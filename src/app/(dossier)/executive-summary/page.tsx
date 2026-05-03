@@ -181,7 +181,11 @@ export default function ExecutiveSummary() {
                 <td>USD 4,615</td>
               </tr>
               <tr>
-                <td>Monthly Production</td>
+                <td>Current Monthly Production</td>
+                <td colSpan={2}>5 KG (160.7 troy oz)</td>
+              </tr>
+              <tr>
+                <td>Target Monthly Production</td>
                 <td colSpan={2}>15 KG (482.3 troy oz)</td>
               </tr>
               <tr>
