@@ -1,0 +1,179 @@
+/* ============================================================================
+   Phases Shared Styles
+   ============================================================================ */
+
+.page {
+  padding: var(--space-8);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: var(--space-12);
+  text-align: center;
+}
+
+.pageHeader h1 {
+  font-size: var(--fs-5xl);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--white-70);
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ── Timeline Navigator ───────────────────────────────────────────────────── */
+.phaseNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--white-05);
+  flex-wrap: wrap;
+}
+
+.phaseLink {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--smoke);
+  text-decoration: none;
+  border: 1px solid var(--white-10);
+  transition: all var(--duration-fast);
+}
+
+.phaseLink:hover {
+  background: var(--white-05);
+  color: var(--white);
+}
+
+.phaseActive {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold-400);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* ── Phase Content Grid ───────────────────────────────────────────────────── */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+.detailCard {
+  background: var(--black-800);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.detailCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gold-gradient);
+}
+
+.detailCard h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-4);
+}
+
+.detailCard p {
+  color: var(--platinum);
+  line-height: 1.8;
+  margin-bottom: var(--space-4);
+}
+
+.milestoneList {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-6);
+}
+
+.milestoneItem {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--black-900);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--white-05);
+}
+
+.milestoneIcon {
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+
+.milestoneText h4 {
+  font-size: var(--fs-md);
+  color: var(--gold-400);
+  margin-bottom: var(--space-1);
+}
+
+.milestoneText p {
+  font-size: var(--fs-sm);
+  color: var(--smoke);
+  margin-bottom: 0;
+}
+
+/* ── KPI Box ──────────────────────────────────────────────────────────────── */
+.kpiBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), transparent);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-6);
+}
+
+.kpiLabel {
+  font-size: var(--fs-sm);
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.kpiValue {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  color: var(--gold-400);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-8) var(--space-4);
+  }
+  
+  .pageHeader h1 {
+    font-size: var(--fs-3xl);
+  }
+  
+  .detailCard {
+    padding: var(--space-6) var(--space-4);
+  }
+  
+  .kpiBox {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+}

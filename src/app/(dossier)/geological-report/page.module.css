@@ -1,0 +1,231 @@
+/* ============================================================================
+   Geological Report Styles
+   ============================================================================ */
+
+.page {
+  padding: 0;
+}
+
+.pageHeader {
+  padding: var(--space-12) var(--space-12) var(--space-8);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader h1 {
+  font-size: var(--fs-4xl);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--white-70);
+  line-height: 1.7;
+  max-width: 800px;
+}
+
+/* ── Visual Section ───────────────────────────────────────────────────────── */
+.visualSection {
+  padding: 0 var(--space-12);
+  margin-bottom: var(--space-12);
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--white-10);
+}
+
+.coreImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 40%);
+}
+
+.imageCaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--fs-sm);
+  color: var(--platinum);
+  z-index: 2;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+.imageCaption strong {
+  color: var(--gold-400);
+}
+
+/* ── Content Grid ─────────────────────────────────────────────────────────── */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* 33/66 layout */
+  gap: var(--space-12);
+  padding: 0 var(--space-12) var(--space-12);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ── Left Data Column ─────────────────────────────────────────────────────── */
+.dataColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.statList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--white-05);
+}
+
+.statItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.statLabel {
+  font-size: var(--fs-sm);
+  color: var(--smoke);
+}
+
+.statValue {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--white);
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-4);
+  font-size: var(--fs-sm);
+}
+
+.dataTable th {
+  text-align: left;
+  padding-bottom: var(--space-2);
+  color: var(--smoke);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--fs-xs);
+  border-bottom: 1px solid var(--white-10);
+}
+
+.dataTable td {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--white-05);
+  color: var(--platinum);
+}
+
+.dataTable td:last-child, .dataTable th:last-child {
+  text-align: right;
+}
+
+.highlightVal {
+  color: var(--gold-400) !important;
+  font-weight: 700;
+}
+
+/* ── Right Text Column ────────────────────────────────────────────────────── */
+.textColumn {
+  padding-left: var(--space-8);
+  border-left: 1px solid var(--white-05);
+}
+
+.textColumn h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-4);
+}
+
+.textColumn p {
+  font-size: var(--fs-base);
+  color: var(--white-70);
+  line-height: 1.8;
+  margin-bottom: var(--space-4);
+}
+
+.textColumn em {
+  color: var(--gold-300);
+  font-style: normal;
+}
+
+.infoAlert {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.alertIcon {
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+
+.infoAlert strong {
+  display: block;
+  color: var(--gold-400);
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-sm);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  
+  .textColumn {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--white-05);
+    padding-top: var(--space-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader, .visualSection, .contentGrid {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  
+  .imageWrapper {
+    height: 300px;
+  }
+  
+  .pageHeader h1 {
+    font-size: var(--fs-3xl);
+  }
+}

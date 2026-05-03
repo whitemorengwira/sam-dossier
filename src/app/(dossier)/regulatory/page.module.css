@@ -1,0 +1,208 @@
+/* ============================================================================
+   Regulatory & Compliance Styles
+   ============================================================================ */
+
+.page {
+  padding: var(--space-8);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: var(--space-12);
+}
+
+.pageHeader h1 {
+  font-size: var(--fs-4xl);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--white-70);
+  line-height: 1.7;
+  max-width: 800px;
+}
+
+.section {
+  margin-bottom: var(--space-16);
+}
+
+.section h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+/* ── Check List ───────────────────────────────────────────────────────────── */
+.checkList {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-4);
+}
+
+.checkList li {
+  position: relative;
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--platinum);
+  line-height: 1.5;
+}
+
+.checkList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--gold-400);
+  font-weight: 900;
+  font-size: var(--fs-md);
+}
+
+/* ── Mandate Table ────────────────────────────────────────────────────────── */
+.mandateTableWrapper {
+  overflow-x: auto;
+  background: var(--black-800);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
+}
+
+.mandateTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.mandateTable th {
+  text-align: left;
+  padding: var(--space-4);
+  background: var(--black-900);
+  font-size: var(--fs-sm);
+  color: var(--gold-400);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+}
+
+.mandateTable td {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--white-05);
+  font-size: var(--fs-sm);
+  vertical-align: middle;
+}
+
+.countryCell {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--white);
+}
+
+.lawCell {
+  color: var(--platinum);
+  font-family: monospace;
+}
+
+.focusCell {
+  color: var(--smoke);
+}
+
+/* ── ESG Grid ─────────────────────────────────────────────────────────────── */
+.esgGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-8);
+  margin-top: var(--space-6);
+}
+
+.esgImageWrapper {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  height: 100%;
+  min-height: 300px;
+}
+
+.esgPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(10, 10, 10, 1) 100%);
+  border: 1px solid rgba(0, 200, 83, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.esgIcon {
+  font-size: var(--fs-5xl);
+}
+
+.esgPlaceholder h4 {
+  font-size: var(--fs-md);
+  color: var(--success);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding: 0 var(--space-4);
+}
+
+.esgContent h3 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-4);
+}
+
+.esgContent p {
+  color: var(--smoke);
+  line-height: 1.7;
+  margin-bottom: var(--space-6);
+}
+
+.policyBox {
+  background: var(--black-800);
+  border-left: 3px solid var(--gold-400);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.policyBox h4 {
+  font-size: var(--fs-sm);
+  color: var(--gold-400);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
+}
+
+.policyBox p {
+  margin-bottom: 0;
+  font-size: var(--fs-sm);
+  color: var(--platinum);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .esgGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .esgImageWrapper {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-8) var(--space-4);
+  }
+}

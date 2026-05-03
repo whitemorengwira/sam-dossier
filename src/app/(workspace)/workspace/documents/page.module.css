@@ -1,0 +1,207 @@
+/* ============================================================================
+   Document Vault Styles
+   ============================================================================ */
+
+.page {
+  padding: var(--space-8);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-12);
+  border-bottom: 1px solid var(--white-10);
+  padding-bottom: var(--space-6);
+}
+
+.header h1 {
+  font-size: var(--fs-3xl);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.lead {
+  font-size: var(--fs-md);
+  color: var(--smoke);
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.statBox {
+  background: var(--black-800);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-6);
+  text-align: center;
+  min-width: 120px;
+}
+
+.statLabel {
+  font-size: var(--fs-xs);
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-1);
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  color: var(--white);
+}
+
+/* ── Vault Grid ───────────────────────────────────────────────────────────── */
+.vaultGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--space-6);
+}
+
+.docCard {
+  background: var(--black-800);
+  border: 1px solid var(--white-10);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--duration-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.docCard:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.docLocked {
+  background: rgba(10, 10, 10, 0.95);
+  border-color: rgba(0, 200, 83, 0.2);
+}
+
+.docLocked::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--success);
+}
+
+.docHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.docIcon {
+  font-size: var(--fs-2xl);
+}
+
+.docType {
+  font-size: var(--fs-xs);
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--black-900);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--white-05);
+}
+
+.docTitle {
+  font-size: var(--fs-md);
+  color: var(--white);
+  line-height: 1.4;
+  margin-bottom: var(--space-6);
+  flex-grow: 1;
+}
+
+.docMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  background: var(--black-900);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.metaItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-sm);
+}
+
+.metaItem span {
+  color: var(--smoke);
+}
+
+.metaItem strong {
+  color: var(--platinum);
+}
+
+.docFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--white-05);
+  padding-top: var(--space-4);
+}
+
+.statusBadge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+}
+
+.statusPending { background: rgba(212, 175, 55, 0.1); color: var(--gold-400); }
+.statusReview { background: rgba(0, 176, 255, 0.1); color: var(--info); }
+.statusLocked { background: rgba(0, 200, 83, 0.1); color: var(--success); }
+
+.lockedSeal {
+  font-size: var(--fs-sm);
+  color: var(--success);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-8) var(--space-4);
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+  
+  .stats {
+    width: 100%;
+  }
+  
+  .statBox {
+    flex: 1;
+  }
+  
+  .vaultGrid {
+    grid-template-columns: 1fr;
+  }
+}
