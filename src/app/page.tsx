@@ -1,298 +1,256 @@
-import Link from "next/link";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  /* ── Gold particle dust effect ────────────────────────────────── */
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    interface Particle {
+      x: number
+      y: number
+      size: number
+      speedY: number
+      opacity: number
+      drift: number
+    }
+
+    const particles: Particle[] = []
+    for (let i = 0; i < 200; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2.5 + 1,
+        speedY: Math.random() * 0.3 + 0.05,
+        opacity: Math.random() * 0.2 + 0.05,
+        drift: (Math.random() - 0.5) * 0.15,
+      })
+    }
+
+    let animId: number
+
+    function animate() {
+      if (!ctx || !canvas) return
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      particles.forEach((p) => {
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(212, 175, 55, ${p.opacity})`
+        ctx.fill()
+
+        p.y -= p.speedY
+        p.x += p.drift
+
+        if (p.y < -10) {
+          p.y = canvas.height + 10
+          p.x = Math.random() * canvas.width
+        }
+      })
+
+      animId = requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  /* ── Login handler ────────────────────────────────────────────── */
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    // For now, without Supabase connection, allow admin login
+    // This will be replaced with proper Supabase Auth
+    if (email && password) {
+      // Simulate auth — replace with Supabase once connected
+      setTimeout(() => {
+        router.push('/dashboard/overview')
+      }, 800)
+    } else {
+      setError('Invalid credentials. Please check your email and password.')
+      setLoading(false)
+    }
+  }
+
   return (
-    <main className={styles.main}>
-      {/* ── Hero Section ──────────────────────────────────────────────── */}
-      <section className={styles.hero}>
-        <div className={styles.heroBg}>
-          <img
-            src="/images/hero-mine.png"
-            alt="Aerial view of Chikonga Mine, Manicaland, Zimbabwe"
-            className={styles.heroImage}
-          />
-          <div className={styles.heroOverlay} />
-          <div className={styles.heroVignette} />
-        </div>
+    <main className="relative min-h-screen overflow-hidden bg-onyx">
+      {/* ── Deep mine shaft background ──────────────────────────── */}
+      <div className="absolute inset-0">
+        {/* Geological texture gradient */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse at 50% 120%, rgba(212,175,55,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(139,90,0,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 60%, rgba(212,175,55,0.04) 0%, transparent 50%),
+              linear-gradient(180deg, #050810 0%, #0A1128 30%, #0D0D0D 70%, #060606 100%)
+            `,
+          }}
+        />
 
-        <div className={styles.heroContent}>
-          <div className={styles.heroBadge}>
-            <span className={styles.pulseDot} />
-            Institutional-Grade Investment Dossier
+        {/* Gold vein streaks */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `
+              linear-gradient(135deg, transparent 40%, rgba(212,175,55,0.5) 40.5%, transparent 41%),
+              linear-gradient(225deg, transparent 55%, rgba(212,175,55,0.3) 55.5%, transparent 56%),
+              linear-gradient(160deg, transparent 70%, rgba(180,140,30,0.4) 70.2%, transparent 70.5%)
+            `,
+          }}
+        />
+      </div>
+
+      {/* ── Particle canvas ────────────────────────────────────── */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 z-10 pointer-events-none"
+      />
+
+      {/* ── Centre content ─────────────────────────────────────── */}
+      <div className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4">
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+          className="mb-8"
+        >
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-gold to-gold-light flex items-center justify-center shadow-gold-glow">
+            <span className="text-onyx font-display text-3xl font-black">S</span>
           </div>
+        </motion.div>
 
-          <h1 className={styles.heroTitle}>
-            <span className={styles.heroTitleLine}>Chikonga</span>
-            <span className={`${styles.heroTitleLine} ${styles.heroTitleGold}`}>
-              Gold Mine
-            </span>
-          </h1>
+        {/* Tagline — letter by letter reveal */}
+        <motion.h1
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="text-center mb-2 text-gold font-display font-black tracking-[-0.02em]"
+          style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)' }}
+        >
+          CHIKONGA MINE
+        </motion.h1>
 
-          <p className={styles.heroSubtitle}>
-            Mutare, Manicaland Province — Zimbabwe
-          </p>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="text-center mb-10 font-heading text-lg tracking-widest"
+          style={{ color: 'var(--text-secondary)' }}
+        >
+          ZW$500 MILLION INVESTMENT DOSSIER
+        </motion.p>
 
-          <div className={styles.heroStats}>
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>ZAR 500M</div>
-              <div className={styles.heroStatLabel}>Investment Secured</div>
-            </div>
-            <div className={styles.heroDivider} />
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>15+ KG</div>
-              <div className={styles.heroStatLabel}>Monthly Gold Target</div>
-            </div>
-            <div className={styles.heroDivider} />
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>45 Ha</div>
-              <div className={styles.heroStatLabel}>Mining Concession</div>
-            </div>
-          </div>
-
-          <div className={styles.heroCtas}>
-            <Link href="/executive-summary" className="btn btn-gold">
-              Enter Dossier
-            </Link>
-            <Link href="/workspace/dashboard" className="btn btn-outline">
-              Team Workspace
-            </Link>
-          </div>
-
-          <p className={styles.heroDisclaimer}>
-            Confidential — For Authorised Personnel Only
-          </p>
-        </div>
-
-        <div className={styles.scrollIndicator}>
-          <div className={styles.scrollLine} />
-          <span>Scroll</span>
-        </div>
-      </section>
-
-      {/* ── Overview Section ──────────────────────────────────────────── */}
-      <section className={`section ${styles.overview}`}>
-        <div className="container">
-          <div className={styles.overviewGrid}>
-            <div className={styles.overviewText}>
-              <span className={`badge badge-gold ${styles.sectionBadge}`}>
-                The Opportunity
-              </span>
-              <h2>
-                Asset-Backed Value Creation in{" "}
-                <span className="text-gold">Africa&apos;s Richest Goldfields</span>
-              </h2>
-              <hr className="divider-gold" />
-              <p>
-                Chikonga Mine is a subsidiary of Hilltouch Investments, an
-                indigenous gold mining entity that is wholly owned by its
-                Directors Mr Lufeyi Shato and Mrs Joyce Kujenga. Established
-                in 2005, it has grown in leaps and bounds from humble
-                beginnings to become Manicaland&apos;s 3rd largest producer of
-                the yellow mineral.
-              </p>
-              <p>
-                The 45-hectare property is comprised of four 10-hectare
-                registered claims. All four claims are currently or have
-                previously been mined on a small scale for gold, with the
-                first recorded production in 1959. Good and better standards
-                of mining are presently being conducted by Hilltouch on
-                multiple, steeply dipping, parallel narrow reefs (shear
-                zones) stacked across a 350-metre wide, 800-metre+
-                structural corridor.
-              </p>
-              <p>
-                Improved gold grades averaged 15 g/t, 18 g/t and 25 g/t in
-                2019, 2020 and 2021 respectively. With the secured
-                investment of <strong>ZAR 500,000,000 (USD 29,994,000)</strong>,
-                Socinga Africa Mining will push production from the current
-                5 KG per month to <strong>15+ KG per month</strong>, unlocking
-                significant returns for institutional partners.
-              </p>
-            </div>
-
-            <div className={styles.overviewCards}>
-              <div className="glass-card">
-                <div className={styles.cardIcon}>⛏️</div>
-                <h4>Current Production</h4>
-                <div className="stat-value">5 KG</div>
-                <div className="stat-label">Gold Per Month</div>
+        {/* ── Login Panel ───────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.1 }}
+          className="w-full max-w-[380px]"
+        >
+          <div className="glass-card-heavy p-8">
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label htmlFor="email" className="label">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="input"
+                  required
+                  autoComplete="email"
+                />
               </div>
-              <div className="glass-card">
-                <div className={styles.cardIcon}>📈</div>
-                <h4>Target Production</h4>
-                <div className="stat-value">15+ KG</div>
-                <div className="stat-label">Gold Per Month</div>
-              </div>
-              <div className="glass-card">
-                <div className={styles.cardIcon}>🪨</div>
-                <h4>Ore Grade</h4>
-                <div className="stat-value">15–25 g/t</div>
-                <div className="stat-label">Verified Average</div>
-              </div>
-              <div className="glass-card">
-                <div className={styles.cardIcon}>🔬</div>
-                <h4>Recovery Rate</h4>
-                <div className="stat-value">90–95%</div>
-                <div className="stat-label">CIP Plant Technology</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── Dossier Navigation Section ────────────────────────────────── */}
-      <section className={`section ${styles.navSection}`}>
-        <div className="container">
-          <div style={{ textAlign: "center", marginBottom: "var(--space-12)" }}>
-            <span className="badge badge-gold">Navigate</span>
-            <h2 style={{ marginTop: "var(--space-4)" }}>
-              Explore the <span className="text-gold">Dossier</span>
-            </h2>
-            <hr className="divider-gold-center" />
-            <p
-              style={{
-                maxWidth: "600px",
-                margin: "0 auto",
-                color: "var(--smoke)",
-              }}
-            >
-              Every aspect of this investment has been meticulously documented
-              and is accessible through the sections below.
-            </p>
-          </div>
+              <div>
+                <label htmlFor="password" className="label">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="input"
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
 
-          <div className={styles.navGrid}>
-            {[
-              {
-                title: "Executive Summary",
-                desc: "High-level investment thesis, capital structure, and projected returns.",
-                href: "/executive-summary",
-                icon: "📋",
-                phase: "Overview",
-              },
-              {
-                title: "Chikonga Mine Profile",
-                desc: "Complete mine profile, geological history, coordinates, and company documents.",
-                href: "/chikonga-mine",
-                icon: "⛏️",
-                phase: "Asset",
-              },
-              {
-                title: "Geological Report",
-                desc: "Mineralisation data, assay results, shaft reports, and structural corridor analysis.",
-                href: "/geological-report",
-                icon: "🔬",
-                phase: "Technical",
-              },
-              {
-                title: "Financial Model",
-                desc: "Interactive ROI calculator, 3-year projections, and capital deployment waterfall.",
-                href: "/financial-model",
-                icon: "💰",
-                phase: "Financial",
-              },
-              {
-                title: "Pre-Production",
-                desc: "Zimbabwe trip logistics, geological verification, SAMREC CPR scheduling.",
-                href: "/phases/pre-production",
-                icon: "🗓️",
-                phase: "Phase 1",
-              },
-              {
-                title: "Production",
-                desc: "Shaft sinking, equipment mobilisation, extraction timeline, and personnel.",
-                href: "/phases/production",
-                icon: "⚙️",
-                phase: "Phase 2",
-              },
-              {
-                title: "Post-Production",
-                desc: "CIP plant commissioning, boiler installation, gold recovery and quality assurance.",
-                href: "/phases/post-production",
-                icon: "🏭",
-                phase: "Phase 3",
-              },
-              {
-                title: "Marketing & Distribution",
-                desc: "FGR delivery pipeline, off-take fulfilment, and investor reporting.",
-                href: "/phases/marketing",
-                icon: "📊",
-                phase: "Phase 4",
-              },
-              {
-                title: "Mine Simulation",
-                desc: "Interactive end-to-end mining ecosystem — from shaft to gold bar.",
-                href: "/simulation/mine-simulator",
-                icon: "🎮",
-                phase: "Digital",
-              },
-              {
-                title: "Regulatory & Compliance",
-                desc: "Zimbabwe mining law, ZIDA licensing, beneficiation mandates, ESG framework.",
-                href: "/regulatory",
-                icon: "⚖️",
-                phase: "Legal",
-              },
-              {
-                title: "Team Workspace",
-                desc: "monday.com-style dashboard, tasks, documents, AI chat, and timeline.",
-                href: "/workspace/dashboard",
-                icon: "👥",
-                phase: "Workspace",
-              },
-              {
-                title: "Mining Hub",
-                desc: "Pan-African mining marketplace — listings, jobs, talent, and investors.",
-                href: "https://www.socinga.africa/mining-hub",
-                icon: "🌍",
-                phase: "Hub",
-              },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={styles.navCard}
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-danger text-sm font-body"
+                >
+                  {error}
+                </motion.p>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-gold w-full py-3"
               >
-                <div className={styles.navCardHeader}>
-                  <span className={styles.navCardIcon}>{item.icon}</span>
-                  <span className="badge badge-gold">{item.phase}</span>
-                </div>
-                <h4 className={styles.navCardTitle}>{item.title}</h4>
-                <p className={styles.navCardDesc}>{item.desc}</p>
-                <span className={styles.navCardArrow}>→</span>
-              </Link>
-            ))}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
+                    Authenticating…
+                  </span>
+                ) : (
+                  'Access Dossier'
+                )}
+              </button>
+            </form>
           </div>
-        </div>
-      </section>
+        </motion.div>
 
-      {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className={styles.footer}>
-        <div className="container">
-          <div className={styles.footerContent}>
-            <div>
-              <h5 className="text-gold">SAM Dossier</h5>
-              <p style={{ fontSize: "var(--fs-sm)", color: "var(--smoke)" }}>
-                Socinga Africa Mining — Institutional-Grade Investment Dossier
-              </p>
-            </div>
-            <div style={{ fontSize: "var(--fs-xs)", color: "var(--ash)" }}>
-              <p>
-                24 Kemphaan Street, Florida Lake, Roodepoort, 1709,
-                Johannesburg, South Africa
-              </p>
-              <p>
-                Reg No. 2013/227290/07 · FSP No. 46620 · FAIS Act Compliant
-              </p>
-              <p style={{ marginTop: "var(--space-2)" }}>
-                © 2026 Socinga Africa. All Rights Reserved. Confidential
-                Document.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
+        {/* Footer text */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.5 }}
+          className="mt-8 text-center text-xs font-body font-light"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          By invitation only — Socinga Africa Holdings
+        </motion.p>
+      </div>
     </main>
-  );
+  )
 }
