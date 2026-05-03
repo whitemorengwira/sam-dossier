@@ -1,0 +1,240 @@
+/* ============================================================================
+   Chikonga Mine Profile Styles
+   ============================================================================ */
+
+.page {
+  padding: 0;
+}
+
+/* ── Visual Header ────────────────────────────────────────────────────────── */
+.visualHeader {
+  position: relative;
+  height: 60vh;
+  min-height: 400px;
+  background: var(--black-900);
+}
+
+.visualWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.visualImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.05);
+  animation: slowPan 30s ease-in-out infinite alternate;
+}
+
+@keyframes slowPan {
+  0% { transform: scale(1.05) translateX(0); }
+  100% { transform: scale(1.05) translateX(-2%); }
+}
+
+.visualOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 10, 10, 0.9) 0%,
+    rgba(10, 10, 10, 0.7) 40%,
+    transparent 100%
+  );
+}
+
+.headerContent {
+  position: absolute;
+  top: 50%;
+  left: var(--space-12);
+  transform: translateY(-50%);
+  max-width: 600px;
+  z-index: 2;
+}
+
+.headerContent h1 {
+  font-size: var(--fs-5xl);
+  margin-bottom: var(--space-4);
+  line-height: 1.1;
+}
+
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--white-70);
+  line-height: 1.6;
+}
+
+/* ── Content Grid (70/30 Ratio) ───────────────────────────────────────────── */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 2:1 is close to 66/33, fulfilling the 70/30 visual/text directive */
+  gap: var(--space-12);
+  padding: var(--space-12);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ── Data Column (Left) ───────────────────────────────────────────────────── */
+.dataColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.ownershipGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.ownerBox {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--white-05);
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+}
+
+.ownerTitle {
+  font-size: var(--fs-xs);
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
+}
+
+.ownerValue {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--white);
+}
+
+.ownerSub {
+  font-size: var(--fs-xs);
+  color: var(--gold-400);
+  margin-top: var(--space-2);
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-4);
+}
+
+.dataTable td {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--white-05);
+}
+
+.dataTable td:first-child {
+  color: var(--smoke);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 40%;
+}
+
+.dataTable td:last-child {
+  font-weight: 600;
+  color: var(--white);
+  font-size: var(--fs-base);
+}
+
+.visualCard {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), transparent);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statCallout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.statIcon {
+  font-size: var(--fs-4xl);
+}
+
+.statCalloutValue {
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.statCalloutLabel {
+  font-size: var(--fs-sm);
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: var(--space-1);
+}
+
+/* ── Text Column (Right) ──────────────────────────────────────────────────── */
+.textColumn {
+  padding-left: var(--space-8);
+  border-left: 1px solid var(--white-05);
+}
+
+.textColumn h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-4);
+  color: var(--white);
+}
+
+.textColumn p {
+  font-size: var(--fs-base);
+  color: var(--white-70);
+  line-height: 1.8;
+  margin-bottom: var(--space-4);
+}
+
+.textColumn strong {
+  color: var(--gold-400);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  
+  .textColumn {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--white-05);
+    padding-top: var(--space-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    left: var(--space-4);
+    right: var(--space-4);
+  }
+  
+  .headerContent h1 {
+    font-size: var(--fs-3xl);
+  }
+  
+  .contentGrid {
+    padding: var(--space-6) var(--space-4);
+  }
+  
+  .ownershipGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,351 @@
+/* ============================================================================
+   Workspace Dashboard Styles
+   ============================================================================ */
+
+.page {
+  padding: var(--space-8);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: var(--space-8);
+}
+
+.badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-4);
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--gold-400);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-4);
+}
+
+.pageHeader h1 {
+  font-size: var(--fs-3xl);
+  margin-bottom: var(--space-2);
+}
+
+.textGold {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lead {
+  font-size: var(--fs-md);
+  color: var(--smoke);
+  max-width: 600px;
+}
+
+/* ── KPI Grid ─────────────────────────────────────────────────────────────── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.kpiCard {
+  background: var(--black-700);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--duration-fast);
+}
+
+.kpiCard:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.kpiIcon {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--space-2);
+}
+
+.kpiValue {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.kpiLabel {
+  font-size: var(--fs-xs);
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--space-1);
+}
+
+.kpiTrend {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--success);
+}
+
+/* ── Progress Section ─────────────────────────────────────────────────────── */
+.progressSection {
+  background: var(--black-700);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.progressHeader h3 {
+  font-size: var(--fs-md);
+  margin: 0;
+}
+
+.progressPct {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  color: var(--gold-400);
+}
+
+/* ── Task Section ─────────────────────────────────────────────────────────── */
+.taskSection {
+  background: var(--black-700);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.taskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.taskHeader h3 {
+  font-size: var(--fs-md);
+  margin: 0;
+}
+
+.addTask {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.taskInput {
+  background: var(--black-800);
+  border: 1px solid var(--white-10);
+  color: var(--white);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  width: 300px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+}
+
+.taskInput:focus {
+  outline: none;
+  border-color: var(--gold-400);
+}
+
+/* ── Task Table ───────────────────────────────────────────────────────────── */
+.taskTable {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskTableHead {
+  display: flex;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--white-10);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.taskRow {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--white-05);
+  transition: background var(--duration-fast);
+}
+
+.taskRow:hover {
+  background: var(--black-600);
+}
+
+.taskRow:last-child {
+  border-bottom: none;
+}
+
+.colTask { flex: 2; min-width: 250px; font-weight: 500; color: var(--white); }
+.colAssignee { flex: 1; display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); color: var(--platinum); }
+.colStatus { flex: 1; }
+.colPriority { flex: 1; display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); color: var(--smoke); text-transform: capitalize; }
+.colDue { flex: 1; font-size: var(--fs-sm); color: var(--smoke); }
+.colActions { width: 50px; text-align: right; }
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  background: var(--black-500);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--white);
+}
+
+.statusBtn {
+  padding: 4px 12px;
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--white);
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: filter var(--duration-fast);
+}
+
+.statusBtn:hover {
+  filter: brightness(1.2);
+}
+
+.priorityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--ash);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast);
+}
+
+.deleteBtn:hover {
+  color: var(--danger);
+  background: rgba(255, 23, 68, 0.1);
+}
+
+/* ── Meeting Section ──────────────────────────────────────────────────────── */
+.meetingSection h3 {
+  font-size: var(--fs-md);
+  margin-bottom: var(--space-4);
+}
+
+.meetingGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.meetingCard {
+  background: var(--black-700);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  transition: all var(--duration-normal);
+}
+
+.meetingCard:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+}
+
+.meetingDate {
+  font-size: var(--fs-xs);
+  color: var(--gold-400);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
+}
+
+.meetingCard h4 {
+  font-size: var(--fs-base);
+  margin-bottom: var(--space-2);
+}
+
+.meetingCard p {
+  font-size: var(--fs-sm);
+  color: var(--smoke);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .taskTable {
+    overflow-x: auto;
+  }
+  .taskRow, .taskTableHead {
+    min-width: 800px;
+  }
+  
+  .meetingGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .taskHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  
+  .addTask {
+    width: 100%;
+  }
+  
+  .taskInput {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}

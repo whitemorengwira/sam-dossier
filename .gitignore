@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# source documents (large PDFs/DOCX — not for repo)
+/data-centre
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
