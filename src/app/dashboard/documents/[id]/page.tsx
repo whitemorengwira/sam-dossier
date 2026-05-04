@@ -37,10 +37,12 @@ export default function DocumentEditorPage() {
     const docs = loadDocuments()
     const found = docs.find(d => d.id === params.id)
     if (!found) return
+    /* eslint-disable react-hooks/set-state-in-effect */
     setDoc(found); setTitle(found.title); setStarred(found.starred)
     setIsPublished(found.isPublished || false)
     setSignStatus(found.signatureStatus || 'none')
     setVersions(loadVersions(found.id))
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [params.id])
 
   useEffect(() => {
