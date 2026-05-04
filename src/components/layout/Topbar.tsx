@@ -21,6 +21,7 @@ export default function Topbar({ sidebarCollapsed, onToggleMobile }: TopbarProps
   const [searchOpen, setSearchOpen] = useState(false)
   const [user, setUser] = useState<UserInfo | null>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
   const [editMode, setEditMode] = useState(false)
 
   useEffect(() => {
@@ -115,10 +116,50 @@ export default function Topbar({ sidebarCollapsed, onToggleMobile }: TopbarProps
         </div>
 
         {/* Notifications */}
-        <button className="relative p-2 text-text-secondary hover:text-gold transition-colors">
-          <Bell size={20} weight="duotone" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full" />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={() => { setShowNotifications(!showNotifications); setShowMenu(false) }}
+            className="relative p-2 text-text-secondary hover:text-gold transition-colors"
+          >
+            <Bell size={20} weight="duotone" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full" />
+          </button>
+
+          {showNotifications && (
+            <div className="absolute right-0 top-full mt-2 w-80 bg-navy border border-gold/20 shadow-xl z-50 flex flex-col max-h-[400px]">
+              <div className="px-4 py-3 border-b border-gold/15 flex justify-between items-center bg-gold/5">
+                <span className="text-sm font-semibold text-gold">Notifications</span>
+                <span className="text-xs text-text-muted cursor-pointer hover:text-gold">Mark all as read</span>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <div className="px-4 py-3 border-b border-gold/5 hover:bg-gold/5 cursor-pointer transition-colors">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-xs font-semibold text-text-primary">Sam Dossier Team</span>
+                    <span className="text-[10px] text-text-muted">10m ago</span>
+                  </div>
+                  <p className="text-xs text-text-secondary">Patience Ngwira assigned you to <strong>Complete geological survey report</strong></p>
+                </div>
+                <div className="px-4 py-3 border-b border-gold/5 hover:bg-gold/5 cursor-pointer transition-colors">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-xs font-semibold text-text-primary">System Alert</span>
+                    <span className="text-[10px] text-text-muted">1h ago</span>
+                  </div>
+                  <p className="text-xs text-text-secondary">Document <strong>Mining Mandate — Zambia</strong> was signed.</p>
+                </div>
+                <div className="px-4 py-3 hover:bg-gold/5 cursor-pointer transition-colors">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-xs font-semibold text-text-primary">Olwethu Mlokoti</span>
+                    <span className="text-[10px] text-text-muted">2h ago</span>
+                  </div>
+                  <p className="text-xs text-text-secondary">Left a comment on <strong>Executive Summary</strong></p>
+                </div>
+              </div>
+              <div className="px-4 py-2 border-t border-gold/15 text-center bg-gold/5">
+                <span className="text-xs text-gold font-medium cursor-pointer hover:underline">View all notifications</span>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* User avatar + dropdown */}
         <div className="relative">

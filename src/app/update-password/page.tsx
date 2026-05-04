@@ -1,0 +1,230 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+
+export default function UpdatePasswordPage() {
+  const router = useRouter()
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  /* ── Gold particle dust effect ────────────────────────────────── */
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    interface Particle {
+      x: number; y: number; size: number; speedY: number; opacity: number; drift: number
+    }
+
+    const particles: Particle[] = []
+    for (let i = 0; i < 200; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2.5 + 1,
+        speedY: Math.random() * 0.3 + 0.05,
+        opacity: Math.random() * 0.2 + 0.05,
+        drift: (Math.random() - 0.5) * 0.15,
+      })
+    }
+
+    let animId: number
+
+    function animate() {
+      if (!ctx || !canvas) return
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      particles.forEach((p) => {
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(212, 175, 55, ${p.opacity})`
+        ctx.fill()
+        p.y -= p.speedY
+        p.x += p.drift
+        if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width }
+      })
+      animId = requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
+    window.addEventListener('resize', handleResize)
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', handleResize) }
+  }, [])
+
+  /* ── Update Password handler ────────────────────────────────────── */
+  async function handleUpdatePassword(e: React.FormEvent) {
+    e.preventDefault()
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.')
+      return
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.')
+      return
+    }
+    setLoading(true)
+    setError('')
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password
+      })
+
+      if (updateError) {
+        setError(updateError.message)
+        setLoading(false)
+        return
+      }
+
+      setSuccess(true)
+      setLoading(false)
+      setTimeout(() => {
+        router.push('/dashboard/overview')
+        router.refresh()
+      }, 2000)
+    } catch {
+      setError('Service unavailable. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-onyx">
+      {/* ── Deep mine shaft background ──────────────────────────── */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse at 50% 120%, rgba(212,175,55,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(139,90,0,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 60%, rgba(212,175,55,0.04) 0%, transparent 50%),
+              linear-gradient(180deg, #050810 0%, #0A1128 30%, #0D0D0D 70%, #060606 100%)
+            `,
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `
+              linear-gradient(135deg, transparent 40%, rgba(212,175,55,0.5) 40.5%, transparent 41%),
+              linear-gradient(225deg, transparent 55%, rgba(212,175,55,0.3) 55.5%, transparent 56%),
+              linear-gradient(160deg, transparent 70%, rgba(180,140,30,0.4) 70.2%, transparent 70.5%)
+            `,
+          }}
+        />
+      </div>
+
+      <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none" />
+
+      {/* ── Centre content ─────────────────────────────────────── */}
+      <div className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4">
+        {/* Logo */}
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, ease: 'easeOut' }} className="mb-8">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-gold to-gold-light flex items-center justify-center shadow-gold-glow">
+            <span className="text-onyx font-display text-3xl font-black">S</span>
+          </div>
+        </motion.div>
+
+        <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }} className="text-center mb-2 text-gold font-display font-black tracking-[-0.02em]" style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)' }}>
+          SAM DOSSIER
+        </motion.h1>
+
+        <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }} className="text-center mb-10 font-heading text-lg tracking-widest uppercase" style={{ color: 'var(--text-secondary)' }}>
+          SECURE RECOVERY
+        </motion.p>
+
+        {/* ── Auth Panel ───────────────────────────────────────── */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 1.1 }} className="w-full max-w-[380px]">
+          <div className="glass-card-heavy p-8">
+
+            {success ? (
+              <div className="text-center space-y-5 py-4">
+                <div className="w-16 h-16 mx-auto bg-gold/10 border border-gold/30 flex items-center justify-center mb-4 text-gold">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h2 className="text-white font-display text-lg">Password Updated</h2>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  Your password has been successfully reset.
+                </p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  Redirecting to your dossier...
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleUpdatePassword} className="space-y-5">
+                <div className="text-center mb-2">
+                  <h2 className="text-white font-display text-lg mb-1">Set New Password</h2>
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Create a strong password for your account.</p>
+                </div>
+
+                <div>
+                  <label htmlFor="update-password" className="label">New Password</label>
+                  <div className="relative">
+                    <input id="update-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a new password" className="input pr-10" required minLength={6} autoComplete="new-password" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-gold transition-colors" tabIndex={-1}>
+                      {showPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[10px] mt-1 font-mono" style={{ color: 'var(--text-muted)' }}>Minimum 6 characters</p>
+                </div>
+
+                <div>
+                  <label htmlFor="update-confirm" className="label">Confirm Password</label>
+                  <div className="relative">
+                    <input id="update-confirm" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="input pr-10" required minLength={6} autoComplete="new-password" />
+                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-gold transition-colors" tabIndex={-1}>
+                      {showConfirmPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {error && (
+                  <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-danger text-sm font-body">{error}</motion.p>
+                )}
+
+                <button type="submit" disabled={loading} className="btn-gold w-full py-3 mt-2">
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
+                      Updating…
+                    </span>
+                  ) : 'Update Password'}
+                </button>
+              </form>
+            )}
+
+          </div>
+        </motion.div>
+
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.5 }} className="mt-8 text-center text-xs font-body font-light" style={{ color: 'var(--text-muted)' }}>
+          By invitation only — Socinga Africa Holdings
+        </motion.p>
+      </div>
+    </main>
+  )
+}

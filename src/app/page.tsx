@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
-type AuthMode = 'login' | 'signup' | 'verify-sent'
+type AuthMode = 'login' | 'signup' | 'verify-sent' | 'forgot-password' | 'reset-sent'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -144,6 +144,43 @@ export default function LoginPage() {
     }
   }
 
+  /* ── Reset password handler ─────────────────────────────────────── */
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email) {
+      setError('Please enter your email address.')
+      return
+    }
+    setLoading(true)
+    setError('')
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    if (!supabaseUrl || supabaseUrl === '__REPLACE_ME__') {
+      setTimeout(() => { setLoading(false); setMode('reset-sent') }, 1000)
+      return
+    }
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      })
+
+      if (resetError) {
+        setError(resetError.message)
+        setLoading(false)
+        return
+      }
+
+      setLoading(false)
+      setMode('reset-sent')
+    } catch {
+      setError('Service unavailable. Please try again.')
+      setLoading(false)
+    }
+  }
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-onyx">
       {/* ── Deep mine shaft background ──────────────────────────── */}
@@ -228,10 +265,15 @@ export default function LoginPage() {
                   ) : 'Access Dossier'}
                 </button>
 
-                <div className="text-center pt-2">
-                  <button type="button" onClick={() => { setMode('signup'); setError('') }} className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4">
-                    Create an account
+                <div className="flex flex-col gap-3 pt-2">
+                  <button type="button" onClick={() => { setMode('forgot-password'); setError('') }} className="text-sm text-right text-text-muted hover:text-gold transition-colors font-body">
+                    Forgot password?
                   </button>
+                  <div className="text-center pt-2 border-t border-white/5">
+                    <button type="button" onClick={() => { setMode('signup'); setError('') }} className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4">
+                      Create an account
+                    </button>
+                  </div>
                 </div>
               </form>
             )}
@@ -333,6 +375,63 @@ export default function LoginPage() {
                     className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4"
                   >
                     {loading ? 'Resending…' : 'Resend verification email'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ FORGOT PASSWORD ═══ */}
+            {mode === 'forgot-password' && (
+              <form onSubmit={handleResetPassword} className="space-y-5">
+                <div className="text-center mb-2">
+                  <h2 className="text-white font-display text-lg mb-1">Reset Password</h2>
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Enter your email to receive a recovery link.</p>
+                </div>
+
+                <div>
+                  <label htmlFor="reset-email" className="label">Email Address</label>
+                  <input id="reset-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="input" required autoComplete="email" />
+                </div>
+
+                {error && (
+                  <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-danger text-sm font-body">{error}</motion.p>
+                )}
+
+                <button type="submit" disabled={loading} className="btn-gold w-full py-3 mt-2">
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
+                      Sending Link…
+                    </span>
+                  ) : 'Send Reset Link'}
+                </button>
+
+                <div className="text-center pt-2 border-t border-white/5">
+                  <button type="button" onClick={() => { setMode('login'); setError('') }} className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4">
+                    Back to Login
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* ═══ RESET LINK SENT ═══ */}
+            {mode === 'reset-sent' && (
+              <div className="text-center space-y-5 py-4">
+                <div className="w-16 h-16 mx-auto bg-gold/10 border border-gold/30 flex items-center justify-center mb-4" style={{ fontSize: '28px' }}>
+                  ✉️
+                </div>
+                <h2 className="text-white font-display text-lg">Check Your Email</h2>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  We have sent a password reset link to<br />
+                  <span className="text-gold font-medium">{email}</span>
+                </p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  Click the link in the email to set a new password.
+                </p>
+
+                <div className="pt-4">
+                  <button type="button" onClick={() => { setMode('login'); setError('') }} className="btn-gold w-full py-3">
+                    Back to Login
                   </button>
                 </div>
               </div>

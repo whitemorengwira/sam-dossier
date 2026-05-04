@@ -21,11 +21,20 @@ import {
   Eraser,
   Highlighter,
   TextAa,
+  Printer,
+  TextAUnderline,
+  PaintRoller,
+  MagnifyingGlass,
+  ChatCircle,
+  Image as ImageIcon,
+  CheckSquareOffset,
+  List,
 } from '@phosphor-icons/react'
 import styles from './EditorToolbar.module.css'
 
 interface EditorToolbarProps {
   editorRef?: React.RefObject<HTMLDivElement | null>
+  onAddComment?: () => void
 }
 
 const FONTS = [
@@ -41,10 +50,12 @@ const FONTS = [
 
 const FONT_SIZES = ['10', '11', '12', '14', '16', '18', '20', '24', '28', '36', '48']
 
-export default function EditorToolbar({ editorRef }: EditorToolbarProps = {}) {
+export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbarProps = {}) {
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set())
   const [currentFont, setCurrentFont] = useState('DM Sans')
   const [currentSize, setCurrentSize] = useState('14')
+  const [currentStyle, setCurrentStyle] = useState('Normal text')
+  const [zoom, setZoom] = useState('100%')
   const [textColour, setTextColour] = useState('#000000')
   const [highlightColour, setHighlightColour] = useState('#ffff00')
 
@@ -80,7 +91,7 @@ export default function EditorToolbar({ editorRef }: EditorToolbarProps = {}) {
 
   return (
     <div className={styles.toolbar}>
-      {/* Undo / Redo */}
+      {/* Undo / Redo / Print / Format */}
       <div className={styles.toolGroup}>
         <button className={styles.toolBtn} onClick={() => exec('undo')} title="Undo">
           <ArrowUUpLeft size={16} />
@@ -88,6 +99,52 @@ export default function EditorToolbar({ editorRef }: EditorToolbarProps = {}) {
         <button className={styles.toolBtn} onClick={() => exec('redo')} title="Redo">
           <ArrowUUpRight size={16} />
         </button>
+        <button className={styles.toolBtn} onClick={() => window.print()} title="Print (Ctrl+P)">
+          <Printer size={16} />
+        </button>
+        <button className={styles.toolBtn} onClick={() => {}} title="Spelling and grammar check">
+          <TextAUnderline size={16} />
+        </button>
+        <button className={styles.toolBtn} onClick={() => {}} title="Paint format">
+          <PaintRoller size={16} />
+        </button>
+      </div>
+
+      {/* Zoom */}
+      <div className={styles.toolGroup}>
+        <select
+          className={styles.toolSelect}
+          value={zoom}
+          onChange={(e) => setZoom(e.target.value)}
+          title="Zoom"
+          style={{ width: 70 }}
+        >
+          {['50%', '75%', '90%', '100%', '125%', '150%', '200%'].map((z) => (
+            <option key={z} value={z}>{z}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Paragraph styles */}
+      <div className={styles.toolGroup}>
+        <select
+          className={styles.toolSelect}
+          value={currentStyle}
+          onChange={(e) => {
+            setCurrentStyle(e.target.value)
+            exec('formatBlock', e.target.value === 'Normal text' ? 'P' : e.target.value)
+          }}
+          title="Styles"
+          style={{ width: 110 }}
+        >
+          <option value="Normal text">Normal text</option>
+          <option value="H1">Heading 1</option>
+          <option value="H2">Heading 2</option>
+          <option value="H3">Heading 3</option>
+          <option value="H4">Heading 4</option>
+          <option value="H5">Heading 5</option>
+          <option value="H6">Heading 6</option>
+        </select>
       </div>
 
       {/* Font family */}
@@ -247,6 +304,13 @@ export default function EditorToolbar({ editorRef }: EditorToolbarProps = {}) {
       {/* Lists & indent */}
       <div className={styles.toolGroup}>
         <button
+          className={`${styles.toolBtn} ${isActive('insertChecklist') ? styles.active : ''}`}
+          onClick={() => exec('insertUnorderedList')} // Basic fallback for checklist
+          title="Checklist"
+        >
+          <CheckSquareOffset size={16} />
+        </button>
+        <button
           className={`${styles.toolBtn} ${isActive('insertUnorderedList') ? styles.active : ''}`}
           onClick={() => exec('insertUnorderedList')}
           title="Bullet list"
@@ -268,6 +332,12 @@ export default function EditorToolbar({ editorRef }: EditorToolbarProps = {}) {
         </button>
       </div>
 
+      <div className={styles.toolGroup}>
+        <button className={styles.toolBtn} onClick={() => {}} title="Line & paragraph spacing">
+          <List size={16} />
+        </button>
+      </div>
+
       {/* Insert */}
       <div className={styles.toolGroup}>
         <button
@@ -279,6 +349,15 @@ export default function EditorToolbar({ editorRef }: EditorToolbarProps = {}) {
           title="Insert link"
         >
           <LinkSimple size={16} />
+        </button>
+        <button className={styles.toolBtn} onClick={onAddComment} title="Add comment">
+          <ChatCircle size={16} />
+        </button>
+        <button className={styles.toolBtn} onClick={() => {
+          const url = prompt('Enter image URL:')
+          if (url) exec('insertImage', url)
+        }} title="Insert image">
+          <ImageIcon size={16} />
         </button>
         <button className={styles.toolBtn} onClick={() => exec('insertHorizontalRule')} title="Insert horizontal rule">
           <Minus size={16} />

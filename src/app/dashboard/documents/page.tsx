@@ -144,6 +144,24 @@ export default function DocumentsPage() {
           {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="list" onStar={toggleStar} onMenuOpen={() => {}} />)}
         </div>
       )}
+
+      {/* ── FAB — New Document ──── */}
+      <button
+        onClick={() => handleCreate('tpl-blank')}
+        style={{
+          position: 'fixed', bottom: 32, right: 32, width: 56, height: 56,
+          borderRadius: '50%', background: '#1a73e8', color: '#fff', border: 'none',
+          fontSize: 28, fontWeight: 300, cursor: 'pointer', boxShadow: '0 4px 16px rgba(26,115,232,0.4)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'all 0.2s ease', zIndex: 50,
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(26,115,232,0.5)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(26,115,232,0.4)' }}
+        title="Create new document"
+        aria-label="Create new document"
+      >
+        +
+      </button>
     </div>
   )
 }

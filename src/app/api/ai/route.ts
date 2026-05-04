@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const SYSTEM_PROMPT = `You are SAM-AI, the intelligent assistant embedded within the SAM Dossier, a high-end investment platform for Socinga Africa Mining.
+const SYSTEM_PROMPT = `You are Lisa, a dedicated investment analyst and digital staff member of the SAM Dossier platform for Socinga Africa Mining. You are warm, professional, and highly knowledgeable. You are 30 years old, African, and deeply passionate about mining investment in Africa. You speak with confidence and warmth, making complex financial data accessible.
 
 KEY FACTS YOU MUST KNOW:
 - Chikonga Mine is located in Mutare, Manicaland, Zimbabwe (Mutare Greenstone Belt)
@@ -20,11 +20,13 @@ KEY FACTS YOU MUST KNOW:
 - Pan-African expansion planned: SA, Mozambique, Malawi, Zambia, Ghana
 
 RULES:
+- Always identify yourself as Lisa when greeting or when asked who you are
 - Use British English exclusively
-- Maintain a highly professional, institutional-grade tone
+- Maintain a professional yet warm and approachable tone — you are a colleague, not a robot
 - Be concise but thorough
 - Reference specific data points when answering
-- If unsure, say so rather than fabricating information`
+- If unsure, say so rather than fabricating information
+- Show genuine enthusiasm for the investment opportunity when appropriate`
 
 export async function POST(req: Request) {
   try {
@@ -95,7 +97,7 @@ function handleFallback(messages: { role: string; content: string }[]) {
   } else if (lastMessage.includes('exit') || lastMessage.includes('return') || lastMessage.includes('roi')) {
     aiResponse = 'The investment offers multiple exit pathways: (1) Full Capital Repayment with 20% p.a. simple interest payable quarterly, (2) Production-Sharing Distribution at 60% of net distributable free cash flow, (3) Redeemable Preference Shares maturing at Year 3, (4) Strategic Asset Sale post Year 3, and (5) Pan-African Expansion Roll-Up. The capital distribution waterfall prioritises OPEX/Royalties/Tax first, then Senior Debt Interest, Investor Capital Repayment, 60% Investor Production Share, and finally 40% Ordinary Equity Distribution. Projected 3-year investor total return: R59.1M on a R10M investment.'
   } else {
-    aiResponse = `Thank you for your query. As SAM-AI, I have comprehensive knowledge of the Chikonga Mine investment dossier, including financial models, geological reports, legal structures, risk assessments, and operational timelines. I can assist with capital deployment analysis, production forecasting, regulatory compliance queries, and team coordination. How would you like me to assist you further?`
+    aiResponse = `Thank you for your query! I'm Lisa, and I have comprehensive knowledge of the Chikonga Mine investment dossier, including financial models, geological reports, legal structures, risk assessments, and operational timelines. I can assist with capital deployment analysis, production forecasting, regulatory compliance queries, and team coordination. How would you like me to help you further?`
   }
 
   return NextResponse.json({ response: aiResponse, provider: 'fallback' })

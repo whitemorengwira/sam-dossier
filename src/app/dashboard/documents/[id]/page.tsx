@@ -2,10 +2,18 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle } from '@phosphor-icons/react'
+import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap } from '@phosphor-icons/react'
 import EditorToolbar from '@/components/documents/EditorToolbar'
+import MenuBar from '@/components/documents/MenuBar'
+import Ruler from '@/components/documents/Ruler'
+import FindReplaceModal from '@/components/documents/modals/FindReplaceModal'
+import WordCountModal from '@/components/documents/modals/WordCountModal'
+import PageSetupModal, { type PageSettings } from '@/components/documents/modals/PageSetupModal'
+import ShareModal from '@/components/documents/modals/ShareModal'
+import KeyboardShortcutsModal from '@/components/documents/modals/KeyboardShortcutsModal'
+import OutlinePanel from '@/components/documents/panels/OutlinePanel'
 import { loadDocuments, saveDocuments, loadVersions, saveVersion, TEAM } from '@/lib/documents-data'
-import type { GDocsDocument } from '@/types'
+import type { GDocsDocument, SharedUser } from '@/types'
 import type { DocVersion } from '@/lib/documents-data'
 import styles from './page.module.css'
 
@@ -32,6 +40,24 @@ export default function DocumentEditorPage() {
   const [isPublished, setIsPublished] = useState(false)
   const [signStatus, setSignStatus] = useState<'none'|'pending'|'signed'>('none')
 
+  /* ── New state for Phase 1 features ──── */
+  const [saveState, setSaveState] = useState<'idle'|'saving'|'saved'>('idle')
+  const [showFindReplace, setShowFindReplace] = useState(false)
+  const [showWordCount, setShowWordCount] = useState(false)
+  const [showPageSetup, setShowPageSetup] = useState(false)
+  const [showShare, setShowShare] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
+  const [showOutline, setShowOutline] = useState(false)
+  const [showRuler, setShowRuler] = useState(true)
+  const [showPrintLayout, setShowPrintLayout] = useState(true)
+  const [liveWordCount, setLiveWordCount] = useState(false)
+  const [docMode, setDocMode] = useState<'editing'|'suggesting'|'viewing'>('editing')
+  const [pageSettings, setPageSettings] = useState<PageSettings>({
+    pageSize: 'A4', orientation: 'portrait',
+    marginTop: 2.54, marginBottom: 2.54, marginLeft: 2.54, marginRight: 2.54,
+    pageColour: '#ffffff',
+  })
+
   // Load document
   useEffect(() => {
     const docs = loadDocuments()
@@ -50,6 +76,7 @@ export default function DocumentEditorPage() {
   // Auto-save
   const save = useCallback(() => {
     if (!canvasRef.current || !doc) return
+    setSaveState('saving')
     const content = canvasRef.current.innerHTML
     const text = canvasRef.current.innerText || ''
     setWordCount(text.trim().split(/\s+/).filter(Boolean).length)
@@ -60,9 +87,68 @@ export default function DocumentEditorPage() {
       docs[idx] = { ...docs[idx], title, content, starred, lastModified: new Date().toISOString(), signatureStatus: signStatus, isPublished }
       saveDocuments(docs)
     }
+    setTimeout(() => setSaveState('saved'), 300)
+    setTimeout(() => setSaveState('idle'), 2000)
   }, [doc, title, starred, signStatus, isPublished])
 
-  useEffect(() => { const t = setTimeout(save, 1500); return () => clearTimeout(t) }, [save])
+  useEffect(() => { const t = setTimeout(save, 500); return () => clearTimeout(t) }, [save])
+
+  /* ── Keyboard shortcuts ──── */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'h') { e.preventDefault(); setShowFindReplace(true) }
+      if (e.ctrlKey && e.shiftKey && e.key === 'C') { e.preventDefault(); setShowWordCount(true) }
+      if (e.ctrlKey && e.key === '/') { e.preventDefault(); setShowShortcuts(true) }
+      if (e.ctrlKey && e.shiftKey && e.key === 'H') { e.preventDefault(); setShowVersions(true) }
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') { e.preventDefault(); document.documentElement.requestFullscreen?.() }
+      if (e.ctrlKey && e.altKey && e.key === 'm') { e.preventDefault(); /* comment placeholder */ }
+      if (e.altKey && e.key === '/') { e.preventDefault(); /* command palette placeholder */ }
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [])
+
+  /* ── beforeunload guard ──── */
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => { if (saveState === 'saving') { e.preventDefault() } }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [saveState])
+
+  /* ── Shared users update ──── */
+  const updateShared = (users: SharedUser[]) => {
+    if (!doc) return
+    const docs = loadDocuments()
+    const idx = docs.findIndex(d => d.id === doc.id)
+    if (idx >= 0) { docs[idx] = { ...docs[idx], shared: users }; saveDocuments(docs) }
+    setDoc(prev => prev ? { ...prev, shared: users } : prev)
+  }
+
+  /* ── Download handler ──── */
+  const handleDownload = (format: string) => {
+    if (!canvasRef.current) return
+    const content = canvasRef.current.innerHTML
+    let blob: Blob; let ext = format
+    if (format === 'txt') {
+      blob = new Blob([canvasRef.current.innerText || ''], { type: 'text/plain' })
+    } else if (format === 'pdf') {
+      window.print(); return
+    } else {
+      blob = new Blob([`<html><body>${content}</body></html>`], { type: 'text/html' })
+    }
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url; a.download = `${title}.${ext}`; a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  /* ── Paragraph style ──── */
+  const applyParagraphStyle = (tag: string) => {
+    canvasRef.current?.focus()
+    document.execCommand('formatBlock', false, tag)
+  }
+
+  const charCountNoSpaces = canvasRef.current ? (canvasRef.current.innerText || '').replace(/\s/g, '').length : 0
+  const pageCount = Math.max(1, Math.ceil((canvasRef.current?.scrollHeight || 1056) / 1056))
 
   // Version save
   const createVersion = (label?: string) => {
@@ -154,6 +240,42 @@ export default function DocumentEditorPage() {
     }
   }
 
+  // Comments
+  const handleAddComment = () => {
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      alert('Please select some text to comment on.')
+      return
+    }
+
+    const text = prompt('Enter your comment:')
+    if (!text) return
+
+    const range = selection.getRangeAt(0)
+    const quote = selection.toString()
+    
+    // Highlight the text
+    const span = document.createElement('span')
+    span.style.backgroundColor = '#fef7e0'
+    span.style.borderBottom = '2px solid #fbbc04'
+    span.className = 'comment-anchor'
+    range.surroundContents(span)
+
+    const newComment = {
+      id: `c-${Date.now()}`,
+      author: TEAM[0],
+      text,
+      timestamp: new Date().toISOString(),
+      resolved: false,
+      quote,
+      replies: []
+    }
+
+    setDoc(prev => prev ? { ...prev, comments: [newComment, ...prev.comments] } : prev)
+    setShowComments(true)
+    save()
+  }
+
   if (!doc) return <div className={styles.loading}>Loading document...</div>
 
   return (
@@ -164,16 +286,26 @@ export default function DocumentEditorPage() {
           <button className={styles.backBtn} onClick={() => router.push('/dashboard/documents')}><ArrowLeft size={18} /></button>
           <div className={styles.docIcon}>📄</div>
           <div className={styles.titleWrapper}>
-            <input className={styles.titleInput} value={title} onChange={e => setTitle(e.target.value)} />
-            <span className={styles.lastEdit}>Last edit was {new Date(doc.lastModified).toLocaleDateString()}</span>
+            <input className={styles.titleInput} value={title} onChange={e => setTitle(e.target.value)} readOnly={docMode === 'viewing'} />
+            <span className={styles.lastEdit}>
+              {saveState === 'saving' && <><SpinnerGap size={12} className="animate-spin" style={{display:'inline',marginRight:4}} />Saving…</>}
+              {saveState === 'saved' && <><CloudCheck size={12} style={{display:'inline',marginRight:4,color:'#137333'}} />Saved to Drive</>}
+              {saveState === 'idle' && `Last edit was ${new Date(doc.lastModified).toLocaleDateString()}`}
+            </span>
           </div>
           <button className={`${styles.starBtn} ${starred ? styles.starred : ''}`} onClick={() => setStarred(!starred)}>
             <Star size={18} weight={starred ? 'fill' : 'regular'} />
           </button>
         </div>
         <div className={styles.chromeRight}>
+          {/* Mode indicator */}
+          <span style={{ fontSize: 12, color: '#5f6368', padding: '4px 10px', background: '#f1f3f4', borderRadius: 4, textTransform: 'capitalize' }}>
+            {docMode === 'editing' ? '✏️' : docMode === 'suggesting' ? '💡' : '👁️'} {docMode}
+          </span>
+
           <div className={styles.avatarGroup}>
             {doc.shared.slice(0, 3).map(u => <div key={u.id} className={styles.avatar}>{u.avatar}</div>)}
+            {doc.shared.length > 4 && <div className={styles.avatar} style={{background:'#e0e0e0',color:'#5f6368'}}>+{doc.shared.length - 3}</div>}
           </div>
 
           <button className={styles.versionBtn} onClick={() => { setShowVersions(!showVersions); setShowComments(false) }}>
@@ -193,26 +325,118 @@ export default function DocumentEditorPage() {
             {doc.comments.length > 0 && <span className={styles.commentBadge}>{doc.comments.length}</span>}
           </button>
 
-          <button className={styles.shareBtn}><ShareNetwork size={16} /> Share</button>
+          <button className={styles.shareBtn} onClick={() => setShowShare(true)}><ShareNetwork size={16} /> Share</button>
         </div>
       </div>
 
+      {/* ── Menu Bar ──── */}
+      {docMode !== 'viewing' && (
+        <MenuBar
+          editorRef={canvasRef}
+          onFindReplace={() => setShowFindReplace(true)}
+          onWordCount={() => setShowWordCount(true)}
+          onPageSetup={() => setShowPageSetup(true)}
+          onShare={() => setShowShare(true)}
+          onShortcuts={() => setShowShortcuts(true)}
+          onOutline={setShowOutline}
+          onRuler={setShowRuler}
+          onMode={setDocMode}
+          onPrint={() => window.print()}
+          onFullScreen={() => document.documentElement.requestFullscreen?.()}
+          onNewDoc={() => router.push('/dashboard/documents')}
+          onDownload={handleDownload}
+          onInsertTable={(r, c) => {
+            const rows = Array(r).fill(`<tr>${Array(c).fill('<td>&nbsp;</td>').join('')}</tr>`).join('')
+            document.execCommand('insertHTML', false, `<table style="width:100%;border-collapse:collapse"><tbody>${rows}</tbody></table>`)
+          }}
+          onInsertHR={() => document.execCommand('insertHorizontalRule')}
+          onInsertEmoji={() => {
+            const emoji = prompt('Enter emoji:')
+            if (emoji) document.execCommand('insertText', false, emoji)
+          }}
+          onInsertComment={() => setShowComments(true)}
+          onInsertImage={() => {
+            const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'
+            input.onchange = () => {
+              const file = input.files?.[0]; if (!file) return
+              const reader = new FileReader()
+              reader.onload = () => document.execCommand('insertImage', false, reader.result as string)
+              reader.readAsDataURL(file)
+            }
+            input.click()
+          }}
+          onInsertLink={() => {
+            const url = prompt('Enter URL:')
+            if (url) document.execCommand('createLink', false, url)
+          }}
+          onParagraphStyle={applyParagraphStyle}
+          onAlign={(a) => document.execCommand(`justify${a.charAt(0).toUpperCase() + a.slice(1)}`)}
+          onSpacing={(s) => {
+            const sel = window.getSelection()
+            if (sel && sel.rangeCount) {
+              const el = sel.anchorNode?.parentElement
+              if (el) el.style.lineHeight = s
+            }
+          }}
+          onClearFormatting={() => document.execCommand('removeFormat')}
+          onVersionHistory={() => setShowVersions(true)}
+          onNameVersion={() => { const name = prompt('Version name:'); if (name) createVersion(name) }}
+          onMakeCopy={() => {
+            const docs = loadDocuments()
+            const copy = { ...doc, id: `doc-${Date.now()}`, title: `${title} (Copy)`, lastModified: new Date().toISOString() }
+            docs.unshift(copy); saveDocuments(docs)
+            router.push(`/dashboard/documents/${copy.id}`)
+          }}
+          onRename={() => { const el = document.querySelector(`.${styles.titleInput}`) as HTMLInputElement; el?.focus() }}
+          onTrash={() => { router.push('/dashboard/documents') }}
+          onDetails={() => {}}
+          showRuler={showRuler}
+          showOutline={showOutline}
+          currentMode={docMode}
+          showPrintLayout={showPrintLayout}
+          onPrintLayout={setShowPrintLayout}
+        />
+      )}
+
       {/* ── Toolbar ──── */}
-      <EditorToolbar />
+      {docMode !== 'viewing' && <EditorToolbar editorRef={canvasRef} onAddComment={handleAddComment} />}
+
+      {/* ── Ruler ──── */}
+      <Ruler visible={showRuler && docMode !== 'viewing'} marginLeft={96} marginRight={96} pageWidth={816} onMarginChange={() => {}} />
+
+      {/* ── Viewing mode banner ──── */}
+      {docMode === 'viewing' && (
+        <div style={{ padding: '8px 16px', background: '#e8f0fe', borderBottom: '1px solid #d2e3fc', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, fontSize: 13, color: '#174ea6' }}>
+          <span>👁️ You are viewing this document.</span>
+          <button onClick={() => setDocMode('editing')} style={{ background: '#1a73e8', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 12px', fontSize: 12, cursor: 'pointer', fontWeight: 500 }}>
+            Switch to editing
+          </button>
+        </div>
+      )}
 
       {/* ── Editor body ──── */}
       <div className={styles.editorBody}>
+        {/* Outline Panel */}
+        <OutlinePanel open={showOutline} onClose={() => setShowOutline(false)} editorRef={canvasRef} />
+
         <div className={styles.editorMain}>
           <div className={styles.canvasWrapper}>
-            <div ref={canvasRef} className={styles.canvas} contentEditable suppressContentEditableWarning onInput={save} />
+            <div
+              ref={canvasRef}
+              className={styles.canvas}
+              contentEditable={docMode !== 'viewing'}
+              suppressContentEditableWarning
+              onInput={save}
+              style={{ background: pageSettings.pageColour }}
+            />
           </div>
 
-          {/* ── Signature Pad (overlay inside canvas area) ──── */}
+          {/* ── Signature Pad ──── */}
           {isSigning && (
             <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ background: '#fff', padding: 32, borderRadius: 12, width: 500, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
                 <h3 style={{ marginBottom: 16, color: '#202124', fontFamily: 'Google Sans, sans-serif' }}>Sign this document</h3>
-                <p style={{ fontSize: 13, color: '#5f6368', marginBottom: 16 }}>Draw your signature below. This constitutes a legally binding electronic signature.</p>
+                <p style={{ fontSize: 13, color: '#5f6368', marginBottom: 16 }}>Draw your signature below.</p>
                 <canvas
                   ref={signCanvasRef} className={styles.signatureCanvas}
                   style={{ width: '100%', height: 140, border: '1px solid #dadce0', borderRadius: 8, cursor: 'crosshair', background: '#fafafa' }}
@@ -255,7 +479,7 @@ export default function DocumentEditorPage() {
               <button onClick={() => createVersion()} style={{ fontSize: 12, color: '#1a73e8', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>Save version</button>
             </div>
             {versions.length === 0 ? (
-              <p style={{ fontSize: 13, color: '#80868b' }}>No versions saved yet. Click &ldquo;Save version&rdquo; to create a snapshot.</p>
+              <p style={{ fontSize: 13, color: '#80868b' }}>No versions saved yet.</p>
             ) : versions.map(v => (
               <div key={v.id} className={styles.versionItem} onClick={() => restoreVersion(v)}>
                 <div className={styles.versionDate}>{new Date(v.date).toLocaleString()}</div>
@@ -272,6 +496,7 @@ export default function DocumentEditorPage() {
         <div className={styles.statusLeft}>
           <span>{wordCount} words</span>
           <span>{charCount} characters</span>
+          {liveWordCount && <span style={{ fontWeight: 500, color: '#1a73e8' }}>{wordCount} words</span>}
           {signStatus === 'signed' && <span style={{ color: '#137333' }}>✓ Signed</span>}
           {isPublished && <span style={{ color: '#137333' }}>● Published</span>}
         </div>
@@ -307,6 +532,14 @@ export default function DocumentEditorPage() {
           )}
         </div>
       )}
+
+      {/* ── Modals ──── */}
+      <FindReplaceModal open={showFindReplace} onClose={() => setShowFindReplace(false)} editorRef={canvasRef} />
+      <WordCountModal open={showWordCount} onClose={() => setShowWordCount(false)} pages={pageCount} words={wordCount} characters={charCount} charsNoSpaces={charCountNoSpaces} onToggleLive={setLiveWordCount} liveEnabled={liveWordCount} />
+      <PageSetupModal open={showPageSetup} onClose={() => setShowPageSetup(false)} onApply={setPageSettings} current={pageSettings} />
+      <ShareModal open={showShare} onClose={() => setShowShare(false)} shared={doc.shared} owner={doc.owner} onUpdateShared={updateShared} />
+      <KeyboardShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </div>
   )
 }
+

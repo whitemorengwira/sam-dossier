@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   House,
   PresentationChart,
-  Robot,
+  Sparkle,
   FileText,
   Hammer,
   ChartLine,
@@ -26,9 +26,12 @@ import {
   Globe,
   Rocket,
   Flag,
+  CheckCircle,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
+const SIDEBAR_EDITS_KEY = 'sam-dossier-sidebar-edits'
 
 interface NavItem {
   label: string
@@ -47,7 +50,7 @@ const navigation: NavGroup[] = [
     items: [
       { label: 'Overview', href: '/dashboard/overview', icon: <House size={20} weight="duotone" /> },
       { label: 'Investor Pitch Deck', href: '/dashboard/pitch-deck', icon: <PresentationChart size={20} weight="duotone" /> },
-      { label: 'AI Assistant', href: '/dashboard/ai-assistant', icon: <Robot size={20} weight="duotone" /> },
+      { label: 'Lisa AI', href: '/dashboard/ai-assistant', icon: <Sparkle size={20} weight="duotone" /> },
     ],
   },
   {
@@ -70,6 +73,7 @@ const navigation: NavGroup[] = [
       { label: 'Timeline / Gantt', href: '/dashboard/workspace/timeline', icon: <Clock size={20} weight="duotone" /> },
       { label: 'Team', href: '/dashboard/workspace/team', icon: <Users size={20} weight="duotone" /> },
       { label: 'Calendar', href: '/dashboard/workspace/calendar', icon: <CalendarDots size={20} weight="duotone" /> },
+      { label: 'My Work', href: '/dashboard/workspace/my-work', icon: <CheckCircle size={20} weight="duotone" /> },
     ],
   },
   {
@@ -114,6 +118,44 @@ const navigation: NavGroup[] = [
 export default function Sidebar() {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [groupTitles, setGroupTitles] = useState<Record<string, string>>(() => {
+    // Load persisted sidebar title edits
+    if (typeof window === 'undefined') return {}
+    try {
+      return JSON.parse(localStorage.getItem(SIDEBAR_EDITS_KEY) || '{}')
+    } catch { return {} }
+  })
+
+  // Listen for the global edit-mode toggle
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      setEditMode(detail.enabled)
+    }
+    window.addEventListener('sam-edit-mode', handler)
+    return () => window.removeEventListener('sam-edit-mode', handler)
+  }, [])
+
+  // Helper: get the display title for a group (persisted or default)
+  const getTitle = useCallback((defaultTitle: string) => {
+    return groupTitles[defaultTitle] || defaultTitle
+  }, [groupTitles])
+
+  // Handle blur on an editable title — persist the change
+  const handleTitleBlur = useCallback((defaultTitle: string, e: React.FocusEvent<HTMLHeadingElement>) => {
+    const newText = e.currentTarget.textContent?.trim() || defaultTitle
+    setGroupTitles(prev => {
+      const next = { ...prev }
+      if (newText === defaultTitle) {
+        delete next[defaultTitle]
+      } else {
+        next[defaultTitle] = newText
+      }
+      try { localStorage.setItem(SIDEBAR_EDITS_KEY, JSON.stringify(next)) } catch { /* ignore */ }
+      return next
+    })
+  }, [])
 
   return (
     <aside
@@ -145,8 +187,21 @@ export default function Sidebar() {
         {navigation.map((group) => (
           <div key={group.title}>
             {!collapsed && (
-              <h6 className="px-3 mb-2 text-[10px] font-mono text-text-muted uppercase tracking-[0.12em]">
-                {group.title}
+              <h6
+                className={cn(
+                  'px-3 mb-2 text-[10px] font-mono text-text-muted uppercase tracking-[0.12em] transition-all duration-200',
+                  editMode && 'cursor-text hover:shadow-[0_0_0_2px_rgba(212,175,55,0.4)] rounded-sm shadow-[0_0_0_1px_rgba(212,175,55,0.15)]'
+                )}
+                contentEditable={editMode}
+                suppressContentEditableWarning
+                onBlur={(e) => handleTitleBlur(group.title, e)}
+                onFocus={(e) => {
+                  if (editMode) (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 2px rgba(212, 175, 55, 0.6)'
+                }}
+                style={{ outline: 'none' }}
+                data-no-edit="true"
+              >
+                {getTitle(group.title)}
               </h6>
             )}
             <ul className="space-y-0.5">
