@@ -22,7 +22,11 @@ export default function DocumentsPage() {
   const [showSort, setShowSort] = useState(false)
   const [showOwner, setShowOwner] = useState(false)
 
-  useEffect(() => { setDocs(loadDocuments()) }, [])
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setDocs(loadDocuments())
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [])
 
   const toggleStar = (id: string) => {
     setDocs(prev => {
