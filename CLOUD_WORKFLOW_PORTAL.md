@@ -13,6 +13,7 @@ Click on any project below to navigate to its GitHub repository. From there, pre
 | **Oasis College Promax** | [whitemorengwira/oasis-college-promax](https://github.com/whitemorengwira/oasis-college-promax) |
 | **SAM Dossier** | [whitemorengwira/sam-dossier](https://github.com/whitemorengwira/sam-dossier) |
 | **Socinga Africa Enterprise** | [whitemorengwira/socinga-africa-enterprise](https://github.com/whitemorengwira/socinga-africa-enterprise) |
+| **Socinga Africa Mining** | [whitemorengwira/socinga-africa-mining](https://github.com/whitemorengwira/socinga-africa-mining) |
 | **Cineterns** | [whitemorengwira/cineterns](https://github.com/whitemorengwira/cineterns) |
 | **Earcodex Platform** | [whitemorengwira/-earcodex](https://github.com/whitemorengwira/-earcodex) |
 | **Ndeko Presentations** | [whitemorengwira/empoweryouth](https://github.com/whitemorengwira/empoweryouth) |
