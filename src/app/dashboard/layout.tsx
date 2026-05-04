@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Sidebar from '@/components/layout/Sidebar'
 import Topbar from '@/components/layout/Topbar'
+import InlineEditProvider from '@/components/InlineEditProvider'
 import { cn } from '@/lib/utils'
 
 export default function DashboardLayout({
@@ -15,6 +16,9 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-onyx">
+      {/* Inline edit engine */}
+      <InlineEditProvider />
+
       {/* Sidebar */}
       <Sidebar />
 
