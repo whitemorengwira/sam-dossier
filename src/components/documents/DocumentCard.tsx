@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { FileText, Star, DotsThree, Users, PenNib, CheckCircle } from '@phosphor-icons/react'
 import type { GDocsDocument } from '@/types'
+import ContextMenu from './ContextMenu'
 import styles from './DocumentCard.module.css'
 
 const CAT_COLOURS: Record<string, string> = {
@@ -28,10 +29,12 @@ function formatRelativeDate(isoDate: string): string {
 
 interface Props {
   doc: GDocsDocument; mode: 'grid' | 'list'
-  onStar: (id: string) => void; onMenuOpen: (id: string, e: React.MouseEvent) => void
+  onStar: (id: string) => void; onMenuOpen?: (id: string, e: React.MouseEvent) => void;
+  onRename?: (id: string, newTitle: string) => void;
+  onDelete?: (id: string) => void;
 }
 
-export default function DocumentCard({ doc, mode, onStar, onMenuOpen }: Props) {
+export default function DocumentCard({ doc, mode, onStar, onMenuOpen, onRename, onDelete }: Props) {
   const router = useRouter()
   const go = () => router.push(`/dashboard/documents/${doc.id}`)
   const colour = CAT_COLOURS[doc.category] || '#5f6368'
@@ -49,9 +52,26 @@ export default function DocumentCard({ doc, mode, onStar, onMenuOpen }: Props) {
         </div>
         <div className={styles.listOwner}>{doc.owner.name}</div>
         <div className={styles.listDate}>{formatRelativeDate(doc.lastModified)}</div>
-        <button className={styles.listMenu} onClick={e => { e.stopPropagation(); onMenuOpen(doc.id, e); }} aria-label="Options">
-          <DotsThree weight="bold" />
-        </button>
+        <ContextMenu
+          isStarred={doc.starred}
+          onRename={() => {
+            const newTitle = prompt('Enter new document name:', doc.title)
+            if (newTitle && newTitle.trim() !== '' && onRename) onRename(doc.id, newTitle)
+          }}
+          onStar={() => onStar(doc.id)}
+          onShare={() => alert(`Share dialog for ${doc.title} would open here.`)}
+          onDelete={() => {
+            if (confirm(`Are you sure you want to delete "${doc.title}"?`) && onDelete) {
+              onDelete(doc.id)
+            }
+          }}
+          onOpenNewTab={() => window.open(`/dashboard/documents/${doc.id}`, '_blank')}
+          onViewDetails={() => alert(`Details for ${doc.title}:\nOwner: ${doc.owner.name}\nModified: ${formatRelativeDate(doc.lastModified)}`)}
+        >
+          <button className={styles.listMenu} onClick={e => e.stopPropagation()} aria-label="Options">
+            <DotsThree weight="bold" />
+          </button>
+        </ContextMenu>
       </div>
     )
   }
@@ -70,9 +90,27 @@ export default function DocumentCard({ doc, mode, onStar, onMenuOpen }: Props) {
       <button className={`${styles.starButton} ${doc.starred ? styles.starred : ''}`} onClick={e => { e.stopPropagation(); onStar(doc.id); }} aria-label="Star">
         <Star size={14} weight={doc.starred ? 'fill' : 'regular'} />
       </button>
-      <button className={styles.menuButton} onClick={e => { e.stopPropagation(); onMenuOpen(doc.id, e); }} aria-label="Options">
-        <DotsThree weight="bold" />
-      </button>
+
+      <ContextMenu
+        isStarred={doc.starred}
+        onRename={() => {
+          const newTitle = prompt('Enter new document name:', doc.title)
+          if (newTitle && newTitle.trim() !== '' && onRename) onRename(doc.id, newTitle)
+        }}
+        onStar={() => onStar(doc.id)}
+        onShare={() => alert(`Share dialog for ${doc.title} would open here.`)}
+        onDelete={() => {
+          if (confirm(`Are you sure you want to delete "${doc.title}"?`) && onDelete) {
+            onDelete(doc.id)
+          }
+        }}
+        onOpenNewTab={() => window.open(`/dashboard/documents/${doc.id}`, '_blank')}
+        onViewDetails={() => alert(`Details for ${doc.title}:\nOwner: ${doc.owner.name}\nModified: ${formatRelativeDate(doc.lastModified)}`)}
+      >
+        <button className={styles.menuButton} onClick={e => e.stopPropagation()} aria-label="Options">
+          <DotsThree weight="bold" />
+        </button>
+      </ContextMenu>
 
       <div className={styles.cardInfo}>
         <div className={styles.cardTitle}>{doc.title}</div>

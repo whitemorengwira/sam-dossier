@@ -29,6 +29,7 @@ import {
   Image as ImageIcon,
   CheckSquareOffset,
   List,
+  Table,
 } from '@phosphor-icons/react'
 import { Editor } from '@tiptap/react'
 import styles from './EditorToolbar.module.css'
@@ -340,6 +341,9 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
 
       {/* Insert */}
       <div className={styles.toolGroup}>
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} title="Insert table">
+          <Table size={16} />
+        </button>
         <button
           className={styles.toolBtn}
           onClick={() => {

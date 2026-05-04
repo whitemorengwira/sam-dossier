@@ -11,6 +11,7 @@ import { WebrtcProvider } from 'y-webrtc';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { buildEditorExtensions } from '@/lib/editor/editor-config';
 import EditorToolbar from '../documents/EditorToolbar';
+import { TableBubbleMenu } from './TableBubbleMenu';
 // import { CommentsSidebar } from './CommentsSidebar'; // To be implemented later
 import { CURSOR_COLORS } from '@/lib/editor/cursor-colors';
 
@@ -133,6 +134,7 @@ export function NexusEditor({
               editor={editor}
               className="prose prose-slate max-w-none focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px]"
             />
+            {!readOnly && editor && <TableBubbleMenu editor={editor} />}
           </div>
 
           <AnimatePresence>

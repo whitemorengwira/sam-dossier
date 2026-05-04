@@ -3,8 +3,7 @@
 // Validates auth, validates file type, builds R2 key, stores upload intent in Supabase.
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getFileCategory, getMaxFileSizeMB, ALL_ACCEPTED_MIMETYPES } from '@/lib/upload/accepted-types';
@@ -30,8 +29,7 @@ const RequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   // Authenticate
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   if (authError || !user) {
@@ -49,7 +47,7 @@ export async function POST(request: NextRequest) {
   const { fileName, fileType, fileSize, workspaceId, folderId } = parsed.data;
 
   // Validate file type
-  if (!ALL_ACCEPTED_MIMETYPES.includes(fileType)) {
+  if (!(ALL_ACCEPTED_MIMETYPES as readonly string[]).includes(fileType)) {
     return NextResponse.json({ error: `File type "${fileType}" is not supported.` }, { status: 422 });
   }
 

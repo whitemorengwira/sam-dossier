@@ -13,8 +13,12 @@ export interface Slide {
   notes: string;
 }
 
-export function PresentationEditor() {
-  const [slides, setSlides] = useState<Slide[]>([
+export interface PresentationEditorProps {
+  initialSlides?: Slide[];
+}
+
+export function PresentationEditor({ initialSlides }: PresentationEditorProps = {}) {
+  const [slides, setSlides] = useState<Slide[]>(initialSlides || [
     { id: '1', title: 'Welcome', content: ['Start editing your presentation'], notes: '' }
   ]);
   const [activeSlideId, setActiveSlideId] = useState('1');

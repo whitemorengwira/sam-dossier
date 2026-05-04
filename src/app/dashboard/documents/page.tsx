@@ -31,6 +31,20 @@ export default function DocumentsPage() {
     })
   }
 
+  const handleRename = (id: string, newTitle: string) => {
+    setDocs(prev => {
+      const next = prev.map(d => d.id === id ? { ...d, title: newTitle } : d)
+      saveDocuments(next); return next
+    })
+  }
+
+  const handleDelete = (id: string) => {
+    setDocs(prev => {
+      const next = prev.filter(d => d.id !== id)
+      saveDocuments(next); return next
+    })
+  }
+
   const handleCreate = (tplId: string) => {
     const tpl = TEMPLATES.find(t => t.id === tplId)
     const newDoc: GDocsDocument = {
@@ -133,7 +147,7 @@ export default function DocumentsPage() {
         </div>
       ) : view === 'grid' ? (
         <div className={styles.documentGrid}>
-          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="grid" onStar={toggleStar} onMenuOpen={() => {}} />)}
+          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="grid" onStar={toggleStar} onRename={handleRename} onDelete={handleDelete} />)}
         </div>
       ) : (
         <div className={styles.documentList}>
@@ -141,7 +155,7 @@ export default function DocumentsPage() {
             <div /><div className={styles.listHeaderCell}>Name</div>
             <div className={styles.listHeaderCell}>Owner</div><div className={styles.listHeaderCell}>Last modified</div><div />
           </div>
-          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="list" onStar={toggleStar} onMenuOpen={() => {}} />)}
+          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="list" onStar={toggleStar} onRename={handleRename} onDelete={handleDelete} />)}
         </div>
       )}
 
