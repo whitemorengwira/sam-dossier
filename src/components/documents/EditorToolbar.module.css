@@ -1,0 +1,48 @@
+/* ============================================================================
+   Editor Toolbar — Google Docs Light Theme
+   ============================================================================ */
+
+.toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px;
+  padding: 4px 12px; background: #edf2fa; border-bottom: 1px solid #d2e3fc;
+  position: sticky; top: 48px; z-index: 20;
+}
+
+.toolGroup {
+  display: flex; align-items: center; gap: 1px;
+  padding: 0 4px;
+  border-right: 1px solid #c6d4e8;
+}
+
+.toolGroup:last-child { border-right: none; }
+
+.toolBtn {
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 4px; cursor: pointer;
+  color: #444746; font-size: 14px; transition: all 0.1s ease; position: relative;
+}
+
+.toolBtn:hover { background: #d3e3fd; color: #202124; }
+.toolBtn.active { background: #c2d7f2; color: #1a73e8; }
+.toolBtn:disabled { opacity: 0.35; cursor: default; }
+.toolBtn:disabled:hover { background: transparent; }
+
+.toolSelect {
+  height: 28px; padding: 0 6px; background: transparent;
+  border: 1px solid transparent; border-radius: 4px; color: #444746;
+  font-family: 'Google Sans', 'DM Sans', sans-serif; font-size: 12px;
+  cursor: pointer; outline: none; transition: all 0.15s ease; max-width: 110px;
+}
+
+.toolSelect:hover { border-color: #c6d4e8; background: #d3e3fd; }
+.toolSelect:focus { border-color: #1a73e8; background: #fff; }
+
+.toolSelect option { background: #fff; color: #202124; }
+
+.colorInput {
+  width: 24px; height: 24px; border: none; cursor: pointer;
+  background: transparent; padding: 0;
+}
+
+.colorInput::-webkit-color-swatch-wrapper { padding: 2px; }
+.colorInput::-webkit-color-swatch { border: 1px solid #dadce0; border-radius: 3px; }

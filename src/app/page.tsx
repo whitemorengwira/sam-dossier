@@ -4,10 +4,14 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
+type AuthMode = 'login' | 'signup' | 'otp'
+
 export default function LoginPage() {
   const router = useRouter()
+  const [mode, setMode] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -87,15 +91,110 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    // For now, without Supabase connection, allow admin login
-    // This will be replaced with proper Supabase Auth
-    if (email && password) {
-      // Simulate auth — replace with Supabase once connected
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    if (!supabaseUrl || supabaseUrl === '__REPLACE_ME__') {
       setTimeout(() => {
         router.push('/dashboard/overview')
       }, 800)
-    } else {
-      setError('Invalid credentials. Please check your email and password.')
+      return
+    }
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (authError) {
+        setError(authError.message)
+        setLoading(false)
+        return
+      }
+
+      router.push('/dashboard/overview')
+      router.refresh()
+    } catch {
+      setError('Authentication service unavailable. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  /* ── OTP Signup handlers ──────────────────────────────────────── */
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) {
+      setError('Please enter a valid email address.')
+      return
+    }
+    setLoading(true)
+    setError('')
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    if (!supabaseUrl || supabaseUrl === '__REPLACE_ME__') {
+      setTimeout(() => {
+        setLoading(false)
+        setMode('otp')
+      }, 1000)
+      return
+    }
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+      })
+
+      if (otpError) {
+        setError(otpError.message)
+      } else {
+        setMode('otp')
+      }
+    } catch {
+      setError('Service unavailable. Please try again.')
+    }
+    setLoading(false)
+  }
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (otp.length < 4) {
+      setError('Please enter a valid OTP code.')
+      return
+    }
+    setLoading(true)
+    setError('')
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    if (!supabaseUrl || supabaseUrl === '__REPLACE_ME__') {
+      setTimeout(() => {
+        router.push('/dashboard/overview')
+      }, 800)
+      return
+    }
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'email',
+      })
+
+      if (verifyError) {
+        setError(verifyError.message)
+        setLoading(false)
+        return
+      }
+
+      router.push('/dashboard/overview')
+      router.refresh()
+    } catch {
+      setError('Verification failed. Please try again.')
       setLoading(false)
     }
   }
@@ -104,7 +203,6 @@ export default function LoginPage() {
     <main className="relative min-h-screen overflow-hidden bg-onyx">
       {/* ── Deep mine shaft background ──────────────────────────── */}
       <div className="absolute inset-0">
-        {/* Geological texture gradient */}
         <div
           className="absolute inset-0"
           style={{
@@ -117,7 +215,6 @@ export default function LoginPage() {
           }}
         />
 
-        {/* Gold vein streaks */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -150,7 +247,7 @@ export default function LoginPage() {
           </div>
         </motion.div>
 
-        {/* Tagline — letter by letter reveal */}
+        {/* Tagline — SAM DOSSIER */}
         <motion.h1
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -158,20 +255,20 @@ export default function LoginPage() {
           className="text-center mb-2 text-gold font-display font-black tracking-[-0.02em]"
           style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)' }}
         >
-          CHIKONGA MINE
+          SAM DOSSIER
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center mb-10 font-heading text-lg tracking-widest"
+          className="text-center mb-10 font-heading text-lg tracking-widest uppercase"
           style={{ color: 'var(--text-secondary)' }}
         >
-          ZW$500 MILLION INVESTMENT DOSSIER
+          CORPORATE ECOSYSTEM
         </motion.p>
 
-        {/* ── Login Panel ───────────────────────────────────────── */}
+        {/* ── Auth Panel ───────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -179,64 +276,208 @@ export default function LoginPage() {
           className="w-full max-w-[380px]"
         >
           <div className="glass-card-heavy p-8">
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div>
-                <label htmlFor="email" className="label">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="input"
-                  required
-                  autoComplete="email"
-                />
-              </div>
+            
+            {/* LOGIN MODE */}
+            {mode === 'login' && (
+              <form onSubmit={handleLogin} className="space-y-5">
+                <div>
+                  <label htmlFor="email" className="label">
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="input"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
 
-              <div>
-                <label htmlFor="password" className="label">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="input"
-                  required
-                  autoComplete="current-password"
-                />
-              </div>
+                <div>
+                  <label htmlFor="password" className="label">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="input"
+                    required
+                    autoComplete="current-password"
+                  />
+                </div>
 
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-danger text-sm font-body"
-                >
-                  {error}
-                </motion.p>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-gold w-full py-3"
-              >
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
-                    Authenticating…
-                  </span>
-                ) : (
-                  'Access Dossier'
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-danger text-sm font-body"
+                  >
+                    {error}
+                  </motion.p>
                 )}
-              </button>
-            </form>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-gold w-full py-3 mt-2"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
+                      Authenticating…
+                    </span>
+                  ) : (
+                    'Access Dossier'
+                  )}
+                </button>
+
+                <div className="text-center pt-2">
+                  <button 
+                    type="button" 
+                    onClick={() => { setMode('signup'); setError('') }}
+                    className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4"
+                  >
+                    Create an account
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* SIGNUP MODE */}
+            {mode === 'signup' && (
+              <form onSubmit={handleSendOtp} className="space-y-5">
+                <div className="text-center mb-4">
+                  <h2 className="text-white font-display text-lg mb-1">Create Account</h2>
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Enter your email to receive a One-Time Password.</p>
+                </div>
+
+                <div>
+                  <label htmlFor="email-signup" className="label">
+                    Email Address
+                  </label>
+                  <input
+                    id="email-signup"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="input"
+                    required
+                  />
+                </div>
+
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-danger text-sm font-body"
+                  >
+                    {error}
+                  </motion.p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-gold w-full py-3 mt-2"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
+                      Sending OTP…
+                    </span>
+                  ) : (
+                    'Send OTP'
+                  )}
+                </button>
+
+                <div className="text-center pt-2">
+                  <button 
+                    type="button" 
+                    onClick={() => { setMode('login'); setError('') }}
+                    className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4"
+                  >
+                    Back to Login
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* OTP MODE */}
+            {mode === 'otp' && (
+              <form onSubmit={handleVerifyOtp} className="space-y-5">
+                <div className="text-center mb-4">
+                  <h2 className="text-white font-display text-lg mb-1">Verify Email</h2>
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>We sent an OTP to {email}</p>
+                </div>
+
+                <div>
+                  <label htmlFor="otp" className="label">
+                    One-Time Password
+                  </label>
+                  <input
+                    id="otp"
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="Enter OTP code"
+                    className="input text-center text-xl tracking-[0.5em]"
+                    required
+                    maxLength={6}
+                  />
+                </div>
+
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-danger text-sm font-body"
+                  >
+                    {error}
+                  </motion.p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-gold w-full py-3 mt-2"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-onyx/30 border-t-onyx rounded-full animate-spin" />
+                      Verifying…
+                    </span>
+                  ) : (
+                    'Verify & Access'
+                  )}
+                </button>
+
+                <div className="text-center pt-2 space-y-2 flex flex-col items-center">
+                  <button 
+                    type="button" 
+                    onClick={() => { setLoading(true); setTimeout(() => setLoading(false), 800) }}
+                    className="text-sm text-gold hover:text-gold-light transition-colors font-body"
+                  >
+                    Resend OTP
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => { setMode('signup'); setError('') }}
+                    className="text-sm"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    Change email address
+                  </button>
+                </div>
+              </form>
+            )}
+            
           </div>
         </motion.div>
 

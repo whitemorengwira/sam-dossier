@@ -75,8 +75,7 @@ const navigation: NavGroup[] = [
   {
     title: 'Document Vault',
     items: [
-      { label: 'All Documents', href: '/dashboard/documents', icon: <Folder size={20} weight="duotone" /> },
-      { label: 'Pending Signatures', href: '/dashboard/documents?filter=pending_signature', icon: <PencilLine size={20} weight="duotone" /> },
+      { label: 'Documents', href: '/dashboard/documents', icon: <Folder size={20} weight="duotone" /> },
     ],
   },
   {

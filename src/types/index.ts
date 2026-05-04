@@ -117,3 +117,51 @@ export interface TeamMember {
   bio: string
   imageUrl: string
 }
+
+/* ── Google Docs–Style Document Workspace Types ───────────────────────────── */
+
+export interface SharedUser {
+  id: string
+  name: string
+  email: string
+  role: 'viewer' | 'commenter' | 'editor' | 'owner'
+  avatar?: string
+}
+
+export interface DocCommentReply {
+  id: string
+  author: SharedUser
+  text: string
+  timestamp: string
+}
+
+export interface DocComment {
+  id: string
+  author: SharedUser
+  text: string
+  timestamp: string
+  resolved: boolean
+  quote?: string
+  replies: DocCommentReply[]
+}
+
+export interface GDocsDocument {
+  id: string
+  title: string
+  content: string
+  category: 'policy' | 'legal' | 'minutes' | 'strategy' | 'finance' | 'geological' | 'nda' | 'corporate'
+  owner: SharedUser
+  lastModified: string
+  starred: boolean
+  shared: SharedUser[]
+  comments: DocComment[]
+  signatureStatus?: 'none' | 'pending' | 'signed'
+  isPublished?: boolean
+}
+
+export interface DocTemplate {
+  id: string
+  title: string
+  category: string
+  preview: string
+}

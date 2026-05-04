@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Robot, PaperPlaneTilt, Sparkle } from '@phosphor-icons/react'
+import { Robot, PaperPlaneTilt, Sparkle, CircleNotch } from '@phosphor-icons/react'
 
 interface Message {
   role: 'assistant' | 'user'
@@ -10,33 +10,83 @@ interface Message {
 }
 
 const suggestedQueries = [
-  'What is the current gold price and how does it affect Chikonga revenue?',
+  'What is the current gold grade at Chikonga?',
   'Summarise the investment case for a new investor',
   'What are the key risks and how are they mitigated?',
-  'Calculate projected EBITDA at 12 KG/month production',
   'Explain the capital distribution waterfall',
-  'What is the SAMREC CPR status?',
+  'Who is on the executive leadership team?',
+  'What is the projected ROI over 3 years?',
 ]
 
 const initialMessages: Message[] = [
-  { role: 'assistant', content: 'Good day. I am the SAM Intelligence Assistant, your guide to the Socinga Africa Mining investment dossier. I have full access to the Chikonga Mine profile, financial models, geological reports, legal structures, and operational data. How may I assist you today?' },
+  {
+    role: 'assistant',
+    content:
+      'Good day. I am SAM Intelligence, your guide to the Socinga Africa Mining investment dossier. I have full access to the Chikonga Mine profile, financial models, geological reports, legal structures, and operational data. How may I assist you today?',
+  },
 ]
 
 export default function AIAssistantPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-  const handleSend = () => {
-    if (!input.trim()) return
-    const userMsg: Message = { role: 'user', content: input }
-    const aiResponse: Message = { role: 'assistant', content: `Thank you for your query regarding "${input}". This feature will be connected to an AI backend in a future release. For now, please refer to the relevant dossier pages in the sidebar for comprehensive information on this topic.` }
-    setMessages(prev => [...prev, userMsg, aiResponse])
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [messages])
+
+  const handleSend = async (overrideInput?: string) => {
+    const text = overrideInput || input
+    if (!text.trim() || loading) return
+
+    const userMsg: Message = { role: 'user', content: text }
+    setMessages((prev) => [...prev, userMsg])
     setInput('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, userMsg].filter((m) => m.role !== 'assistant' || messages.indexOf(m) > 0).map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        }),
+      })
+
+      const data = await res.json()
+
+      if (data.response) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.response }])
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', content: 'I encountered an error processing your request. Please try again.' },
+        ])
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Connection error. Please check that the server is running and try again.' },
+      ])
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="shrink-0 mb-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="shrink-0 mb-4"
+      >
         <div className="flex items-center gap-3">
           <div className="p-2 bg-gradient-to-br from-gold/20 to-gold/5">
             <Robot size={24} weight="duotone" className="text-gold" />
@@ -49,20 +99,41 @@ export default function AIAssistantPage() {
       </motion.div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pb-4 scrollbar-thin">
         {messages.map((msg, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1, duration: 0.4 }} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] p-4 ${msg.role === 'user' ? 'bg-gold/10 border border-gold/25' : 'glass-card'}`}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05, duration: 0.4 }}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[80%] p-4 ${
+                msg.role === 'user' ? 'bg-gold/10 border border-gold/25' : 'glass-card'
+              }`}
+            >
               {msg.role === 'assistant' && (
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkle size={12} weight="duotone" className="text-gold" />
-                  <span className="text-gold text-[10px] font-mono uppercase tracking-wider">SAM Intelligence</span>
+                  <span className="text-gold text-[10px] font-mono uppercase tracking-wider">
+                    SAM Intelligence
+                  </span>
                 </div>
               )}
-              <p className="text-text-secondary text-sm leading-relaxed">{msg.content}</p>
+              <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
             </div>
           </motion.div>
         ))}
+
+        {loading && (
+          <div className="flex justify-start">
+            <div className="glass-card p-4 flex items-center gap-3">
+              <CircleNotch size={16} weight="bold" className="text-gold animate-spin" />
+              <span className="text-text-muted text-sm font-mono">Processing...</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Suggested Queries */}
@@ -71,7 +142,11 @@ export default function AIAssistantPage() {
           <p className="text-text-muted text-xs mb-2 font-mono">Suggested queries:</p>
           <div className="flex flex-wrap gap-2">
             {suggestedQueries.map((q) => (
-              <button key={q} onClick={() => setInput(q)} className="text-[10px] px-3 py-1.5 border border-gold/15 text-text-secondary hover:border-gold/30 hover:text-gold transition-colors">
+              <button
+                key={q}
+                onClick={() => handleSend(q)}
+                className="text-[10px] px-3 py-1.5 border border-gold/15 text-text-secondary hover:border-gold/30 hover:text-gold transition-colors"
+              >
                 {q}
               </button>
             ))}
@@ -88,8 +163,13 @@ export default function AIAssistantPage() {
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Ask about the investment dossier..."
           className="input flex-1"
+          disabled={loading}
         />
-        <button onClick={handleSend} className="btn-gold px-4 flex items-center gap-2">
+        <button
+          onClick={() => handleSend()}
+          disabled={loading || !input.trim()}
+          className="btn-gold px-4 flex items-center gap-2 disabled:opacity-50"
+        >
           <PaperPlaneTilt size={16} weight="bold" /> Send
         </button>
       </div>

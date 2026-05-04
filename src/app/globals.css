@@ -381,3 +381,54 @@
     border-radius: 0 !important;
   }
 }
+
+/* ── Radix Context Menu / Dropdown Menu ──────────────────────────────────── */
+
+.context-menu-content {
+  min-width: 200px;
+  background: rgba(10, 17, 40, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 4px;
+  z-index: 1000;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+  animation: contextMenuIn 0.15s ease-out;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.75);
+  cursor: pointer;
+  outline: none;
+  transition: background 0.1s ease, color 0.1s ease;
+  user-select: none;
+}
+
+.context-menu-item:hover,
+.context-menu-item[data-highlighted] {
+  background: rgba(212, 175, 55, 0.08);
+  color: #F5F0E8;
+}
+
+.context-menu-item-danger:hover,
+.context-menu-item-danger[data-highlighted] {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: rgba(212, 175, 55, 0.1);
+  margin: 4px 0;
+}
+
+@keyframes contextMenuIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

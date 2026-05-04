@@ -1,0 +1,212 @@
+/* ============================================================================
+   Document Editor — Google Docs Light Theme + E-Sign + CMS
+   ============================================================================ */
+
+.editorPage {
+  display: flex; flex-direction: column; min-height: calc(100vh - 64px); background: #f8f9fa;
+}
+
+/* ── Chrome ──── */
+.editorChrome {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px; background: #fff;
+  border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 30;
+}
+
+.chromeLeft { display: flex; align-items: center; gap: 12px; }
+
+.backBtn {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; color: #5f6368; cursor: pointer;
+  border-radius: 50%; transition: background 0.2s ease;
+}
+
+.backBtn:hover { background: #f1f3f4; color: #202124; }
+
+.docIcon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #4285f4; }
+
+.titleWrapper { display: flex; flex-direction: column; }
+
+.titleInput {
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  font-family: 'Google Sans', 'DM Sans', sans-serif; font-size: 18px; font-weight: 500;
+  color: #202124; outline: none; padding: 2px 4px; transition: border-color 0.2s ease;
+  min-width: 200px; max-width: 400px;
+}
+
+.titleInput:focus { border-bottom-color: #1a73e8; }
+
+.lastEdit { font-size: 11px; color: #80868b; padding-left: 4px; }
+
+.starBtn {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 50%; cursor: pointer;
+  color: #80868b; transition: all 0.2s ease;
+}
+
+.starBtn.starred { color: #f4b400; }
+.starBtn:hover { background: #f1f3f4; color: #f4b400; }
+
+/* ── Chrome Right ──── */
+.chromeRight { display: flex; align-items: center; gap: 8px; }
+
+.versionBtn, .signBtn, .publishBtn {
+  display: flex; align-items: center; gap: 6px; padding: 6px 14px;
+  font-family: 'Google Sans', 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  border: 1px solid #dadce0; border-radius: 4px; cursor: pointer;
+  transition: all 0.2s ease; background: #fff;
+}
+
+.versionBtn { color: #5f6368; }
+.versionBtn:hover { background: #f1f3f4; }
+
+.signBtn { color: #c5221f; border-color: #c5221f; }
+.signBtn:hover { background: #fce8e6; }
+.signBtn.signed { color: #137333; border-color: #137333; }
+.signBtn.signed:hover { background: #e6f4ea; }
+
+.publishBtn {
+  background: #1a73e8; color: #fff; border: none; border-radius: 4px;
+}
+
+.publishBtn:hover { background: #174ea6; box-shadow: 0 1px 4px rgba(26,115,232,0.3); }
+
+.publishBtn.live { background: #137333; }
+.publishBtn.live:hover { background: #0d652d; }
+
+.shareBtn {
+  display: flex; align-items: center; gap: 6px; padding: 6px 16px;
+  background: #1a73e8; color: #fff; font-family: 'Google Sans', sans-serif;
+  font-size: 13px; font-weight: 600; border: none; border-radius: 20px;
+  cursor: pointer; transition: all 0.2s ease;
+}
+
+.shareBtn:hover { background: #174ea6; box-shadow: 0 1px 6px rgba(26,115,232,0.4); }
+
+.commentToggle {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid #dadce0; border-radius: 50%;
+  color: #5f6368; cursor: pointer; transition: all 0.2s ease; position: relative;
+}
+
+.commentToggle:hover, .commentToggle.active { border-color: #1a73e8; color: #1a73e8; background: #e8f0fe; }
+
+.commentBadge {
+  position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
+  background: #ea4335; font-size: 9px; font-weight: 700; color: white;
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+}
+
+.avatarGroup { display: flex; margin-right: 8px; }
+
+.avatar {
+  width: 28px; height: 28px; background: #e8f0fe; border: 2px solid #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; color: #1a73e8; margin-left: -6px;
+}
+
+.avatar:first-child { margin-left: 0; }
+
+/* ── Editor Body ──── */
+.editorBody { flex: 1; display: flex; overflow: hidden; }
+.editorMain { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+
+.canvasWrapper {
+  flex: 1; display: flex; justify-content: center; padding: 40px 20px; background: #f8f9fa;
+}
+
+.canvas {
+  width: 816px; min-height: 1056px;
+  background: #fff; border: 1px solid #d9d9d9;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  padding: 72px; outline: none;
+  color: #202124; font-family: 'Arial', sans-serif;
+  font-size: 14px; line-height: 1.7;
+  caret-color: #1a73e8; overflow-wrap: break-word;
+}
+
+.canvas h1 { font-size: 24px; color: #202124; margin-bottom: 16px; font-weight: 700; }
+.canvas h2 { font-size: 18px; color: #202124; margin-bottom: 12px; margin-top: 24px; font-weight: 600; }
+.canvas h3 { font-size: 15px; color: #3c4043; margin-bottom: 8px; margin-top: 20px; font-weight: 600; }
+.canvas p { margin-bottom: 10px; color: #3c4043; }
+.canvas ul, .canvas ol { margin-left: 24px; margin-bottom: 10px; color: #3c4043; }
+.canvas li { margin-bottom: 4px; }
+.canvas strong { color: #202124; font-weight: 600; }
+.canvas a { color: #1a73e8; text-decoration: underline; }
+
+.canvas hr {
+  border: none; height: 1px; background: #dadce0; margin: 24px 0;
+}
+
+.canvas table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.canvas th, .canvas td { border: 1px solid #dadce0; padding: 8px 12px; font-size: 13px; text-align: left; }
+.canvas th { background: #f8f9fa; color: #202124; font-weight: 600; }
+.canvas td { color: #3c4043; }
+
+/* ── Signature Pad ──── */
+.signatureArea {
+  margin-top: 32px; padding: 24px; border: 2px dashed #dadce0; border-radius: 8px;
+  background: #f8f9fa; text-align: center;
+}
+
+.signatureArea h4 { font-size: 14px; color: #202124; margin-bottom: 12px; }
+
+.signatureCanvas {
+  width: 100%; max-width: 400px; height: 120px; margin: 0 auto;
+  border: 1px solid #dadce0; border-radius: 4px; background: #fff; cursor: crosshair;
+}
+
+.signatureActions { margin-top: 12px; display: flex; gap: 8px; justify-content: center; }
+
+/* ── Status Bar ──── */
+.statusBar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px; background: #fff; border-top: 1px solid #e0e0e0;
+  font-size: 12px; color: #80868b;
+}
+
+.statusLeft { display: flex; align-items: center; gap: 16px; }
+.statusRight { display: flex; align-items: center; gap: 8px; }
+
+.aiButton {
+  display: flex; align-items: center; gap: 6px; padding: 4px 12px;
+  background: #e8f0fe; border: 1px solid #d2e3fc; border-radius: 16px;
+  color: #1a73e8; font-family: 'Google Sans', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+}
+
+.aiButton:hover { background: #d2e3fc; }
+
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 400px; color: #80868b;
+}
+
+/* ── Version History Panel ──── */
+.versionPanel {
+  width: 320px; border-left: 1px solid #e0e0e0; background: #fff;
+  overflow-y: auto; padding: 16px; flex-shrink: 0;
+}
+
+.versionItem {
+  padding: 12px; margin-bottom: 8px; border: 1px solid #e0e0e0;
+  border-radius: 8px; cursor: pointer; transition: background 0.15s ease;
+}
+
+.versionItem:hover { background: #f8f9fa; }
+.versionItem.active { border-color: #1a73e8; background: #e8f0fe; }
+
+.versionDate { font-size: 13px; font-weight: 500; color: #202124; margin-bottom: 4px; }
+.versionAuthor { font-size: 11px; color: #5f6368; }
+.versionLabel {
+  display: inline-block; padding: 1px 6px; font-size: 10px; font-weight: 500;
+  background: #e6f4ea; color: #137333; border-radius: 4px; margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .canvas { width: 100%; min-height: 600px; padding: 40px 32px; }
+  .canvasWrapper { padding: 20px 8px; }
+  .titleInput { font-size: 14px; min-width: 120px; }
+  .avatarGroup { display: none; }
+  .versionBtn, .signBtn { display: none; }
+}
