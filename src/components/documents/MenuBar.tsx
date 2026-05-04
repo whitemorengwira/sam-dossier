@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { Editor } from '@tiptap/react'
 import styles from './MenuBar.module.css'
 
 /* ── Types ──── */
@@ -45,7 +46,7 @@ interface MenuBarProps {
   onRename: () => void
   onTrash: () => void
   onDetails: () => void
-  editorRef: React.RefObject<HTMLDivElement | null>
+  editor?: Editor | null
   showRuler: boolean
   showOutline: boolean
   currentMode: 'editing' | 'suggesting' | 'viewing'
@@ -56,7 +57,6 @@ interface MenuBarProps {
 export default function MenuBar(props: MenuBarProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [hoveredSubmenu, setHoveredSubmenu] = useState<string | null>(null)
-  const [tableHover, setTableHover] = useState({ r: 0, c: 0 })
   const barRef = useRef<HTMLDivElement>(null)
 
   const close = useCallback(() => { setActiveMenu(null); setHoveredSubmenu(null) }, [])
@@ -75,10 +75,7 @@ export default function MenuBar(props: MenuBarProps) {
     return () => document.removeEventListener('keydown', handler)
   }, [close])
 
-  const exec = (cmd: string, val?: string) => {
-    props.editorRef.current?.focus()
-    document.execCommand(cmd, false, val)
-  }
+  const chain = () => props.editor?.chain().focus()
 
   /* ── Menu Definitions ──── */
   const fileMenu: MenuAction[] = [
@@ -117,16 +114,16 @@ export default function MenuBar(props: MenuBarProps) {
   ]
 
   const editMenu: MenuAction[] = [
-    { label: 'Undo', shortcut: 'Ctrl+Z', action: () => exec('undo') },
-    { label: 'Redo', shortcut: 'Ctrl+Y', action: () => exec('redo') },
+    { label: 'Undo', shortcut: 'Ctrl+Z', action: () => chain()?.undo().run() },
+    { label: 'Redo', shortcut: 'Ctrl+Y', action: () => chain()?.redo().run() },
     { label: '', separator: true },
-    { label: 'Cut', shortcut: 'Ctrl+X', action: () => exec('cut') },
-    { label: 'Copy', shortcut: 'Ctrl+C', action: () => exec('copy') },
-    { label: 'Paste', shortcut: 'Ctrl+V', action: () => exec('paste') },
-    { label: 'Paste without formatting', shortcut: 'Ctrl+Shift+V', action: () => exec('paste') },
+    { label: 'Cut', shortcut: 'Ctrl+X', action: () => { document.execCommand('cut') } },
+    { label: 'Copy', shortcut: 'Ctrl+C', action: () => { document.execCommand('copy') } },
+    { label: 'Paste', shortcut: 'Ctrl+V', action: () => { document.execCommand('paste') } },
+    { label: 'Paste without formatting', shortcut: 'Ctrl+Shift+V', action: () => { document.execCommand('paste') } },
     { label: '', separator: true },
-    { label: 'Select all', shortcut: 'Ctrl+A', action: () => exec('selectAll') },
-    { label: 'Delete', disabled: true },
+    { label: 'Select all', shortcut: 'Ctrl+A', action: () => chain()?.selectAll().run() },
+    { label: 'Delete', action: () => chain()?.deleteSelection().run() },
     { label: '', separator: true },
     { label: 'Find and replace', shortcut: 'Ctrl+H', action: props.onFindReplace },
   ]
@@ -149,10 +146,10 @@ export default function MenuBar(props: MenuBarProps) {
   const insertMenu: MenuAction[] = [
     { label: 'Image', submenu: [
       { label: 'Upload from computer', action: props.onInsertImage },
-      { label: 'By URL', action: () => { const u = prompt('Image URL:'); if (u) exec('insertImage', u) } },
+      { label: 'By URL', action: () => { const u = prompt('Image URL:'); if (u) chain()?.insertNexusImage({ src: u }).run() } },
     ]},
-    { label: 'Table', action: () => {} },
-    { label: 'Horizontal line', action: props.onInsertHR },
+    { label: 'Table', action: () => chain()?.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
+    { label: 'Horizontal line', action: () => chain()?.setHorizontalRule().run() },
     { label: 'Emoji', action: props.onInsertEmoji },
     { label: '', separator: true },
     { label: 'Footnote', action: () => {} },
@@ -164,57 +161,44 @@ export default function MenuBar(props: MenuBarProps) {
       { label: 'Page number', action: () => {} },
     ]},
     { label: 'Break', submenu: [
-      { label: 'Page break', action: () => exec('insertHTML', '<div style="page-break-after:always"></div><p><br></p>') },
-      { label: 'Section break', action: () => exec('insertHTML', '<hr style="border:none;border-top:2px dashed #dadce0;margin:24px 0"/>') },
+      { label: 'Page break', action: () => chain()?.insertContent('<div data-type="page-break"></div>').run() },
+      { label: 'Section break', action: () => chain()?.setHorizontalRule().run() },
     ]},
     { label: '', separator: true },
     { label: 'Link', shortcut: 'Ctrl+K', action: props.onInsertLink },
     { label: 'Comment', shortcut: 'Ctrl+Alt+M', action: props.onInsertComment },
     { label: 'Bookmark', action: () => {} },
-    { label: 'Table of contents', action: () => {
-      const headings = props.editorRef.current?.querySelectorAll('h1,h2,h3,h4,h5,h6')
-      if (!headings) return
-      let toc = '<div style="padding:16px;border:1px solid #dadce0;margin-bottom:16px"><p style="font-weight:600;margin-bottom:8px">Table of Contents</p>'
-      headings.forEach((h, i) => {
-        const level = parseInt(h.tagName[1])
-        const id = `toc-heading-${i}`
-        h.id = id
-        toc += `<p style="margin-left:${(level - 1) * 16}px"><a href="#${id}" style="color:#1a73e8">${h.textContent}</a></p>`
-      })
-      toc += '</div>'
-      exec('insertHTML', toc)
-    }},
   ]
 
   const formatMenu: MenuAction[] = [
     { label: 'Text', submenu: [
-      { label: 'Bold', shortcut: 'Ctrl+B', action: () => exec('bold') },
-      { label: 'Italic', shortcut: 'Ctrl+I', action: () => exec('italic') },
-      { label: 'Underline', shortcut: 'Ctrl+U', action: () => exec('underline') },
-      { label: 'Strikethrough', action: () => exec('strikeThrough') },
-      { label: 'Superscript', action: () => exec('superscript') },
-      { label: 'Subscript', action: () => exec('subscript') },
+      { label: 'Bold', shortcut: 'Ctrl+B', action: () => chain()?.toggleBold().run() },
+      { label: 'Italic', shortcut: 'Ctrl+I', action: () => chain()?.toggleItalic().run() },
+      { label: 'Underline', shortcut: 'Ctrl+U', action: () => chain()?.toggleUnderline().run() },
+      { label: 'Strikethrough', action: () => chain()?.toggleStrike().run() },
+      { label: 'Superscript', action: () => chain()?.toggleSuperscript().run() },
+      { label: 'Subscript', action: () => chain()?.toggleSubscript().run() },
     ]},
     { label: 'Paragraph styles', submenu: [
-      { label: 'Normal text', action: () => props.onParagraphStyle('p') },
-      { label: 'Title', action: () => props.onParagraphStyle('h1') },
-      { label: 'Subtitle', action: () => props.onParagraphStyle('h2') },
-      { label: 'Heading 1', action: () => props.onParagraphStyle('h1') },
-      { label: 'Heading 2', action: () => props.onParagraphStyle('h2') },
-      { label: 'Heading 3', action: () => props.onParagraphStyle('h3') },
-      { label: 'Heading 4', action: () => props.onParagraphStyle('h4') },
-      { label: 'Heading 5', action: () => props.onParagraphStyle('h5') },
-      { label: 'Heading 6', action: () => props.onParagraphStyle('h6') },
+      { label: 'Normal text', action: () => chain()?.setParagraph().run() },
+      { label: 'Title', action: () => chain()?.toggleHeading({ level: 1 }).run() },
+      { label: 'Subtitle', action: () => chain()?.toggleHeading({ level: 2 }).run() },
+      { label: 'Heading 1', action: () => chain()?.toggleHeading({ level: 1 }).run() },
+      { label: 'Heading 2', action: () => chain()?.toggleHeading({ level: 2 }).run() },
+      { label: 'Heading 3', action: () => chain()?.toggleHeading({ level: 3 }).run() },
+      { label: 'Heading 4', action: () => chain()?.toggleHeading({ level: 4 }).run() },
+      { label: 'Heading 5', action: () => chain()?.toggleHeading({ level: 5 }).run() },
+      { label: 'Heading 6', action: () => chain()?.toggleHeading({ level: 6 }).run() },
     ]},
     { label: '', separator: true },
     { label: 'Align & indent', submenu: [
-      { label: 'Left', action: () => props.onAlign('left') },
-      { label: 'Centre', action: () => props.onAlign('center') },
-      { label: 'Right', action: () => props.onAlign('right') },
-      { label: 'Justified', action: () => props.onAlign('justify') },
+      { label: 'Left', action: () => chain()?.setTextAlign('left').run() },
+      { label: 'Centre', action: () => chain()?.setTextAlign('center').run() },
+      { label: 'Right', action: () => chain()?.setTextAlign('right').run() },
+      { label: 'Justified', action: () => chain()?.setTextAlign('justify').run() },
       { label: '', separator: true },
-      { label: 'Increase indent', action: () => exec('indent') },
-      { label: 'Decrease indent', action: () => exec('outdent') },
+      { label: 'Increase indent', action: () => chain()?.sinkListItem('listItem').run() },
+      { label: 'Decrease indent', action: () => chain()?.liftListItem('listItem').run() },
     ]},
     { label: 'Line & paragraph spacing', submenu: [
       { label: 'Single (1)', action: () => props.onSpacing('1') },
@@ -224,9 +208,9 @@ export default function MenuBar(props: MenuBarProps) {
     ]},
     { label: '', separator: true },
     { label: 'Bullets & numbering', submenu: [
-      { label: 'Bullet list', action: () => exec('insertUnorderedList') },
-      { label: 'Numbered list', action: () => exec('insertOrderedList') },
-      { label: 'Checklist', action: () => exec('insertHTML', '<div style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" style="margin-top:4px"/><span>Item</span></div>') },
+      { label: 'Bullet list', action: () => chain()?.toggleBulletList().run() },
+      { label: 'Numbered list', action: () => chain()?.toggleOrderedList().run() },
+      { label: 'Checklist', action: () => chain()?.toggleTaskList().run() },
     ]},
     { label: 'Columns', submenu: [
       { label: '1 column', action: () => {} },
@@ -234,7 +218,7 @@ export default function MenuBar(props: MenuBarProps) {
       { label: '3 columns', action: () => {} },
     ]},
     { label: '', separator: true },
-    { label: 'Clear formatting', shortcut: 'Ctrl+\\', action: props.onClearFormatting },
+    { label: 'Clear formatting', shortcut: 'Ctrl+\\', action: () => chain()?.clearNodes().unsetAllMarks().run() },
   ]
 
   const toolsMenu: MenuAction[] = [
@@ -325,7 +309,7 @@ export default function MenuBar(props: MenuBarProps) {
           </button>
           {activeMenu === name && (
             <div className={styles.dropdown}>
-              {items.map((item, i) => renderItem(item, i, name))}
+               {items.map((item, i) => renderItem(item, i, name))}
             </div>
           )}
         </div>

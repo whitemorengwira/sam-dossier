@@ -1,0 +1,124 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { fabric } from 'fabric';
+
+interface PDFAnnotationLayerProps {
+  width: number;
+  height: number;
+  activeTool: string;
+}
+
+export function PDFAnnotationLayer({ width, height, activeTool }: PDFAnnotationLayerProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      width,
+      height,
+      isDrawingMode: activeTool === 'freehand',
+      selection: activeTool === 'select'
+    });
+
+    canvas.freeDrawingBrush.color = '#ff0000';
+    canvas.freeDrawingBrush.width = 3;
+
+    setFabricCanvas(canvas);
+
+    return () => {
+      canvas.dispose();
+    };
+  }, [width, height]);
+
+  useEffect(() => {
+    if (!fabricCanvas) return;
+
+    fabricCanvas.isDrawingMode = activeTool === 'freehand';
+    fabricCanvas.selection = activeTool === 'select';
+
+    // Handle tool changes
+    fabricCanvas.off('mouse:down');
+    
+    if (activeTool === 'text') {
+      fabricCanvas.on('mouse:down', (o) => {
+        const pointer = fabricCanvas.getPointer(o.e);
+        const text = new fabric.IText('Type here...', {
+          left: pointer.x,
+          top: pointer.y,
+          fontFamily: 'Helvetica',
+          fill: '#000000',
+          fontSize: 20
+        });
+        fabricCanvas.add(text);
+        fabricCanvas.setActiveObject(text);
+        text.enterEditing();
+        text.selectAll();
+        
+        // Reset tool to select after placement
+      });
+    } else if (activeTool === 'rectangle') {
+      fabricCanvas.on('mouse:down', (o) => {
+        const pointer = fabricCanvas.getPointer(o.e);
+        const rect = new fabric.Rect({
+          left: pointer.x,
+          top: pointer.y,
+          width: 100,
+          height: 100,
+          fill: 'transparent',
+          stroke: '#ff0000',
+          strokeWidth: 3
+        });
+        fabricCanvas.add(rect);
+        fabricCanvas.setActiveObject(rect);
+      });
+    } else if (activeTool === 'highlight') {
+      fabricCanvas.on('mouse:down', (o) => {
+        const pointer = fabricCanvas.getPointer(o.e);
+        const rect = new fabric.Rect({
+          left: pointer.x,
+          top: pointer.y,
+          width: 150,
+          height: 20,
+          fill: 'rgba(255, 255, 0, 0.4)',
+          strokeWidth: 0
+        });
+        fabricCanvas.add(rect);
+        fabricCanvas.setActiveObject(rect);
+      });
+    } else if (activeTool === 'signature') {
+      fabricCanvas.on('mouse:down', (o) => {
+        const pointer = fabricCanvas.getPointer(o.e);
+        // Add a signature placeholder block
+        const rect = new fabric.Rect({
+          left: pointer.x,
+          top: pointer.y,
+          width: 200,
+          height: 50,
+          fill: 'rgba(0, 0, 255, 0.1)',
+          stroke: 'blue',
+          strokeWidth: 1,
+          strokeDashArray: [5, 5]
+        });
+        const text = new fabric.Text('Sign Here', {
+          left: pointer.x + 60,
+          top: pointer.y + 15,
+          fontSize: 16,
+          fill: 'blue'
+        });
+        const group = new fabric.Group([rect, text]);
+        fabricCanvas.add(group);
+        fabricCanvas.setActiveObject(group);
+      });
+    }
+
+  }, [fabricCanvas, activeTool]);
+
+  return (
+    <div className="absolute inset-0 z-10" style={{ pointerEvents: activeTool === 'select' && (!fabricCanvas || fabricCanvas.getObjects().length === 0) ? 'none' : 'auto' }}>
+      <canvas ref={canvasRef} />
+    </div>
+  );
+}

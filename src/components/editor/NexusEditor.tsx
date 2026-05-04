@@ -1,0 +1,154 @@
+// src/components/editor/NexusEditor.tsx
+// The main document editor. Wraps TipTap with the full Nexus UI.
+
+'use client';
+
+import { useEditor, EditorContent } from '@tiptap/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import * as Y from 'yjs';
+import { WebrtcProvider } from 'y-webrtc';
+import { IndexeddbPersistence } from 'y-indexeddb';
+import { buildEditorExtensions } from '@/lib/editor/editor-config';
+import EditorToolbar from '../documents/EditorToolbar';
+// import { CommentsSidebar } from './CommentsSidebar'; // To be implemented later
+import { CURSOR_COLORS } from '@/lib/editor/cursor-colors';
+
+// Simple mock store and hooks for this example
+function useCurrentUser() {
+  return { user: { id: 'user-1', email: 'test@example.com', user_metadata: { full_name: 'Test User' } } };
+}
+
+function getCursorColor(userId: string): string {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return CURSOR_COLORS[Math.abs(hash) % CURSOR_COLORS.length];
+}
+
+interface NexusEditorProps {
+  documentId: string;
+  initialContent?: string;
+  readOnly?: boolean;
+  collaborative?: boolean;
+  pageSize?: 'A4' | 'Letter' | 'A3' | 'Legal';
+  onContentChange?: (json: string, html: string) => void;
+}
+
+export function NexusEditor({
+  documentId,
+  initialContent,
+  readOnly = false,
+  collaborative = true,
+  pageSize = 'A4',
+  onContentChange,
+}: NexusEditorProps) {
+  const { user } = useCurrentUser();
+  const [showComments, setShowComments] = useState(false);
+  const [zoom, setZoom] = useState('100');
+  const [isReady, setIsReady] = useState(false);
+  const ydocRef = useRef<Y.Doc | null>(null);
+  const providerRef = useRef<WebrtcProvider | null>(null);
+  const persistenceRef = useRef<IndexeddbPersistence | null>(null);
+
+  useEffect(() => {
+    if (!collaborative || !user) return;
+
+    const ydoc = new Y.Doc();
+    ydocRef.current = ydoc;
+
+    const persistence = new IndexeddbPersistence(`nexus-doc-${documentId}`, ydoc);
+    persistenceRef.current = persistence;
+
+    const provider = new WebrtcProvider(`nexus-${documentId}`, ydoc, {
+      signaling: ['wss://signaling.yjs.dev'],
+      password: documentId,
+    });
+    providerRef.current = provider;
+
+    persistence.on('synced', () => setIsReady(true));
+
+    return () => {
+      provider.destroy();
+      persistence.destroy();
+      ydoc.destroy();
+    };
+  }, [documentId, collaborative, user]);
+
+  const editor = useEditor({
+    extensions: buildEditorExtensions({
+      ydoc: collaborative ? ydocRef.current ?? undefined : undefined,
+      userInfo: user ? {
+        name: user.user_metadata?.full_name || user.email || 'Anonymous',
+        color: getCursorColor(user.id),
+      } : undefined,
+      placeholder: 'Start writing, or type "/" for a menu of formatting and insert options...',
+    }),
+    content: initialContent ? JSON.parse(initialContent) : undefined,
+    editable: !readOnly,
+    immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      const json = JSON.stringify(editor.getJSON());
+      const html = editor.getHTML();
+      onContentChange?.(json, html);
+    },
+  });
+
+  const PAGE_SIZES = {
+    A4:     { width: 794,  height: 1123 },
+    Letter: { width: 816,  height: 1056 },
+    A3:     { width: 1123, height: 1587 },
+    Legal:  { width: 816,  height: 1344 },
+  };
+  const page = PAGE_SIZES[pageSize];
+  const zoomFactor = parseFloat(zoom) / 100;
+
+  return (
+    <div className="flex flex-col h-full bg-[#E8EAED] w-full min-h-screen">
+      {!readOnly && editor && (
+        <EditorToolbar
+          editor={editor}
+          documentId={documentId}
+          onToggleComments={() => setShowComments(v => !v)}
+          zoom={zoom}
+          onZoomChange={(z) => setZoom(z.toString())}
+          pageSize={pageSize}
+        />
+      )}
+
+      <div className="flex-1 overflow-y-auto overflow-x-auto flex justify-center py-8 px-4">
+        <div className="flex gap-6 items-start">
+          <div
+            className="nexus-editor-page bg-white shadow-xl rounded-sm relative"
+            style={{
+              width: `${page.width * zoomFactor}px`,
+              minHeight: `${page.height * zoomFactor}px`,
+              padding: `${96 * zoomFactor}px`,
+              transform: `scale(${zoomFactor})`,
+              transformOrigin: 'top center',
+            }}
+          >
+            <EditorContent
+              editor={editor}
+              className="prose prose-slate max-w-none focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px]"
+            />
+          </div>
+
+          <AnimatePresence>
+            {showComments && (
+              <motion.div
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 24 }}
+                className="w-72 shrink-0 bg-white shadow rounded p-4"
+              >
+                Comments feature coming soon!
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}

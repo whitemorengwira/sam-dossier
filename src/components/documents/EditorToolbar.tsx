@@ -30,10 +30,16 @@ import {
   CheckSquareOffset,
   List,
 } from '@phosphor-icons/react'
+import { Editor } from '@tiptap/react'
 import styles from './EditorToolbar.module.css'
 
 interface EditorToolbarProps {
-  editorRef?: React.RefObject<HTMLDivElement | null>
+  editor?: Editor | null
+  documentId?: string
+  onToggleComments?: () => void
+  zoom?: string | number
+  onZoomChange?: (zoom: string | number) => void
+  pageSize?: string
   onAddComment?: () => void
 }
 
@@ -50,53 +56,47 @@ const FONTS = [
 
 const FONT_SIZES = ['10', '11', '12', '14', '16', '18', '20', '24', '28', '36', '48']
 
-export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbarProps = {}) {
-  const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set())
+export default function EditorToolbar({ editor, onToggleComments, zoom = '100%', onZoomChange, onAddComment }: EditorToolbarProps) {
   const [currentFont, setCurrentFont] = useState('DM Sans')
   const [currentSize, setCurrentSize] = useState('14')
   const [currentStyle, setCurrentStyle] = useState('Normal text')
-  const [zoom, setZoom] = useState('100%')
   const [textColour, setTextColour] = useState('#000000')
   const [highlightColour, setHighlightColour] = useState('#ffff00')
 
-  const updateActiveFormats = useCallback(() => {
-    const formats = new Set<string>()
-    if (document.queryCommandState('bold')) formats.add('bold')
-    if (document.queryCommandState('italic')) formats.add('italic')
-    if (document.queryCommandState('underline')) formats.add('underline')
-    if (document.queryCommandState('strikeThrough')) formats.add('strikeThrough')
-    if (document.queryCommandState('justifyLeft')) formats.add('justifyLeft')
-    if (document.queryCommandState('justifyCenter')) formats.add('justifyCenter')
-    if (document.queryCommandState('justifyRight')) formats.add('justifyRight')
-    if (document.queryCommandState('justifyFull')) formats.add('justifyFull')
-    if (document.queryCommandState('insertUnorderedList')) formats.add('insertUnorderedList')
-    if (document.queryCommandState('insertOrderedList')) formats.add('insertOrderedList')
-    setActiveFormats(formats)
-  }, [])
-
+  // Update local state when editor changes
   useEffect(() => {
-    document.addEventListener('selectionchange', updateActiveFormats)
-    return () => document.removeEventListener('selectionchange', updateActiveFormats)
-  }, [updateActiveFormats])
+    if (!editor) return
 
-  const exec = (command: string, value?: string) => {
-    if (editorRef && editorRef.current) {
-      editorRef.current.focus()
+    const updateState = () => {
+      if (editor.isActive('heading', { level: 1 })) setCurrentStyle('H1')
+      else if (editor.isActive('heading', { level: 2 })) setCurrentStyle('H2')
+      else if (editor.isActive('heading', { level: 3 })) setCurrentStyle('H3')
+      else if (editor.isActive('heading', { level: 4 })) setCurrentStyle('H4')
+      else if (editor.isActive('heading', { level: 5 })) setCurrentStyle('H5')
+      else if (editor.isActive('heading', { level: 6 })) setCurrentStyle('H6')
+      else setCurrentStyle('Normal text')
     }
-    document.execCommand(command, false, value)
-    updateActiveFormats()
+
+    editor.on('transaction', updateState)
+    return () => {
+      editor.off('transaction', updateState)
+    }
+  }, [editor])
+
+  if (!editor) {
+    return null;
   }
 
-  const isActive = (format: string) => activeFormats.has(format)
+  const isActive = (format: any, options?: any) => editor.isActive(format, options)
 
   return (
     <div className={styles.toolbar}>
       {/* Undo / Redo / Print / Format */}
       <div className={styles.toolGroup}>
-        <button className={styles.toolBtn} onClick={() => exec('undo')} title="Undo">
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} title="Undo">
           <ArrowUUpLeft size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => exec('redo')} title="Redo">
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} title="Redo">
           <ArrowUUpRight size={16} />
         </button>
         <button className={styles.toolBtn} onClick={() => window.print()} title="Print (Ctrl+P)">
@@ -115,12 +115,12 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
         <select
           className={styles.toolSelect}
           value={zoom}
-          onChange={(e) => setZoom(e.target.value)}
+          onChange={(e) => onZoomChange?.(e.target.value)}
           title="Zoom"
           style={{ width: 70 }}
         >
-          {['50%', '75%', '90%', '100%', '125%', '150%', '200%'].map((z) => (
-            <option key={z} value={z}>{z}</option>
+          {['50', '75', '90', '100', '125', '150', '200'].map((z) => (
+            <option key={z} value={z}>{z}%</option>
           ))}
         </select>
       </div>
@@ -131,8 +131,14 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
           className={styles.toolSelect}
           value={currentStyle}
           onChange={(e) => {
-            setCurrentStyle(e.target.value)
-            exec('formatBlock', e.target.value === 'Normal text' ? 'P' : e.target.value)
+            const val = e.target.value
+            setCurrentStyle(val)
+            if (val === 'Normal text') {
+              editor.chain().focus().setParagraph().run()
+            } else {
+              const level = parseInt(val.replace('H', '')) as 1|2|3|4|5|6
+              editor.chain().focus().toggleHeading({ level }).run()
+            }
           }}
           title="Styles"
           style={{ width: 110 }}
@@ -154,7 +160,7 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
           value={currentFont}
           onChange={(e) => {
             setCurrentFont(e.target.value)
-            exec('fontName', e.target.value)
+            editor.chain().focus().setFontFamily(e.target.value).run()
           }}
           title="Font"
         >
@@ -171,13 +177,7 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
           value={currentSize}
           onChange={(e) => {
             setCurrentSize(e.target.value)
-            const selection = window.getSelection()
-            if (selection && selection.rangeCount > 0) {
-              const range = selection.getRangeAt(0)
-              const span = document.createElement('span')
-              span.style.fontSize = `${e.target.value}px`
-              range.surroundContents(span)
-            }
+            editor.chain().focus().setFontSize(e.target.value).run()
           }}
           title="Font size"
         >
@@ -191,28 +191,28 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
       <div className={styles.toolGroup}>
         <button
           className={`${styles.toolBtn} ${isActive('bold') ? styles.active : ''}`}
-          onClick={() => exec('bold')}
+          onClick={() => editor.chain().focus().toggleBold().run()}
           title="Bold (Ctrl+B)"
         >
           <TextB size={16} weight="bold" />
         </button>
         <button
           className={`${styles.toolBtn} ${isActive('italic') ? styles.active : ''}`}
-          onClick={() => exec('italic')}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
           title="Italic (Ctrl+I)"
         >
           <TextItalic size={16} />
         </button>
         <button
           className={`${styles.toolBtn} ${isActive('underline') ? styles.active : ''}`}
-          onClick={() => exec('underline')}
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
           title="Underline (Ctrl+U)"
         >
           <TextUnderline size={16} />
         </button>
         <button
-          className={`${styles.toolBtn} ${isActive('strikeThrough') ? styles.active : ''}`}
-          onClick={() => exec('strikeThrough')}
+          className={`${styles.toolBtn} ${isActive('strike') ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().toggleStrike().run()}
           title="Strikethrough"
         >
           <TextStrikethrough size={16} />
@@ -237,7 +237,7 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
             value={textColour}
             onChange={(e) => {
               setTextColour(e.target.value)
-              exec('foreColor', e.target.value)
+              editor.chain().focus().setColor(e.target.value).run()
             }}
             style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
           />
@@ -262,7 +262,7 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
             value={highlightColour}
             onChange={(e) => {
               setHighlightColour(e.target.value)
-              exec('hiliteColor', e.target.value)
+              editor.chain().focus().toggleHighlight({ color: e.target.value }).run()
             }}
             style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
           />
@@ -272,29 +272,29 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
       {/* Alignment */}
       <div className={styles.toolGroup}>
         <button
-          className={`${styles.toolBtn} ${isActive('justifyLeft') ? styles.active : ''}`}
-          onClick={() => exec('justifyLeft')}
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'left' }) ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
           title="Align left"
         >
           <TextAlignLeft size={16} />
         </button>
         <button
-          className={`${styles.toolBtn} ${isActive('justifyCenter') ? styles.active : ''}`}
-          onClick={() => exec('justifyCenter')}
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'center' }) ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
           title="Align centre"
         >
           <TextAlignCenter size={16} />
         </button>
         <button
-          className={`${styles.toolBtn} ${isActive('justifyRight') ? styles.active : ''}`}
-          onClick={() => exec('justifyRight')}
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'right' }) ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
           title="Align right"
         >
           <TextAlignRight size={16} />
         </button>
         <button
-          className={`${styles.toolBtn} ${isActive('justifyFull') ? styles.active : ''}`}
-          onClick={() => exec('justifyFull')}
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'justify' }) ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
           title="Justify"
         >
           <TextAlignJustify size={16} />
@@ -304,30 +304,30 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
       {/* Lists & indent */}
       <div className={styles.toolGroup}>
         <button
-          className={`${styles.toolBtn} ${isActive('insertChecklist') ? styles.active : ''}`}
-          onClick={() => exec('insertUnorderedList')} // Basic fallback for checklist
+          className={`${styles.toolBtn} ${isActive('taskList') ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().toggleTaskList().run()}
           title="Checklist"
         >
           <CheckSquareOffset size={16} />
         </button>
         <button
-          className={`${styles.toolBtn} ${isActive('insertUnorderedList') ? styles.active : ''}`}
-          onClick={() => exec('insertUnorderedList')}
+          className={`${styles.toolBtn} ${isActive('bulletList') ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
           title="Bullet list"
         >
           <ListBullets size={16} />
         </button>
         <button
-          className={`${styles.toolBtn} ${isActive('insertOrderedList') ? styles.active : ''}`}
-          onClick={() => exec('insertOrderedList')}
+          className={`${styles.toolBtn} ${isActive('orderedList') ? styles.active : ''}`}
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
           title="Numbered list"
         >
           <ListNumbers size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => exec('indent')} title="Increase indent">
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().sinkListItem('listItem').run()} title="Increase indent">
           <TextIndent size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => exec('outdent')} title="Decrease indent">
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().liftListItem('listItem').run()} title="Decrease indent">
           <TextOutdent size={16} />
         </button>
       </div>
@@ -344,25 +344,25 @@ export default function EditorToolbar({ editorRef, onAddComment }: EditorToolbar
           className={styles.toolBtn}
           onClick={() => {
             const url = prompt('Enter link URL:')
-            if (url) exec('createLink', url)
+            if (url) editor.chain().focus().setLink({ href: url }).run()
           }}
           title="Insert link"
         >
           <LinkSimple size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={onAddComment} title="Add comment">
+        <button className={styles.toolBtn} onClick={onToggleComments || onAddComment} title="Add comment">
           <ChatCircle size={16} />
         </button>
         <button className={styles.toolBtn} onClick={() => {
           const url = prompt('Enter image URL:')
-          if (url) exec('insertImage', url)
+          if (url) editor.chain().focus().insertNexusImage({ src: url }).run()
         }} title="Insert image">
           <ImageIcon size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => exec('insertHorizontalRule')} title="Insert horizontal rule">
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Insert horizontal rule">
           <Minus size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => exec('removeFormat')} title="Clear formatting">
+        <button className={styles.toolBtn} onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear formatting">
           <Eraser size={16} />
         </button>
       </div>

@@ -7,7 +7,7 @@
 // 5. Return the document ID and edit URL
 
 import { useState, useCallback } from 'react';
-import { useSupabaseClient } from '@/lib/supabase/client'; // use existing client
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 interface UploadOptions {
   file: File;
@@ -24,7 +24,7 @@ interface UploadResult {
 
 export function useUploadDocument() {
   const [isUploading, setIsUploading] = useState(false);
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
 
   const uploadDocument = useCallback(async ({
     file,
