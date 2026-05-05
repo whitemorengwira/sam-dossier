@@ -7,7 +7,8 @@ import {
   ImageSquare,
   CornersOut,
   Stack,
-  DropHalfBottom
+  DropHalfBottom,
+  Trash
 } from '@phosphor-icons/react';
 import { ImageLayout } from '@/lib/editor/extensions/NexusImage';
 
@@ -78,6 +79,16 @@ export function ImageBubbleMenu({ editor }: ImageBubbleMenuProps) {
           title="In Front of Text"
         >
           <ImageSquare size={16} />
+        </button>
+      </div>
+
+      <div className="flex items-center px-1 border-l border-slate-200">
+        <button
+          onClick={() => editor.chain().focus().deleteSelection().run()}
+          className="p-1.5 rounded hover:bg-red-50 text-red-600 transition-colors"
+          title="Delete Image"
+        >
+          <Trash size={16} />
         </button>
       </div>
     </BubbleMenu>
