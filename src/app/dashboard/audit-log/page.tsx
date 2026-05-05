@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { getAuditLog } from '@/lib/actions/cmsActions'
-import { Clock, UserCircle, Activity, FileText, ArrowDownRight } from '@phosphor-icons/react'
+import { Clock, UserCircle, ListDashes, FileText, ArrowDownRight } from '@phosphor-icons/react'
 
 export default function AuditLogPage() {
   const [logs, setLogs] = useState<any[]>([])
@@ -41,7 +41,7 @@ export default function AuditLogPage() {
               <tr>
                 <th className="p-4 whitespace-nowrap"><Clock size={16} className="inline mr-2" />Timestamp</th>
                 <th className="p-4"><UserCircle size={16} className="inline mr-2" />User</th>
-                <th className="p-4"><Activity size={16} className="inline mr-2" />Action</th>
+                <th className="p-4"><ListDashes size={16} className="inline mr-2" />Action</th>
                 <th className="p-4"><FileText size={16} className="inline mr-2" />Page Slug</th>
                 <th className="p-4">Details</th>
               </tr>
