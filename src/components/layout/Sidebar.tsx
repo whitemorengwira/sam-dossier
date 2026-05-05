@@ -51,6 +51,7 @@ const navigation: NavGroup[] = [
     title: 'Main',
     items: [
       { label: 'Overview', href: '/dashboard/overview', icon: <House size={20} weight="duotone" /> },
+      { label: 'SAM-X Platform', href: '/samx-app', icon: <Globe size={20} weight="duotone" /> },
       { label: 'Investor Pitch Deck', href: '/dashboard/pitch-deck', icon: <PresentationChart size={20} weight="duotone" /> },
       { label: 'Lisa AI', href: '/dashboard/ai-assistant', icon: <Sparkle size={20} weight="duotone" /> },
     ],
