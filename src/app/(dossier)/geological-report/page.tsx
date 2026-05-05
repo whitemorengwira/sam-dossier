@@ -1,3 +1,4 @@
+import { getGlobalAssetUrl } from "@/lib/getGlobalAssetUrl";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -24,7 +25,7 @@ export default function GeologicalReport() {
       <section className={styles.visualSection}>
         <div className={styles.imageWrapper}>
           <img 
-            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/geology-core.png" 
+            src={getGlobalAssetUrl("sam-dossier/public/images/geology-core.png")} 
             alt="High-grade gold quartz core sample"
             className={styles.coreImage}
           />

@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { getGlobalAssetUrl } from '@/lib/getGlobalAssetUrl'
+
+const SOCINGA_ICON = 'https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/socinga-logos/png/sa-icon-dark-ui.png'
 
 type AuthMode = 'login' | 'signup' | 'verify-sent' | 'forgot-password' | 'reset-sent'
 
@@ -71,6 +74,14 @@ export default function LoginPage() {
   /* ── Login handler ────────────────────────────────────────────── */
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+    if (!password) {
+      setError('Please enter your password.')
+      return
+    }
     setLoading(true)
     setError('')
 
@@ -102,6 +113,10 @@ export default function LoginPage() {
   /* ── Signup handler (email + password + confirm → verification email) ── */
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match.')
       return
@@ -213,19 +228,22 @@ export default function LoginPage() {
       {/* ── Centre content ─────────────────────────────────────── */}
       <div className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4">
         {/* Logo */}
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, ease: 'easeOut' }} className="mb-8">
-          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-gold to-gold-light flex items-center justify-center shadow-gold-glow">
-            <span className="text-onyx font-display text-3xl font-black">S</span>
-          </div>
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, ease: 'easeOut' }} className="mb-4">
+          <img
+            src={SOCINGA_ICON}
+            alt="Socinga Africa Mining"
+            className="w-48 h-48 mx-auto object-contain drop-shadow-[0_0_25px_#cc9900] drop-shadow-[0_0_50px_rgba(204,153,0,0.4)]"
+          />
         </motion.div>
 
-        <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }} className="text-center mb-2 text-gold font-display font-black tracking-[-0.02em]" style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)' }}>
-          SAM DOSSIER
-        </motion.h1>
-
-        <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }} className="text-center mb-10 font-heading text-lg tracking-widest uppercase" style={{ color: 'var(--text-secondary)' }}>
-          CORPORATE ECOSYSTEM
-        </motion.p>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }} className="text-center mb-10">
+          <h1 className="text-gold font-display font-black tracking-[-0.02em]" style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)' }}>
+            SOCINGA AFRICA MINING
+          </h1>
+          <p className="text-white font-display italic tracking-wide mt-1" style={{ fontSize: 'clamp(0.85rem, 1.8vw, 1.1rem)' }}>
+            (investment dossier)
+          </p>
+        </motion.div>
 
         {/* ── Auth Panel ───────────────────────────────────────── */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 1.1 }} className="w-full max-w-[380px]">
@@ -266,7 +284,7 @@ export default function LoginPage() {
                 </button>
 
                 <div className="flex flex-col gap-3 pt-2">
-                  <button type="button" onClick={() => { setMode('forgot-password'); setError('') }} className="text-sm text-right text-text-muted hover:text-gold transition-colors font-body">
+                  <button type="button" onClick={() => { setMode('forgot-password'); setError('') }} className="text-sm text-center text-text-muted hover:text-gold transition-colors font-body">
                     Forgot password?
                   </button>
                   <div className="text-center pt-2 border-t border-white/5">
@@ -333,10 +351,13 @@ export default function LoginPage() {
                   ) : 'Sign Up'}
                 </button>
 
-                <div className="text-center pt-2">
+                <div className="flex flex-col gap-3 pt-2 border-t border-white/5">
                   <button type="button" onClick={() => { setMode('login'); setError('') }} className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4">
-                    Already have an account? Log in
+                    Back to Login
                   </button>
+                  <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+                    Already have an account? <button type="button" onClick={() => { setMode('login'); setError('') }} className="text-gold hover:text-gold-light transition-colors underline underline-offset-4">Log in</button>
+                  </p>
                 </div>
               </form>
             )}

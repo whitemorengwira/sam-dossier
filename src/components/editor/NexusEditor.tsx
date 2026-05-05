@@ -47,6 +47,7 @@ export function NexusEditor({
 }: NexusEditorProps) {
   const { user } = useCurrentUser();
   const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<{ id: string; text: string; author: string; date: string }[]>([]);
   const [zoom, setZoom] = useState('100');
   const [isReady, setIsReady] = useState(false);
   const ydocRef = useRef<Y.Doc | null>(null);
@@ -112,6 +113,12 @@ export function NexusEditor({
           editor={editor}
           documentId={documentId}
           onToggleComments={() => setShowComments(v => !v)}
+          onAddComment={() => {
+            const id = `comment-${Date.now()}`;
+            editor.chain().focus().setMark('comment', { commentId: id }).run();
+            setComments(prev => [...prev, { id, text: '', author: user?.user_metadata?.full_name || 'Anonymous', date: new Date().toISOString() }]);
+            setShowComments(true);
+          }}
           zoom={zoom}
           onZoomChange={(z) => setZoom(z.toString())}
           pageSize={pageSize}
@@ -143,9 +150,41 @@ export function NexusEditor({
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 24 }}
-                className="w-72 shrink-0 bg-white shadow rounded p-4"
+                className="w-80 shrink-0 bg-white shadow-xl rounded-sm p-4 flex flex-col max-h-[80vh] overflow-hidden"
               >
-                Comments feature coming soon!
+                <div className="flex items-center justify-between border-b pb-3 mb-4">
+                  <h3 className="text-sm font-semibold text-slate-800">Comments</h3>
+                  <button onClick={() => setShowComments(false)} className="text-slate-400 hover:text-slate-600">×</button>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+                  {comments.length === 0 ? (
+                    <p className="text-xs text-slate-500 italic text-center py-8">No comments yet. Highlight text and click the comment icon to add one.</p>
+                  ) : (
+                    comments.map(comment => (
+                      <div key={comment.id} className="bg-slate-50 rounded p-3 border border-slate-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold">
+                            {comment.author[0]}
+                          </div>
+                          <span className="text-xs font-medium text-slate-700">{comment.author}</span>
+                          <span className="text-[10px] text-slate-400 ml-auto">{new Date(comment.date).toLocaleDateString()}</span>
+                        </div>
+                        <textarea
+                          autoFocus={comment.text === ''}
+                          className="w-full text-xs p-2 bg-white border border-slate-200 rounded focus:border-blue-400 focus:outline-none resize-none"
+                          rows={3}
+                          placeholder="Type your comment..."
+                          value={comment.text}
+                          onChange={e => setComments(comments.map(c => c.id === comment.id ? { ...c, text: e.target.value } : c))}
+                        />
+                        <div className="flex justify-end mt-2">
+                          <button onClick={() => setComments(comments.filter(c => c.id !== comment.id))} className="text-[10px] text-red-500 hover:text-red-700">Delete</button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

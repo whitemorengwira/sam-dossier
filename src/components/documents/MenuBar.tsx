@@ -47,6 +47,7 @@ interface MenuBarProps {
   onTrash: () => void
   onDetails: () => void
   editor?: Editor | null
+  editorRef?: React.RefObject<HTMLDivElement | null>
   showRuler: boolean
   showOutline: boolean
   currentMode: 'editing' | 'suggesting' | 'viewing'
@@ -86,7 +87,10 @@ export default function MenuBar(props: MenuBarProps) {
     { label: 'Open', shortcut: 'Ctrl+O', action: () => {} },
     { label: 'Make a copy', action: props.onMakeCopy },
     { label: '', separator: true },
-    { label: 'Share', action: props.onShare },
+    { label: 'Share', submenu: [
+      { label: 'Share with others', action: props.onShare },
+      { label: 'Publish to web', action: () => {} },
+    ]},
     { label: 'Email', submenu: [
       { label: 'Email this file', action: () => {} },
       { label: 'Email collaborators', action: () => {} },
@@ -140,7 +144,6 @@ export default function MenuBar(props: MenuBarProps) {
     { label: 'Show outline', toggle: true, toggled: props.showOutline, action: () => props.onOutline(!props.showOutline) },
     { label: '', separator: true },
     { label: 'Full screen', shortcut: 'Ctrl+Shift+F', action: props.onFullScreen },
-    { label: 'Focus mode', action: () => {} },
   ]
 
   const insertMenu: MenuAction[] = [
@@ -149,11 +152,14 @@ export default function MenuBar(props: MenuBarProps) {
       { label: 'By URL', action: () => { const u = prompt('Image URL:'); if (u) chain()?.insertNexusImage({ src: u }).run() } },
     ]},
     { label: 'Table', action: () => chain()?.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
+    { label: 'Drawing', action: () => {} },
     { label: 'Horizontal line', action: () => chain()?.setHorizontalRule().run() },
     { label: 'Emoji', action: props.onInsertEmoji },
-    { label: '', separator: true },
+    { label: 'Dropdown', action: () => {} },
     { label: 'Footnote', action: () => {} },
     { label: 'Special characters', action: () => {} },
+    { label: 'Equation', action: () => {} },
+    { label: 'Watermark', action: () => {} },
     { label: '', separator: true },
     { label: 'Header & page number', submenu: [
       { label: 'Header', action: () => {} },
@@ -168,6 +174,7 @@ export default function MenuBar(props: MenuBarProps) {
     { label: 'Link', shortcut: 'Ctrl+K', action: props.onInsertLink },
     { label: 'Comment', shortcut: 'Ctrl+Alt+M', action: props.onInsertComment },
     { label: 'Bookmark', action: () => {} },
+    { label: 'Table of contents', action: () => {} },
   ]
 
   const formatMenu: MenuAction[] = [
@@ -181,8 +188,6 @@ export default function MenuBar(props: MenuBarProps) {
     ]},
     { label: 'Paragraph styles', submenu: [
       { label: 'Normal text', action: () => chain()?.setParagraph().run() },
-      { label: 'Title', action: () => chain()?.toggleHeading({ level: 1 }).run() },
-      { label: 'Subtitle', action: () => chain()?.toggleHeading({ level: 2 }).run() },
       { label: 'Heading 1', action: () => chain()?.toggleHeading({ level: 1 }).run() },
       { label: 'Heading 2', action: () => chain()?.toggleHeading({ level: 2 }).run() },
       { label: 'Heading 3', action: () => chain()?.toggleHeading({ level: 3 }).run() },
@@ -190,7 +195,6 @@ export default function MenuBar(props: MenuBarProps) {
       { label: 'Heading 5', action: () => chain()?.toggleHeading({ level: 5 }).run() },
       { label: 'Heading 6', action: () => chain()?.toggleHeading({ level: 6 }).run() },
     ]},
-    { label: '', separator: true },
     { label: 'Align & indent', submenu: [
       { label: 'Left', action: () => chain()?.setTextAlign('left').run() },
       { label: 'Centre', action: () => chain()?.setTextAlign('center').run() },
@@ -206,17 +210,19 @@ export default function MenuBar(props: MenuBarProps) {
       { label: '1.5', action: () => props.onSpacing('1.5') },
       { label: 'Double (2)', action: () => props.onSpacing('2') },
     ]},
-    { label: '', separator: true },
-    { label: 'Bullets & numbering', submenu: [
-      { label: 'Bullet list', action: () => chain()?.toggleBulletList().run() },
-      { label: 'Numbered list', action: () => chain()?.toggleOrderedList().run() },
-      { label: 'Checklist', action: () => chain()?.toggleTaskList().run() },
-    ]},
     { label: 'Columns', submenu: [
       { label: '1 column', action: () => {} },
       { label: '2 columns', action: () => {} },
       { label: '3 columns', action: () => {} },
     ]},
+    { label: 'Bullets & numbering', submenu: [
+      { label: 'Bullet list', action: () => chain()?.toggleBulletList().run() },
+      { label: 'Numbered list', action: () => chain()?.toggleOrderedList().run() },
+      { label: 'Checklist', action: () => chain()?.toggleTaskList().run() },
+    ]},
+    { label: 'Headers & footers', action: () => {} },
+    { label: 'Page numbers', action: () => {} },
+    { label: 'Page orientation', action: props.onPageSetup },
     { label: '', separator: true },
     { label: 'Clear formatting', shortcut: 'Ctrl+\\', action: () => chain()?.clearNodes().unsetAllMarks().run() },
   ]
@@ -236,27 +242,35 @@ export default function MenuBar(props: MenuBarProps) {
     { label: 'Translate document', action: () => {} },
     { label: '', separator: true },
     { label: 'Voice typing', shortcut: 'Ctrl+Shift+S', action: () => {} },
-    { label: 'Explore', action: () => {} },
-    { label: 'Preferences', action: () => {} },
     { label: 'Accessibility settings', action: () => {} },
   ]
 
+  const geminiMenu: MenuAction[] = [
+    { label: 'Help me write', action: () => {} },
+    { label: 'Summarise', action: () => {} },
+    { label: 'Rewrite', action: () => {} },
+    { label: 'Formalise', action: () => {} },
+    { label: 'Elaborate', action: () => {} },
+    { label: 'Shorten', action: () => {} },
+  ]
+
   const extensionsMenu: MenuAction[] = [
-    { label: 'Manage add-ons', action: () => {} },
-    { label: 'Get add-ons', action: () => {} },
+    { label: 'Add-ons', action: () => {} },
+    { label: 'Macros', action: () => {} },
+    { label: 'AppScript', action: () => {} },
   ]
 
   const helpMenu: MenuAction[] = [
     { label: 'Help', action: () => {} },
-    { label: 'Search the menus', shortcut: 'Alt+/', action: () => {} },
-    { label: 'Keyboard shortcuts', shortcut: 'Ctrl+/', action: props.onShortcuts },
+    { label: 'Training', action: () => {} },
+    { label: 'Updates', action: () => {} },
     { label: '', separator: true },
-    { label: "What's new", action: () => {} },
+    { label: 'Keyboard shortcuts', shortcut: 'Ctrl+/', action: props.onShortcuts },
   ]
 
   const menus: Record<string, MenuAction[]> = {
     File: fileMenu, Edit: editMenu, View: viewMenu, Insert: insertMenu,
-    Format: formatMenu, Tools: toolsMenu, Extensions: extensionsMenu, Help: helpMenu,
+    Format: formatMenu, Tools: toolsMenu, Gemini: geminiMenu, Extensions: extensionsMenu, Help: helpMenu,
   }
 
   const handleMenuClick = (name: string) => {

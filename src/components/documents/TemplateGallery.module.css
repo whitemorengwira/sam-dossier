@@ -1,5 +1,5 @@
 /* ============================================================================
-   Template Gallery — Google Docs Light Theme
+   Template Gallery — SAM Dossier Dark-Luxury Theme
    ============================================================================ */
 
 .gallery { padding: 24px 0; }
@@ -9,25 +9,25 @@
 }
 
 .galleryTitle {
-  font-family: 'Google Sans', 'DM Sans', system-ui, sans-serif;
-  font-size: 15px; font-weight: 500; color: #202124;
+  font-family: var(--font-body);
+  font-size: 15px; font-weight: 500; color: var(--text-primary);
   display: flex; align-items: center; gap: 8px;
 }
 
 .collapseBtn {
-  background: none; border: none; cursor: pointer; color: #5f6368;
+  background: none; border: none; cursor: pointer; color: var(--text-muted);
   display: flex; align-items: center; transition: color 0.2s ease, transform 0.2s ease; padding: 4px;
 }
 
-.collapseBtn:hover { color: #1a73e8; }
+.collapseBtn:hover { color: var(--gold); }
 .collapseBtn.collapsed { transform: rotate(-90deg); }
 
 .galleryLink {
-  font-size: 13px; color: #1a73e8; text-decoration: none; cursor: pointer;
-  font-family: 'Google Sans', 'DM Sans', sans-serif; font-weight: 500;
+  font-size: 13px; color: var(--gold); text-decoration: none; cursor: pointer;
+  font-family: var(--font-body); font-weight: 500;
 }
 
-.galleryLink:hover { text-decoration: underline; }
+.galleryLink:hover { text-decoration: underline; color: var(--gold-light); }
 
 .scrollContainer { position: relative; overflow: hidden; }
 
@@ -40,13 +40,13 @@
 
 .scrollArrow {
   position: absolute; top: 50%; transform: translateY(-50%);
-  width: 36px; height: 36px; background: #fff; border: 1px solid #dadce0;
-  border-radius: 50%; color: #5f6368; cursor: pointer;
+  width: 36px; height: 36px; background: var(--navy); border: 1px solid var(--border);
+  border-radius: 50%; color: var(--text-secondary); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  z-index: 5; transition: all 0.2s ease; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  z-index: 5; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-.scrollArrow:hover { border-color: #1a73e8; color: #1a73e8; }
+.scrollArrow:hover { border-color: var(--gold); color: var(--gold); background: rgba(212, 175, 55, 0.1); }
 .scrollArrowLeft { left: 0; }
 .scrollArrowRight { right: 0; }
 
@@ -58,27 +58,27 @@
 .templateCard:hover { transform: translateY(-2px); }
 
 .templateThumb {
-  width: 100%; aspect-ratio: 3 / 4; border: 1px solid #dadce0; border-radius: 4px;
+  width: 100%; aspect-ratio: 3 / 4; border: 1px solid var(--border); border-radius: 0;
   overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; position: relative;
+  background: rgba(10, 17, 40, 0.65);
 }
 
 .templateCard:hover .templateThumb {
-  border-color: #1a73e8; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border-color: var(--gold); box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 12px rgba(212, 175, 55, 0.2);
 }
 
 .blankThumb {
-  background: #fff; display: flex; align-items: center; justify-content: center;
+  background: rgba(10, 17, 40, 0.4); display: flex; align-items: center; justify-content: center;
   flex-direction: column; gap: 8px;
 }
 
 .blankThumb::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
-  border-radius: 4px 4px 0 0;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), #c4a030, var(--gold-light), #c4a030, var(--gold));
 }
 
-.blankIcon { font-size: 36px; color: #1a73e8; transition: color 0.2s ease; }
-.templateCard:hover .blankIcon { color: #174ea6; }
+.blankIcon { font-size: 36px; color: var(--gold); transition: color 0.2s ease, transform 0.2s ease; }
+.templateCard:hover .blankIcon { color: var(--gold-light); transform: scale(1.1); }
 
 .previewThumb { background: #fff; padding: 10px 12px; }
 
@@ -91,11 +91,11 @@
 .previewContent p { margin-bottom: 2px; }
 
 .templateLabel {
-  padding: 8px 0 0; font-family: 'Google Sans', 'DM Sans', sans-serif;
-  font-size: 12px; color: #202124; text-align: center;
+  padding: 8px 0 0; font-family: var(--font-body);
+  font-size: 12px; color: var(--text-primary); text-align: center;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
 .templateCategory {
-  font-size: 10px; color: #5f6368; text-align: center; margin-top: 2px;
+  font-size: 10px; color: var(--text-secondary); text-align: center; margin-top: 2px;
 }

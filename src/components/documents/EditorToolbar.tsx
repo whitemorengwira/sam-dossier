@@ -7,7 +7,6 @@ import {
   TextB,
   TextItalic,
   TextUnderline,
-  TextStrikethrough,
   TextAlignLeft,
   TextAlignCenter,
   TextAlignRight,
@@ -18,6 +17,7 @@ import {
   TextOutdent,
   LinkSimple,
   Minus,
+  Plus,
   Eraser,
   Highlighter,
   TextAa,
@@ -29,13 +29,13 @@ import {
   Image as ImageIcon,
   CheckSquareOffset,
   List,
-  Table,
 } from '@phosphor-icons/react'
 import { Editor } from '@tiptap/react'
 import styles from './EditorToolbar.module.css'
 
 interface EditorToolbarProps {
   editor?: Editor | null
+  editorRef?: React.RefObject<HTMLDivElement | null>
   documentId?: string
   onToggleComments?: () => void
   zoom?: string | number
@@ -57,7 +57,7 @@ const FONTS = [
 
 const FONT_SIZES = ['10', '11', '12', '14', '16', '18', '20', '24', '28', '36', '48']
 
-export default function EditorToolbar({ editor, onToggleComments, zoom = '100%', onZoomChange, onAddComment }: EditorToolbarProps) {
+export default function EditorToolbar({ editor, editorRef, onToggleComments, zoom = '100%', onZoomChange, onAddComment }: EditorToolbarProps) {
   const [currentFont, setCurrentFont] = useState('DM Sans')
   const [currentSize, setCurrentSize] = useState('14')
   const [currentStyle, setCurrentStyle] = useState('Normal text')
@@ -84,20 +84,28 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
     }
   }, [editor])
 
-  if (!editor) {
-    return null;
+  const isActive = (format: any, options?: any) => editor?.isActive(format, options) ?? false
+
+  const handleFontSizeChange = (newSize: string) => {
+    setCurrentSize(newSize)
+    editor?.chain().focus().setFontSize(newSize).run()
   }
 
-  const isActive = (format: any, options?: any) => editor.isActive(format, options)
+  const handleStepper = (dir: 1 | -1) => {
+    const current = parseInt(currentSize)
+    if (isNaN(current)) return
+    const newSize = Math.max(8, current + dir).toString()
+    handleFontSizeChange(newSize)
+  }
 
   return (
     <div className={styles.toolbar}>
-      {/* Undo / Redo / Print / Format */}
+      {/* 1. History & Utility */}
       <div className={styles.toolGroup}>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} title="Undo">
+        <button className={styles.toolBtn} onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()} title="Undo">
           <ArrowUUpLeft size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} title="Redo">
+        <button className={styles.toolBtn} onClick={() => editor?.chain().focus().redo().run()} disabled={!editor?.can().redo()} title="Redo">
           <ArrowUUpRight size={16} />
         </button>
         <button className={styles.toolBtn} onClick={() => window.print()} title="Print (Ctrl+P)">
@@ -111,7 +119,7 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
         </button>
       </div>
 
-      {/* Zoom */}
+      {/* 2. Zoom */}
       <div className={styles.toolGroup}>
         <select
           className={styles.toolSelect}
@@ -126,7 +134,7 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
         </select>
       </div>
 
-      {/* Paragraph styles */}
+      {/* 3. Styles & Fonts */}
       <div className={styles.toolGroup}>
         <select
           className={styles.toolSelect}
@@ -135,10 +143,10 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
             const val = e.target.value
             setCurrentStyle(val)
             if (val === 'Normal text') {
-              editor.chain().focus().setParagraph().run()
+              editor?.chain().focus().setParagraph().run()
             } else {
               const level = parseInt(val.replace('H', '')) as 1|2|3|4|5|6
-              editor.chain().focus().toggleHeading({ level }).run()
+              editor?.chain().focus().toggleHeading({ level }).run()
             }
           }}
           title="Styles"
@@ -152,16 +160,13 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
           <option value="H5">Heading 5</option>
           <option value="H6">Heading 6</option>
         </select>
-      </div>
 
-      {/* Font family */}
-      <div className={styles.toolGroup}>
         <select
           className={styles.toolSelect}
           value={currentFont}
           onChange={(e) => {
             setCurrentFont(e.target.value)
-            editor.chain().focus().setFontFamily(e.target.value).run()
+            editor?.chain().focus().setFontFamily(e.target.value).run()
           }}
           title="Font"
         >
@@ -169,54 +174,50 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
             <option key={f} value={f}>{f}</option>
           ))}
         </select>
+
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <button className={styles.toolBtn} onClick={() => handleStepper(-1)} title="Decrease font size" style={{ width: 24 }}>
+            <Minus size={12} />
+          </button>
+          <select
+            className={styles.toolSelect}
+            value={currentSize}
+            onChange={(e) => handleFontSizeChange(e.target.value)}
+            title="Font size"
+            style={{ width: 50, padding: '0 2px' }}
+          >
+            {FONT_SIZES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <button className={styles.toolBtn} onClick={() => handleStepper(1)} title="Increase font size" style={{ width: 24 }}>
+            <Plus size={12} />
+          </button>
+        </div>
       </div>
 
-      {/* Font size */}
-      <div className={styles.toolGroup}>
-        <select
-          className={styles.toolSelect}
-          value={currentSize}
-          onChange={(e) => {
-            setCurrentSize(e.target.value)
-            editor.chain().focus().setFontSize(e.target.value).run()
-          }}
-          title="Font size"
-        >
-          {FONT_SIZES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Text formatting */}
+      {/* 4. Text Formatting */}
       <div className={styles.toolGroup}>
         <button
           className={`${styles.toolBtn} ${isActive('bold') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          onClick={() => editor?.chain().focus().toggleBold().run()}
           title="Bold (Ctrl+B)"
         >
           <TextB size={16} weight="bold" />
         </button>
         <button
           className={`${styles.toolBtn} ${isActive('italic') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onClick={() => editor?.chain().focus().toggleItalic().run()}
           title="Italic (Ctrl+I)"
         >
           <TextItalic size={16} />
         </button>
         <button
           className={`${styles.toolBtn} ${isActive('underline') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onClick={() => editor?.chain().focus().toggleUnderline().run()}
           title="Underline (Ctrl+U)"
         >
           <TextUnderline size={16} />
-        </button>
-        <button
-          className={`${styles.toolBtn} ${isActive('strike') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          title="Strikethrough"
-        >
-          <TextStrikethrough size={16} />
         </button>
 
         {/* Text colour */}
@@ -238,7 +239,7 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
             value={textColour}
             onChange={(e) => {
               setTextColour(e.target.value)
-              editor.chain().focus().setColor(e.target.value).run()
+              editor?.chain().focus().setColor(e.target.value).run()
             }}
             style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
           />
@@ -263,92 +264,20 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
             value={highlightColour}
             onChange={(e) => {
               setHighlightColour(e.target.value)
-              editor.chain().focus().toggleHighlight({ color: e.target.value }).run()
+              editor?.chain().focus().toggleHighlight({ color: e.target.value }).run()
             }}
             style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
           />
         </div>
       </div>
 
-      {/* Alignment */}
+      {/* 5. Block Formatting */}
       <div className={styles.toolGroup}>
-        <button
-          className={`${styles.toolBtn} ${isActive({ textAlign: 'left' }) ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          title="Align left"
-        >
-          <TextAlignLeft size={16} />
-        </button>
-        <button
-          className={`${styles.toolBtn} ${isActive({ textAlign: 'center' }) ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          title="Align centre"
-        >
-          <TextAlignCenter size={16} />
-        </button>
-        <button
-          className={`${styles.toolBtn} ${isActive({ textAlign: 'right' }) ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          title="Align right"
-        >
-          <TextAlignRight size={16} />
-        </button>
-        <button
-          className={`${styles.toolBtn} ${isActive({ textAlign: 'justify' }) ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-          title="Justify"
-        >
-          <TextAlignJustify size={16} />
-        </button>
-      </div>
-
-      {/* Lists & indent */}
-      <div className={styles.toolGroup}>
-        <button
-          className={`${styles.toolBtn} ${isActive('taskList') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
-          title="Checklist"
-        >
-          <CheckSquareOffset size={16} />
-        </button>
-        <button
-          className={`${styles.toolBtn} ${isActive('bulletList') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet list"
-        >
-          <ListBullets size={16} />
-        </button>
-        <button
-          className={`${styles.toolBtn} ${isActive('orderedList') ? styles.active : ''}`}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Numbered list"
-        >
-          <ListNumbers size={16} />
-        </button>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().sinkListItem('listItem').run()} title="Increase indent">
-          <TextIndent size={16} />
-        </button>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().liftListItem('listItem').run()} title="Decrease indent">
-          <TextOutdent size={16} />
-        </button>
-      </div>
-
-      <div className={styles.toolGroup}>
-        <button className={styles.toolBtn} onClick={() => {}} title="Line & paragraph spacing">
-          <List size={16} />
-        </button>
-      </div>
-
-      {/* Insert */}
-      <div className={styles.toolGroup}>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} title="Insert table">
-          <Table size={16} />
-        </button>
         <button
           className={styles.toolBtn}
           onClick={() => {
             const url = prompt('Enter link URL:')
-            if (url) editor.chain().focus().setLink({ href: url }).run()
+            if (url) editor?.chain().focus().setLink({ href: url }).run()
           }}
           title="Insert link"
         >
@@ -359,14 +288,81 @@ export default function EditorToolbar({ editor, onToggleComments, zoom = '100%',
         </button>
         <button className={styles.toolBtn} onClick={() => {
           const url = prompt('Enter image URL:')
-          if (url) editor.chain().focus().insertNexusImage({ src: url }).run()
+          if (url) editor?.chain().focus().insertNexusImage({ src: url }).run()
         }} title="Insert image">
           <ImageIcon size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Insert horizontal rule">
-          <Minus size={16} />
+      </div>
+
+      {/* 6. Alignment */}
+      <div className={styles.toolGroup}>
+        <button
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'left' }) ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+          title="Align left"
+        >
+          <TextAlignLeft size={16} />
         </button>
-        <button className={styles.toolBtn} onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear formatting">
+        <button
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'center' }) ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+          title="Align centre"
+        >
+          <TextAlignCenter size={16} />
+        </button>
+        <button
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'right' }) ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+          title="Align right"
+        >
+          <TextAlignRight size={16} />
+        </button>
+        <button
+          className={`${styles.toolBtn} ${isActive({ textAlign: 'justify' }) ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().setTextAlign('justify').run()}
+          title="Justify"
+        >
+          <TextAlignJustify size={16} />
+        </button>
+      </div>
+
+      {/* 7. Spacing & Lists */}
+      <div className={styles.toolGroup}>
+        <button className={styles.toolBtn} onClick={() => {}} title="Line & paragraph spacing">
+          <List size={16} />
+        </button>
+        <button
+          className={`${styles.toolBtn} ${isActive('taskList') ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().toggleTaskList().run()}
+          title="Checklist"
+        >
+          <CheckSquareOffset size={16} />
+        </button>
+        <button
+          className={`${styles.toolBtn} ${isActive('bulletList') ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().toggleBulletList().run()}
+          title="Bullet list"
+        >
+          <ListBullets size={16} />
+        </button>
+        <button
+          className={`${styles.toolBtn} ${isActive('orderedList') ? styles.active : ''}`}
+          onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+          title="Numbered list"
+        >
+          <ListNumbers size={16} />
+        </button>
+        <button className={styles.toolBtn} onClick={() => editor?.chain().focus().liftListItem('listItem').run()} title="Decrease indent">
+          <TextOutdent size={16} />
+        </button>
+        <button className={styles.toolBtn} onClick={() => editor?.chain().focus().sinkListItem('listItem').run()} title="Increase indent">
+          <TextIndent size={16} />
+        </button>
+      </div>
+
+      {/* 8. Clear */}
+      <div className={styles.toolGroup}>
+        <button className={styles.toolBtn} onClick={() => editor?.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear formatting">
           <Eraser size={16} />
         </button>
       </div>

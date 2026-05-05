@@ -93,6 +93,42 @@ export default function DocumentEditorPage() {
 
   useEffect(() => { const t = setTimeout(save, 500); return () => clearTimeout(t) }, [save])
 
+  // Comments
+  const handleAddComment = useCallback(() => {
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      alert('Please select some text to comment on.')
+      return
+    }
+
+    const text = prompt('Enter your comment:')
+    if (!text) return
+
+    const range = selection.getRangeAt(0)
+    const quote = selection.toString()
+    
+    // Highlight the text
+    const span = document.createElement('span')
+    span.style.backgroundColor = '#fef7e0'
+    span.style.borderBottom = '2px solid #fbbc04'
+    span.className = 'comment-anchor'
+    range.surroundContents(span)
+
+    const newComment = {
+      id: `c-${Date.now()}`,
+      author: TEAM[0],
+      text,
+      timestamp: new Date().toISOString(),
+      resolved: false,
+      quote,
+      replies: []
+    }
+
+    setDoc(prev => prev ? { ...prev, comments: [newComment, ...prev.comments] } : prev)
+    setShowComments(true)
+    save()
+  }, [save, setDoc, setShowComments])
+
   /* ── Keyboard shortcuts ──── */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -101,12 +137,12 @@ export default function DocumentEditorPage() {
       if (e.ctrlKey && e.key === '/') { e.preventDefault(); setShowShortcuts(true) }
       if (e.ctrlKey && e.shiftKey && e.key === 'H') { e.preventDefault(); setShowVersions(true) }
       if (e.ctrlKey && e.shiftKey && e.key === 'F') { e.preventDefault(); document.documentElement.requestFullscreen?.() }
-      if (e.ctrlKey && e.altKey && e.key === 'm') { e.preventDefault(); /* comment placeholder */ }
+      if (e.ctrlKey && e.altKey && e.key === 'm') { e.preventDefault(); handleAddComment() }
       if (e.altKey && e.key === '/') { e.preventDefault(); /* command palette placeholder */ }
     }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
-  }, [])
+  }, [handleAddComment])
 
   /* ── beforeunload guard ──── */
   useEffect(() => {
@@ -238,42 +274,6 @@ export default function DocumentEditorPage() {
       setShowAI(false); setAiResult(''); setAiPrompt('')
       save()
     }
-  }
-
-  // Comments
-  const handleAddComment = () => {
-    const selection = window.getSelection()
-    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-      alert('Please select some text to comment on.')
-      return
-    }
-
-    const text = prompt('Enter your comment:')
-    if (!text) return
-
-    const range = selection.getRangeAt(0)
-    const quote = selection.toString()
-    
-    // Highlight the text
-    const span = document.createElement('span')
-    span.style.backgroundColor = '#fef7e0'
-    span.style.borderBottom = '2px solid #fbbc04'
-    span.className = 'comment-anchor'
-    range.surroundContents(span)
-
-    const newComment = {
-      id: `c-${Date.now()}`,
-      author: TEAM[0],
-      text,
-      timestamp: new Date().toISOString(),
-      resolved: false,
-      quote,
-      replies: []
-    }
-
-    setDoc(prev => prev ? { ...prev, comments: [newComment, ...prev.comments] } : prev)
-    setShowComments(true)
-    save()
   }
 
   if (!doc) return <div className={styles.loading}>Loading document...</div>

@@ -6,7 +6,7 @@
 export const APP_NAME = 'SAM Dossier'
 export const APP_DESCRIPTION = 'Socinga Africa Mining — Institutional-Grade Investment Dossier'
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sam-dossier.vercel.app'
-export const R2_BASE_URL = process.env.NEXT_PUBLIC_R2_BASE_URL || 'https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev'
+export const R2_BASE_URL = process.env.NEXT_PUBLIC_GLOBAL_R2_URL || 'https://pub-c1b1115f451f49a0888914c18175cc2c.r2.dev'
 
 /** Gold market constants */
 export const GOLD_PRICE_USD_PER_OZ = 3200

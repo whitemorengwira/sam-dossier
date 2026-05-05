@@ -3,7 +3,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { getGlobalAssetUrl } from "@/lib/getGlobalAssetUrl";
 import styles from "./AIChatSidebar.module.css";
+
+const LISA_PORTRAIT = getGlobalAssetUrl("sam-dossier/public/images/lisa-portrait.png");
 
 type Message = {
   id: string;
@@ -174,7 +177,7 @@ export default function AIChatSidebar() {
           <span className={styles.fabPulse} />
           <div className={styles.fabPortrait}>
             <Image
-              src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/lisa-portrait.png"
+              src={LISA_PORTRAIT}
               alt="Lisa"
               width={44}
               height={44}
@@ -190,7 +193,7 @@ export default function AIChatSidebar() {
           <div className={styles.headerLeft}>
             <div className={styles.headerPortrait}>
               <Image
-                src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/lisa-portrait.png"
+                src={LISA_PORTRAIT}
                 alt="Lisa"
                 width={32}
                 height={32}
@@ -258,7 +261,7 @@ export default function AIChatSidebar() {
               {msg.role === "ai" && (
                 <div className={styles.msgAvatar}>
                   <Image
-                    src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/lisa-portrait.png"
+                    src={LISA_PORTRAIT}
                     alt="Lisa"
                     width={28}
                     height={28}
@@ -279,7 +282,7 @@ export default function AIChatSidebar() {
             <div className={`${styles.messageWrapper} ${styles.messageWrapperAi}`}>
               <div className={styles.msgAvatar}>
                 <Image
-                  src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/lisa-portrait.png"
+                  src={LISA_PORTRAIT}
                   alt="Lisa"
                   width={28}
                   height={28}

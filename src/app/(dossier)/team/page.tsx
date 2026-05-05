@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { getGlobalAssetUrl } from "@/lib/getGlobalAssetUrl";
 import styles from "./page.module.css";
+
+const PORTRAIT_PLACEHOLDER = getGlobalAssetUrl("sam-dossier/public/images/portrait-placeholder.png");
 
 export const metadata = {
   title: "Executive Leadership | SAM Dossier",
@@ -11,42 +14,42 @@ const LEADERS = [
     name: "Lufeyi Shato",
     role: "Director, Hilltouch Investments",
     desc: "Co-founder of Hilltouch Investments. Over two decades of operational experience scaling the Chikonga Mine from artisanal works to Manicaland's 3rd largest gold producer.",
-    image: "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/portrait-placeholder.png",
+    image: PORTRAIT_PLACEHOLDER,
     group: "asset",
   },
   {
     name: "Joyce Kujenga",
     role: "Director, Hilltouch Investments",
     desc: "Co-founder and strategic director of Hilltouch Investments. Manages internal operations, statutory compliance, and strategic growth for the Chikonga concession.",
-    image: "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/portrait-placeholder.png",
+    image: PORTRAIT_PLACEHOLDER,
     group: "asset",
   },
   {
     name: "Whitemore Ngwira",
     role: "Managing Director / CEO",
     desc: "Spearheads the strategic vision and capital deployment for Socinga Africa Mining. Lead architect of the Chikonga structural investment and digital operational twin.",
-    image: "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/portrait-placeholder.png",
+    image: PORTRAIT_PLACEHOLDER,
     group: "executive",
   },
   {
     name: "Patience Ngwira",
     role: "Chief Financial Officer (CFO)",
     desc: "Controls all financial instruments, tranche releases, and compliance. Ensures rigorous King V corporate governance and strict segregation of duties across the SPV.",
-    image: "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/portrait-placeholder.png",
+    image: PORTRAIT_PLACEHOLDER,
     group: "executive",
   },
   {
     name: "Olwethu Mlokoti",
     role: "Head of Logistics & Pre-Production",
     desc: "Directs physical mobilisation, cross-border logistics, and operational setup between the Johannesburg corporate office and the Mutare asset site.",
-    image: "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/portrait-placeholder.png",
+    image: PORTRAIT_PLACEHOLDER,
     group: "operations",
   },
   {
     name: "Shingirai",
     role: "Technical & Geological Liaison",
     desc: "Coordinates the independent SAMREC-compliant Competent Person's Report (CPR) and oversees CIP plant specification, sourcing, and commissioning.",
-    image: "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/portrait-placeholder.png",
+    image: PORTRAIT_PLACEHOLDER,
     group: "operations",
   },
 ];

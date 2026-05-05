@@ -13,6 +13,8 @@ import {
   Mountains,
   Scales,
   Warning,
+  FilePdf,
+  ProjectorScreen,
   SignOut as SignOutIcon,
   CaretLeft,
   Kanban,
@@ -80,11 +82,14 @@ const navigation: NavGroup[] = [
     title: 'Document Vault',
     items: [
       { label: 'Documents', href: '/dashboard/documents', icon: <Folder size={20} weight="duotone" /> },
+      { label: 'PDF Editor (Pro)', href: '/dashboard/pdf-editor', icon: <FilePdf size={20} weight="duotone" /> },
+      { label: 'Presentations', href: '/dashboard/presentations', icon: <ProjectorScreen size={20} weight="duotone" /> },
     ],
   },
   {
     title: 'Spreadsheets',
     items: [
+      { label: 'Master Editor', href: '/dashboard/spreadsheet', icon: <Table size={20} weight="duotone" /> },
       { label: 'Budget Breakdown', href: '/dashboard/spreadsheets/budget', icon: <Table size={20} weight="duotone" /> },
       { label: 'Cash Flow Model', href: '/dashboard/spreadsheets/cashflow', icon: <Table size={20} weight="duotone" /> },
       { label: 'Ore Grade Tracker', href: '/dashboard/spreadsheets/ore-grades', icon: <Table size={20} weight="duotone" /> },

@@ -86,7 +86,7 @@ export function DocumentUploadZone({
       const maxSizeMB = getMaxFileSizeMB(file.type);
       const fileSizeMB = file.size / (1024 * 1024);
 
-      if (!ALL_ACCEPTED_MIMETYPES.includes(file.type)) {
+      if (!ALL_ACCEPTED_MIMETYPES.includes(file.type as any)) {
         validFiles.push({
           id: crypto.randomUUID(),
           file,

@@ -1,0 +1,146 @@
+
+> sam-dossier@0.1.0 build
+> next build
+
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 4 errors:
+./node_modules/@tiptap/extension-collaboration/dist/index.js:4:1
+Module not found: Can't resolve '@tiptap/y-tiptap'
+  [90m2 |[0m [36mimport[0m { [33mExtension[0m } [36mfrom[0m [32m"@tiptap/core"[0m;
+  [90m3 |[0m [36mimport[0m { [33mPlugin[0m, [33mPluginKey[0m } [36mfrom[0m [32m"@tiptap/pm/state"[0m;
+[31m[1m>[0m [90m4 |[0m [36mimport[0m { redo, undo, ySyncPlugin, yUndoPlugin, yUndoPluginKey } [36mfrom[0m [32m"@tiptap/y-tiptap"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m
+  [90m6 |[0m [90m// src/helpers/CollaborationMappablePosition.ts[0m
+  [90m7 |[0m [36mimport[0m {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./node_modules/@tiptap/extension-collaboration/dist/index.js [Client Component Browser]
+    ./src/lib/editor/editor-config.ts [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./node_modules/@tiptap/extension-collaboration/dist/index.js [Client Component SSR]
+    ./src/lib/editor/editor-config.ts [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./node_modules/@tiptap/extension-collaboration/dist/index.js:13:1
+Module not found: Can't resolve '@tiptap/y-tiptap'
+  [90m11 |[0m
+  [90m12 |[0m [90m// src/helpers/isChangeOrigin.ts[0m
+[31m[1m>[0m [90m13 |[0m [36mimport[0m { ySyncPluginKey } [36mfrom[0m [32m"@tiptap/y-tiptap"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m14 |[0m [36mfunction[0m isChangeOrigin(transaction) {
+  [90m15 |[0m   [36mreturn[0m !!transaction.getMeta(ySyncPluginKey);
+  [90m16 |[0m }
+
+
+
+Import traces:
+  Client Component Browser:
+    ./node_modules/@tiptap/extension-collaboration/dist/index.js [Client Component Browser]
+    ./src/lib/editor/editor-config.ts [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./node_modules/@tiptap/extension-collaboration/dist/index.js [Client Component SSR]
+    ./src/lib/editor/editor-config.ts [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./node_modules/@tiptap/extension-collaboration/dist/index.js:19:1
+Module not found: Can't resolve '@tiptap/y-tiptap'
+  [90m17 |[0m
+  [90m18 |[0m [90m// src/helpers/yRelativePosition.ts[0m
+[31m[1m>[0m [90m19 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   absolutePositionToRelativePosition,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   relativePositionToAbsolutePosition,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m   ySyncPluginKey [36mas[0m ySyncPluginKey2
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m23 |[0m } [36mfrom[0m [32m"@tiptap/y-tiptap"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m24 |[0m [36mfunction[0m getYAbsolutePosition(state, relativePos) {
+  [90m25 |[0m   [36mconst[0m ystate = ySyncPluginKey2.getState(state);
+  [90m26 |[0m   [36mreturn[0m relativePositionToAbsolutePosition(ystate.doc, ystate.[36mtype[0m, relativePos, ystate.binding.mapping) || [35m0[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./node_modules/@tiptap/extension-collaboration/dist/index.js [Client Component Browser]
+    ./src/lib/editor/editor-config.ts [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./node_modules/@tiptap/extension-collaboration/dist/index.js [Client Component SSR]
+    ./src/lib/editor/editor-config.ts [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./node_modules/@tiptap/extension-collaboration-cursor/dist/index.js:2:1
+Module not found: Can't resolve 'y-prosemirror'
+  [90m1 |[0m [36mimport[0m { [33mExtension[0m } [36mfrom[0m [32m'@tiptap/core'[0m;
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { defaultSelectionBuilder, yCursorPlugin } [36mfrom[0m [32m'y-prosemirror'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mconst[0m awarenessStatesToArray = (states) => {
+  [90m5 |[0m     [36mreturn[0m [33mArray[0m.[36mfrom[0m(states.entries()).map(([key, value]) => {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./node_modules/@tiptap/extension-collaboration-cursor/dist/index.js [Client Component Browser]
+    ./src/lib/editor/editor-config.ts [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Client Component Browser]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./node_modules/@tiptap/extension-collaboration-cursor/dist/index.js [Client Component SSR]
+    ./src/lib/editor/editor-config.ts [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Client Component SSR]
+    ./src/components/editor/NexusEditor.tsx [Server Component]
+    ./src/app/(workspace)/workspace/editor/[documentId]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at ./node_modules/ (tiptap/extension-collaboration/dist/index.js:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at ./node_modules/ (tiptap/extension-collaboration/dist/index.js:13:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at ./node_modules/ (tiptap/extension-collaboration/dist/index.js:19:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at ./node_modules/ (tiptap/extension-collaboration-cursor/dist/index.js:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

@@ -9,7 +9,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as pdfjsLib from 'pdfjs-dist';
 import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { PDFToolbar } from './PDFToolbar';
 import { PDFThumbnailSidebar } from './PDFThumbnailSidebar';
 import { PDFOutlineSidebar } from './PDFOutlineSidebar';

@@ -70,11 +70,33 @@ export default function DocumentsPage() {
 
   return (
     <div className={styles.page}>
-      {/* Search */}
+      {/* Global Navigation (Top Nav) */}
       <div className={styles.topBar}>
+        {/* Left: Hamburger and Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <List size={24} />
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', userSelect: 'none' }}>
+            <div style={{ width: '32px', height: '32px', background: 'var(--gold)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--onyx)', fontWeight: 'bold', fontSize: '18px' }}>S</div>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>SAM Dossier</span>
+          </div>
+        </div>
+
+        {/* Center: Search */}
         <div className={styles.searchWrapper}>
           <MagnifyingGlass size={18} className={styles.searchIcon} />
           <input className={styles.searchInput} placeholder="Search documents..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+
+        {/* Right: App Grid & Avatar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.2s ease' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
+            <SquaresFour size={24} />
+          </button>
+          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(10, 17, 40, 0.8)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold)', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}>
+            {TEAM[0].avatar}
+          </div>
         </div>
       </div>
 
@@ -164,13 +186,13 @@ export default function DocumentsPage() {
         onClick={() => handleCreate('tpl-blank')}
         style={{
           position: 'fixed', bottom: 32, right: 32, width: 56, height: 56,
-          borderRadius: '50%', background: '#1a73e8', color: '#fff', border: 'none',
-          fontSize: 28, fontWeight: 300, cursor: 'pointer', boxShadow: '0 4px 16px rgba(26,115,232,0.4)',
+          borderRadius: '50%', background: 'linear-gradient(135deg, var(--gold), #c4a030)', color: 'var(--onyx)', border: 'none',
+          fontSize: 32, fontWeight: 400, cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.4), 0 0 16px rgba(212,175,55,0.2)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'all 0.2s ease', zIndex: 50,
+          transition: 'all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)', zIndex: 50,
         }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(26,115,232,0.5)' }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(26,115,232,0.4)' }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1) rotate(90deg)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.5), 0 0 24px rgba(212,175,55,0.4)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1) rotate(0deg)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4), 0 0 16px rgba(212,175,55,0.2)' }}
         title="Create new document"
         aria-label="Create new document"
       >

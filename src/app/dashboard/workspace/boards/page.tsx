@@ -13,6 +13,8 @@ import CalendarView from '@/components/board/CalendarView'
 import ChartView from '@/components/board/ChartView'
 import FormView from '@/components/board/FormView'
 import ItemDetailPanel from '@/components/board/ItemDetailPanel'
+import AutomationsPanel from '@/components/board/AutomationsPanel'
+import IntegrationsPanel from '@/components/board/IntegrationsPanel'
 
 /* ── View icons ──── */
 const VIEW_ICONS: Record<string, React.ReactNode> = {
@@ -34,6 +36,9 @@ export default function BoardsPage() {
   const [editingCell, setEditingCell] = useState<{ itemId: string; colId: string } | null>(null)
   const [showStatusPicker, setShowStatusPicker] = useState<{ itemId: string; colId: string } | null>(null)
   const [detailItem, setDetailItem] = useState<BoardItem | null>(null)
+  const [showAutomations, setShowAutomations] = useState(false)
+  const [showIntegrations, setShowIntegrations] = useState(false)
+  const [showColumnPicker, setShowColumnPicker] = useState(false)
 
   useEffect(() => {
     const b = loadBoard()
@@ -187,6 +192,46 @@ export default function BoardsPage() {
     return <span onClick={() => setEditingCell({ itemId: item.id, colId })} style={{ cursor: 'pointer', fontSize: 12, color: 'rgba(245,240,232,0.6)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{val || '—'}</span>
   }
 
+  /* ── Other simple cells ──── */
+  const renderNumberCell = (item: BoardItem, colId: string) => {
+    const val = (item.values[colId] as number) || ''
+    const isEditing = editingCell?.itemId === item.id && editingCell?.colId === colId
+    if (isEditing) {
+      return <input type="number" defaultValue={val} autoFocus onBlur={e => updateItemValue(item.id, colId, e.target.value ? Number(e.target.value) : undefined)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+        style={{ background: 'rgba(10,17,40,0.6)', border: '1px solid rgba(212,175,55,0.3)', color: '#F5F0E8', padding: '2px 6px', fontSize: 12, outline: 'none', width: '100%', textAlign: 'right' }} />
+    }
+    return <span onClick={() => setEditingCell({ itemId: item.id, colId })} style={{ cursor: 'pointer', fontSize: 12, color: 'rgba(245,240,232,0.6)', display: 'block', textAlign: 'right' }}>{val || '—'}</span>
+  }
+
+  const renderCheckboxCell = (item: BoardItem, colId: string) => {
+    const val = (item.values[colId] as boolean) || false
+    return <input type="checkbox" checked={val} onChange={e => updateItemValue(item.id, colId, e.target.checked)} style={{ accentColor: '#D4AF37', cursor: 'pointer', margin: '0 auto', display: 'block' }} />
+  }
+
+  const renderLinkCell = (item: BoardItem, colId: string) => {
+    const val = (item.values[colId] as string) || ''
+    const isEditing = editingCell?.itemId === item.id && editingCell?.colId === colId
+    if (isEditing) {
+      return <input type="text" defaultValue={val} autoFocus onBlur={e => updateItemValue(item.id, colId, e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+        style={{ background: 'rgba(10,17,40,0.6)', border: '1px solid rgba(212,175,55,0.3)', color: '#F5F0E8', padding: '2px 6px', fontSize: 12, outline: 'none', width: '100%' }} />
+    }
+    if (val) {
+      return <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><a href={val} target="_blank" rel="noopener noreferrer" style={{ color: '#579bfc', textDecoration: 'underline', fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{val}</a><Pencil size={12} color="rgba(245,240,232,0.4)" cursor="pointer" onClick={() => setEditingCell({ itemId: item.id, colId })} /></span>
+    }
+    return <span onClick={() => setEditingCell({ itemId: item.id, colId })} style={{ cursor: 'pointer', fontSize: 12, color: 'rgba(245,240,232,0.6)', display: 'block' }}>—</span>
+  }
+
+  const renderRatingCell = (item: BoardItem, colId: string) => {
+    const val = (item.values[colId] as number) || 0
+    return (
+      <div style={{ display: 'flex', gap: 2, color: '#D4AF37' }}>
+        {[1, 2, 3, 4, 5].map(star => (
+          <Star key={star} size={14} weight={star <= val ? 'fill' : 'regular'} onClick={() => updateItemValue(item.id, colId, star)} style={{ cursor: 'pointer' }} />
+        ))}
+      </div>
+    )
+  }
+
   /* ── Cell renderer ──── */
   const renderCell = (item: BoardItem, col: typeof board.columns[0]) => {
     switch (col.type) {
@@ -194,6 +239,23 @@ export default function BoardsPage() {
       case 'priority': return renderStatusCell(item, col.id, PRIORITY_LABELS)
       case 'people': return renderPeopleCell(item, col.id)
       case 'date': return renderDateCell(item, col.id)
+      case 'numbers': return renderNumberCell(item, col.id)
+      case 'checkbox': return renderCheckboxCell(item, col.id)
+      case 'link': return renderLinkCell(item, col.id)
+      case 'rating': return renderRatingCell(item, col.id)
+      case 'longtext':
+      case 'email':
+      case 'phone':
+      case 'dropdown':
+      case 'tags':
+      case 'formula':
+      case 'autonumber':
+      case 'created_by':
+      case 'created_at':
+      case 'last_updated_by':
+      case 'last_updated_at':
+      case 'file':
+      case 'text':
       default: return renderTextCell(item, col.id)
     }
   }
@@ -258,6 +320,26 @@ export default function BoardsPage() {
             {col.name}
           </div>
         ))}
+        <div style={{ width: 40, padding: '8px', borderLeft: '1px solid rgba(212,175,55,0.08)', flexShrink: 0, position: 'relative' }}>
+          <button onClick={() => setShowColumnPicker(!showColumnPicker)} style={{ background: 'none', border: 'none', color: 'rgba(245,240,232,0.4)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+            <Plus size={16} />
+          </button>
+          {showColumnPicker && (
+            <div style={{ position: 'absolute', top: '100%', right: 0, zIndex: 60, background: 'rgba(10,17,40,0.95)', border: '1px solid rgba(212,175,55,0.2)', width: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', padding: '8px 0', maxHeight: 300, overflowY: 'auto' }}>
+              <div style={{ padding: '4px 12px', fontSize: 11, fontWeight: 600, color: 'rgba(245,240,232,0.4)', textTransform: 'uppercase' }}>Add Column</div>
+              {['status', 'people', 'date', 'text', 'longtext', 'numbers', 'dropdown', 'checkbox', 'tags', 'timeline', 'priority', 'link', 'email', 'phone', 'file', 'rating', 'formula'].map(type => (
+                <button key={type} onClick={() => {
+                  const newCol = { id: `col-${Date.now()}`, name: type.charAt(0).toUpperCase() + type.slice(1), type: type as any, width: 140 }
+                  const updated = { ...board, columns: [...board.columns, newCol] }
+                  persist(updated)
+                  setShowColumnPicker(false)
+                }} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '6px 16px', background: 'transparent', border: 'none', color: '#F5F0E8', fontSize: 13, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(212,175,55,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <div style={{ width: 40, flexShrink: 0 }} />
       </div>
 
@@ -322,6 +404,7 @@ export default function BoardsPage() {
                   {renderCell(item, col)}
                 </div>
               ))}
+              <div style={{ width: 40, borderLeft: '1px solid rgba(212,175,55,0.06)', flexShrink: 0 }} />
 
               {/* Actions */}
               <div style={{ width: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -380,10 +463,10 @@ export default function BoardsPage() {
             <SortAscending size={14} /> Sort
           </button>
           <div style={{ width: 1, height: 16, background: 'rgba(212,175,55,0.2)', margin: '0 8px' }} />
-          <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(212,175,55,0.05)', border: '1px solid rgba(212,175,55,0.15)', color: '#D4AF37', fontSize: 12, cursor: 'pointer', borderRadius: 4 }}>
+          <button onClick={() => setShowAutomations(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(212,175,55,0.05)', border: '1px solid rgba(212,175,55,0.15)', color: '#D4AF37', fontSize: 12, cursor: 'pointer', borderRadius: 4 }}>
             <Lightning size={14} /> Automations
           </button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(212,175,55,0.05)', border: '1px solid rgba(212,175,55,0.15)', color: '#D4AF37', fontSize: 12, cursor: 'pointer', borderRadius: 4 }}>
+          <button onClick={() => setShowIntegrations(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(212,175,55,0.05)', border: '1px solid rgba(212,175,55,0.15)', color: '#D4AF37', fontSize: 12, cursor: 'pointer', borderRadius: 4 }}>
             <Plug size={14} /> Integrations
           </button>
         </div>
@@ -424,6 +507,10 @@ export default function BoardsPage() {
             onUpdate={updateItemValue}
           />
         )}
+
+        {/* ── Automations & Integrations ──── */}
+        {showAutomations && <AutomationsPanel board={board} onClose={() => setShowAutomations(false)} />}
+        {showIntegrations && <IntegrationsPanel board={board} onClose={() => setShowIntegrations(false)} />}
       </div>
     </div>
   )

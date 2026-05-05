@@ -1,13 +1,13 @@
 /* ============================================================================
-   Menu Bar — Google Docs Light Theme
+   Menu Bar — SAM Dossier Dark-Luxury Theme
    ============================================================================ */
 
 .menuBar {
   display: flex;
   align-items: center;
   padding: 2px 8px;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--navy);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 25;
@@ -18,22 +18,22 @@
 .menuItem {
   position: relative;
   padding: 5px 8px;
-  font-family: 'Google Sans', 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 400;
-  color: #3c4043;
+  color: var(--text-secondary);
   cursor: pointer;
   border: none;
   background: transparent;
   border-radius: 4px;
-  transition: background 0.1s ease;
+  transition: background 0.1s ease, color 0.1s ease;
   white-space: nowrap;
 }
 
 .menuItem:hover,
 .menuItem.active {
-  background: #e8eaed;
-  color: #202124;
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--text-primary);
 }
 
 /* ── Dropdown ──── */
@@ -42,13 +42,14 @@
   top: calc(100% + 2px);
   left: 0;
   min-width: 280px;
-  background: #fff;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.08);
+  background: var(--navy-light);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 4px 0;
   z-index: 100;
   animation: menuIn 0.12s ease-out;
+  backdrop-filter: blur(20px);
 }
 
 @keyframes menuIn {
@@ -61,18 +62,18 @@
   align-items: center;
   gap: 8px;
   padding: 6px 16px 6px 12px;
-  font-family: 'Google Sans', 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
-  color: #3c4043;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: background 0.08s ease;
+  transition: background 0.08s ease, color 0.08s ease;
   position: relative;
   white-space: nowrap;
 }
 
 .dropdownItem:hover {
-  background: #f1f3f4;
-  color: #202124;
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--text-primary);
 }
 
 .dropdownItem.disabled {
@@ -87,7 +88,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #5f6368;
+  color: var(--text-muted);
 }
 
 .itemLabel {
@@ -96,14 +97,15 @@
 
 .itemShortcut {
   font-size: 12px;
-  color: #80868b;
+  color: var(--text-muted);
   margin-left: 24px;
-  font-family: 'Google Sans', 'DM Sans', sans-serif;
+  font-family: var(--font-mono);
 }
 
 .separator {
   height: 1px;
-  background: #e0e0e0;
+  background: var(--border);
+  opacity: 0.5;
   margin: 4px 0;
 }
 
@@ -113,7 +115,7 @@
   position: absolute;
   right: 12px;
   font-size: 11px;
-  color: #80868b;
+  color: var(--text-muted);
 }
 
 .submenu {
@@ -121,46 +123,50 @@
   left: calc(100% - 2px);
   top: 0;
   min-width: 240px;
-  background: #fff;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.08);
+  background: var(--navy-light);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 4px 0;
   z-index: 101;
   animation: menuIn 0.12s ease-out;
+  backdrop-filter: blur(20px);
 }
 
 /* ── Toggle Switch ──── */
 .toggleSwitch {
   width: 32px;
   height: 16px;
-  background: #dadce0;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   position: relative;
   transition: background 0.2s ease;
   cursor: pointer;
   flex-shrink: 0;
+  border: 1px solid var(--border);
 }
 
 .toggleSwitch::after {
   content: '';
   width: 12px;
   height: 12px;
-  background: #fff;
+  background: var(--text-primary);
   border-radius: 50%;
   position: absolute;
-  top: 2px;
+  top: 1px;
   left: 2px;
   transition: left 0.2s ease;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .toggleSwitch.on {
-  background: #1a73e8;
+  background: var(--gold);
+  border-color: var(--gold);
 }
 
 .toggleSwitch.on::after {
-  left: 18px;
+  left: 16px;
+  background: var(--onyx);
 }
 
 /* ── Table Grid Picker ──── */
@@ -175,22 +181,23 @@
 .tableGridCell {
   width: 24px;
   height: 24px;
-  border: 1px solid #dadce0;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: transparent;
   cursor: pointer;
   transition: all 0.08s ease;
 }
 
 .tableGridCell.highlighted {
-  background: #e8f0fe;
-  border-color: #1a73e8;
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold);
 }
 
 .tableGridLabel {
   padding: 4px 8px;
   text-align: center;
   font-size: 12px;
-  color: #5f6368;
-  border-top: 1px solid #e0e0e0;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
 }
 
 /* ── Check mark for active items ──── */
@@ -199,6 +206,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a73e8;
+  color: var(--gold);
   flex-shrink: 0;
 }

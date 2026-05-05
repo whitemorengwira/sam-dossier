@@ -1,3 +1,4 @@
+import { getGlobalAssetUrl } from "@/lib/getGlobalAssetUrl";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -13,7 +14,7 @@ export default function ChikongaMineProfile() {
       <header className={styles.visualHeader}>
         <div className={styles.visualWrapper}>
           <img
-            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/images/chikonga-profile.png"
+            src={getGlobalAssetUrl("sam-dossier/public/images/chikonga-profile.png")}
             alt="High-grade gold-bearing quartz rock from Chikonga Mine"
             className={styles.visualImage}
           />

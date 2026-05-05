@@ -31,6 +31,7 @@ const NAV_ITEMS = [
     group: "Workspace",
     items: [
       { label: "Dashboard", href: "/workspace/dashboard", icon: "📈" },
+      { label: "Boards", href: "/workspace/boards", icon: "📋" },
       { label: "Tasks", href: "/workspace/tasks", icon: "✅" },
       { label: "Documents", href: "/workspace/documents", icon: "📄" },
     ],
