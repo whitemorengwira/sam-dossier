@@ -163,16 +163,12 @@ export default function ValidatedDocumentEditorPage() {
     setShowExport(false)
   }
 
-  const exportDOCX = async () => {
+  const exportDOCX = () => {
     if (!editorRef.current || !doc) return
-    try {
-      const htmlDocx = (await import('html-docx-js')).default
-      const content = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${editorRef.current.innerHTML}</body></html>`
-      const blob = htmlDocx.asBlob(content)
-      downloadBlob(blob, `${doc.title}.docx`)
-    } catch {
-      alert('DOCX export failed. Please try HTML or PDF instead.')
-    }
+    // Word can open HTML files saved with .doc extension and proper MIME type
+    const content = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${doc.title}</title><style>body{font-family:'Calibri',sans-serif;font-size:12pt;line-height:1.6;color:#202124;max-width:100%}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}img{max-width:100%}</style></head><body>${editorRef.current.innerHTML}</body></html>`
+    const blob = new Blob([content], { type: 'application/msword' })
+    downloadBlob(blob, `${doc.title}.doc`)
     setShowExport(false)
   }
 
