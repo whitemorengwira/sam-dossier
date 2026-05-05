@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   Menu, X, Home, LayoutDashboard, Pickaxe, Shield, Wrench, 
   Users, DollarSign, ClipboardCheck, Package, Diamond, 
-  Fingerprint, BarChart3, Plus 
+  Fingerprint, BarChart3, Plus, ArrowLeft 
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -48,6 +48,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <Link href="/dashboard/overview" className="text-sm font-medium text-[#94a3b8] hover:text-white transition-colors flex items-center gap-1.5 md:mr-2">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden md:inline">Back to Dossier</span>
+          </Link>
           <button className="btn-primary !p-2 md:!px-4 md:!py-2">
             <Plus className="w-4 h-4" />
             <span className="hidden md:inline">New</span>
