@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useCmsStore } from '@/lib/store/useCmsStore'
 import { HexColorPicker } from 'react-colorful'
-import { X, TextAa, PaintBucket, Image as ImageIcon, TextBolder, TextItalic } from '@phosphor-icons/react'
+import { X, TextAa, PaintBucket, Image as ImageIcon, TextB as TextBolder, TextItalic } from '@phosphor-icons/react'
 
 export function PropertyPanel() {
   const { blocks, selectedBlockId, updateBlock, selectBlock } = useCmsStore()
