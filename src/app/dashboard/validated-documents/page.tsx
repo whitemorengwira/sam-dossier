@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
@@ -15,6 +15,8 @@ import {
   ArrowRight,
 } from '@phosphor-icons/react'
 import { VALIDATED_DOCUMENTS } from '@/lib/validated-documents'
+import { loadFinalisedDocuments } from '@/lib/documents-data'
+import type { GDocsDocument } from '@/types'
 
 const CATEGORY_META: Record<string, { colour: string; icon: React.ReactNode }> = {
   corporate: { colour: '#D4AF37', icon: <Buildings size={18} weight="duotone" /> },
@@ -31,9 +33,28 @@ export default function ValidatedDocumentsPage() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [cat, setCat] = useState('ALL')
+  const [finalisedDocs, setFinalisedDocs] = useState<GDocsDocument[]>([])
+
+  useEffect(() => {
+    setFinalisedDocs(loadFinalisedDocuments())
+  }, [])
+
+  // Merge R2 master docs + finalised docs from the vault
+  const allDocs = useMemo(() => {
+    const r2Items = VALIDATED_DOCUMENTS.map(d => ({
+      id: d.id, title: d.title, category: d.category,
+      description: d.description, source: 'r2' as const,
+    }))
+    const finItems = finalisedDocs.map(d => ({
+      id: d.id, title: d.title, category: d.category || 'corporate',
+      description: `Finalised from Document Vault on ${new Date(d.lastModified).toLocaleDateString('en-GB')}`,
+      source: 'finalised' as const,
+    }))
+    return [...finItems, ...r2Items]
+  }, [finalisedDocs])
 
   const filtered = useMemo(() => {
-    let list = [...VALIDATED_DOCUMENTS]
+    let list = [...allDocs]
     if (search) {
       const q = search.toLowerCase()
       list = list.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q))
@@ -42,7 +63,7 @@ export default function ValidatedDocumentsPage() {
       list = list.filter(d => d.category === cat.toLowerCase())
     }
     return list
-  }, [search, cat])
+  }, [search, cat, allDocs])
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>

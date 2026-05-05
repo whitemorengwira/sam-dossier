@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap } from '@phosphor-icons/react'
+import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap, ShieldCheck } from '@phosphor-icons/react'
 import EditorToolbar from '@/components/documents/EditorToolbar'
 import MenuBar from '@/components/documents/MenuBar'
 import Ruler from '@/components/documents/Ruler'
@@ -12,7 +12,7 @@ import PageSetupModal, { type PageSettings } from '@/components/documents/modals
 import ShareModal from '@/components/documents/modals/ShareModal'
 import KeyboardShortcutsModal from '@/components/documents/modals/KeyboardShortcutsModal'
 import OutlinePanel from '@/components/documents/panels/OutlinePanel'
-import { loadDocuments, saveDocuments, loadVersions, saveVersion, TEAM } from '@/lib/documents-data'
+import { loadDocuments, saveDocuments, loadVersions, saveVersion, saveFinalisedDocument, TEAM } from '@/lib/documents-data'
 import type { GDocsDocument, SharedUser } from '@/types'
 import type { DocVersion } from '@/lib/documents-data'
 import styles from './page.module.css'
@@ -319,6 +319,29 @@ export default function DocumentEditorPage() {
           <button className={`${styles.publishBtn} ${isPublished ? styles.live : ''}`} onClick={togglePublish}>
             <Rocket size={16} /> {isPublished ? '● Live' : 'Go Live'}
           </button>
+
+          {signStatus === 'signed' && (
+            <button
+              onClick={() => {
+                if (!doc || !canvasRef.current) return
+                if (!confirm('Finalise this document and move it to the Validated Documents Vault? This action cannot be undone.')) return
+                const finalDoc = { ...doc, content: canvasRef.current.innerHTML, signatureStatus: 'signed' as const, lastModified: new Date().toISOString() }
+                saveFinalisedDocument(finalDoc)
+                const docs = loadDocuments().filter(d => d.id !== doc.id)
+                saveDocuments(docs)
+                router.push('/dashboard/validated-documents')
+              }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '6px 12px', fontSize: 12, fontWeight: 600,
+                background: 'rgba(19,115,51,0.15)', border: '1px solid rgba(19,115,51,0.4)',
+                color: '#137333', cursor: 'pointer', borderRadius: 4,
+                fontFamily: 'Google Sans, sans-serif',
+              }}
+            >
+              <ShieldCheck size={16} /> Finalise → Validated Docs
+            </button>
+          )}
 
           <button className={`${styles.commentToggle} ${showComments ? styles.active : ''}`} onClick={() => { setShowComments(!showComments); setShowVersions(false) }}>
             <ChatCircle size={18} />
