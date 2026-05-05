@@ -1,7 +1,7 @@
 // src/lib/editor/extensions/NexusImage.ts
 import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-// import { NexusImageView } from '@/components/editor/NexusImageView'; // We will create this
+import { NexusImageView } from '@/components/editor/NexusImageView';
 
 export type ImageLayout =
   | 'inline'
@@ -40,6 +40,8 @@ export interface NexusImageAttrs {
   linkHref?: string;
   documentId?: string;
   storageKey?: string;
+  posX?: number;
+  posY?: number;
 }
 
 declare module '@tiptap/core' {
@@ -86,6 +88,8 @@ export const NexusImage = Node.create({
       shadowColor: { default: 'rgba(0,0,0,0.3)' },
       linkHref: { default: null },
       storageKey: { default: null },
+      posX: { default: 0 },
+      posY: { default: 0 },
     };
   },
 
@@ -110,4 +114,9 @@ export const NexusImage = Node.create({
       },
     };
   },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(NexusImageView);
+  },
 });
+
