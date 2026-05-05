@@ -30,6 +30,7 @@ import {
   Flag,
   CheckCircle,
   ShieldCheck,
+  Tray,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useState, useEffect, useCallback } from 'react'
@@ -85,6 +86,7 @@ const navigation: NavGroup[] = [
     items: [
       { label: 'Documents', href: '/dashboard/documents', icon: <Folder size={20} weight="duotone" /> },
       { label: 'Validated Docs', href: '/dashboard/validated-documents', icon: <ShieldCheck size={20} weight="duotone" /> },
+      { label: 'Received External', href: '/dashboard/received-docs', icon: <Tray size={20} weight="duotone" /> },
       { label: 'PDF Editor (Pro)', href: '/dashboard/pdf-editor', icon: <FilePdf size={20} weight="duotone" /> },
       { label: 'Presentations', href: '/dashboard/presentations', icon: <ProjectorScreen size={20} weight="duotone" /> },
     ],
