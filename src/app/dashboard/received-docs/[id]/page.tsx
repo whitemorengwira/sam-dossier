@@ -20,6 +20,7 @@ const FORMAT_META: Record<string, { colour: string; icon: React.ReactNode; label
   pptx:  { colour: '#d14524', icon: <MicrosoftPowerpointLogo size={18} weight="duotone" />, label: 'PowerPoint' },
   xlsx:  { colour: '#137333', icon: <Table size={18} weight="duotone" />, label: 'Excel' },
   image: { colour: '#9334e6', icon: <ImageIcon size={18} weight="duotone" />, label: 'Image' },
+  video: { colour: '#e040fb', icon: <File size={18} weight="duotone" />, label: 'Video' },
   link:  { colour: '#D4AF37', icon: <LinkSimple size={18} weight="duotone" />, label: 'Link' },
   other: { colour: '#5f6368', icon: <File size={18} weight="duotone" />, label: 'File' },
 }
@@ -120,6 +121,13 @@ export default function ReceivedDocViewerPage() {
             <img src={doc.publicUrl} alt={doc.title}
               style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }}
             />
+          </div>
+        ) : doc.format === 'video' ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 32, background: '#000' }}>
+            <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '100%' }}>
+              <source src={doc.publicUrl} />
+              Your browser does not support the video tag.
+            </video>
           </div>
         ) : (
           <iframe

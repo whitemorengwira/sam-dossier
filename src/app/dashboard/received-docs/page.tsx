@@ -21,6 +21,7 @@ const FORMAT_META: Record<string, { colour: string; icon: React.ReactNode; label
   pptx:  { colour: '#d14524', icon: <MicrosoftPowerpointLogo size={18} weight="duotone" />, label: 'PowerPoint' },
   xlsx:  { colour: '#137333', icon: <Table size={18} weight="duotone" />, label: 'Excel' },
   image: { colour: '#9334e6', icon: <ImageIcon size={18} weight="duotone" />, label: 'Image' },
+  video: { colour: '#e040fb', icon: <File size={18} weight="duotone" />, label: 'Video' },
   link:  { colour: '#D4AF37', icon: <LinkSimple size={18} weight="duotone" />, label: 'Link' },
   other: { colour: '#5f6368', icon: <File size={18} weight="duotone" />, label: 'File' },
 }
@@ -121,8 +122,8 @@ export default function ReceivedExternalDocsPage() {
         </div>
 
         <input ref={fileInputRef} type="file" hidden
-          accept=".pdf,.html,.htm,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.svg,.txt"
-          onChange={e => { const f = e.target.files?.[0]; if (f) handleUpload(f); e.target.value = '' }}
+          accept=".pdf,.html,.htm,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.svg,.bmp,.tiff,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.txt"
+          onChange={e => { const f = e.target.files?.[0]; if (f) { if (f.size > 100 * 1024 * 1024) { alert('File exceeds the 100 MB limit.'); return; } handleUpload(f); } e.target.value = '' }}
         />
 
         <button onClick={() => fileInputRef.current?.click()} disabled={uploading}

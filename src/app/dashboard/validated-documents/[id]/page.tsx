@@ -189,10 +189,39 @@ export default function ValidatedDocumentEditorPage() {
   const handleUpload = () => {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = '.html,.htm,.txt'
+    input.accept = '.html,.htm,.txt,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.svg,.bmp,.tiff,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg'
     input.onchange = () => {
       const file = input.files?.[0]
       if (!file) return
+      if (file.size > 100 * 1024 * 1024) {
+        alert('File exceeds the 100 MB limit. Please choose a smaller file.')
+        return
+      }
+      // For images, embed inline
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader()
+        reader.onload = () => {
+          if (editorRef.current) {
+            editorRef.current.innerHTML += `<div style="margin:16px 0"><img src="${reader.result}" style="max-width:100%;height:auto" alt="${file.name}"/></div>`
+            save()
+          }
+        }
+        reader.readAsDataURL(file)
+        return
+      }
+      // For video, embed inline
+      if (file.type.startsWith('video/')) {
+        const reader = new FileReader()
+        reader.onload = () => {
+          if (editorRef.current) {
+            editorRef.current.innerHTML += `<div style="margin:16px 0"><video controls style="max-width:100%"><source src="${reader.result}" type="${file.type}"/>Your browser does not support the video tag.</video></div>`
+            save()
+          }
+        }
+        reader.readAsDataURL(file)
+        return
+      }
+      // For text/html files, replace content
       const reader = new FileReader()
       reader.onload = () => {
         if (editorRef.current) {

@@ -11,7 +11,7 @@ export interface ReceivedDoc {
   id: string
   fileName: string
   title: string
-  format: 'pdf' | 'html' | 'docx' | 'pptx' | 'xlsx' | 'link' | 'image' | 'other'
+  format: 'pdf' | 'html' | 'docx' | 'pptx' | 'xlsx' | 'link' | 'image' | 'video' | 'other'
   r2Key: string
   publicUrl: string
   uploadedAt: string
@@ -64,7 +64,8 @@ export function detectFormat(fileName: string): ReceivedDoc['format'] {
   if (ext === 'docx' || ext === 'doc') return 'docx'
   if (ext === 'pptx' || ext === 'ppt') return 'pptx'
   if (ext === 'xlsx' || ext === 'xls') return 'xlsx'
-  if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image'
+  if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'tiff'].includes(ext)) return 'image'
+  if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(ext)) return 'video'
   return 'other'
 }
 

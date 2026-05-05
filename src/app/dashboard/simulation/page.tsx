@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import { GameController, ArrowRight, Lightning, Drop, Factory, Scales } from '@phosphor-icons/react'
+
+const SimulationClient = dynamic(() => import('./SimulationClient'), { ssr: false })
 
 const stages = [
   { id: 'extraction', name: 'Extraction', icon: <Lightning size={24} weight="duotone" />, desc: 'Ore is extracted from underground shafts via stoping method. Hand-powered winches hoist ore to surface. Target: 4-10 tonnes/day.', metrics: { input: '10 tonnes/day raw ore', output: '10 tonnes hauled to surface', grade: '15-25 g/t' }, colour: 'from-info/30 to-info/5' },
@@ -69,6 +72,9 @@ export default function SimulationPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* Mine Ecosystem Simulation */}
+      <SimulationClient />
 
       {/* Monthly Production Calculator */}
       <div className="glass-card p-8 lg:p-10">
