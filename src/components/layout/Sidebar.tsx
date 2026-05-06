@@ -130,6 +130,12 @@ const navigation: NavGroup[] = [
       { label: 'Launch Workspace', href: '/dashboard/launch-2027', icon: <Rocket size={20} weight="duotone" /> },
     ],
   },
+  {
+    title: 'Administration',
+    items: [
+      { label: 'Admin Portal', href: '/dashboard/admin', icon: <ShieldCheck size={20} weight="duotone" /> },
+    ],
+  },
 ]
 
 export default function Sidebar() {
