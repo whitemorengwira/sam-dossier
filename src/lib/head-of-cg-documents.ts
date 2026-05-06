@@ -30,30 +30,30 @@ const PREFIX = 'sam-dossier/public/head-of-cg'
 const KNOWN_R2_DOCS: Omit<CGDocument, 'publicUrl'>[] = [
   {
     id: 'cg-doc-hr-policy',
-    fileName: 'SOCINGA AFRICA BUSINESS COMPANY  HUMAN RESOURCE POLICY.docx',
+    fileName: 'SOCINGA AFRICA BUSINESS COMPANY  HUMAN RESOURCE POLICY.pdf',
     title: 'Socinga Africa Human Resource Policy',
     category: 'policy',
     status: 'active',
-    r2Key: `${PREFIX}/SOCINGA AFRICA BUSINESS COMPANY  HUMAN RESOURCE POLICY.docx`,
+    r2Key: `/documents/head-of-cg/hr.pdf`,
     uploadedAt: '2026-05-06T20:11:00Z',
-    source: 'r2',
+    source: 'local',
   },
   {
     id: 'cg-doc-share-structure',
-    fileName: 'SOCINGA AFRICA BUSINESS COMPANY SHARE STRUCTURE.docx',
+    fileName: 'SOCINGA AFRICA BUSINESS COMPANY SHARE STRUCTURE.pdf',
     title: 'Socinga Africa Share Structure',
     category: 'structure',
     status: 'active',
-    r2Key: `${PREFIX}/SOCINGA AFRICA BUSINESS COMPANY SHARE STRUCTURE.docx`,
+    r2Key: `/documents/head-of-cg/share.pdf`,
     uploadedAt: '2026-05-06T20:11:00Z',
-    source: 'r2',
+    source: 'local',
   },
 ]
 
 export function getKnownCGDocs(): CGDocument[] {
   return KNOWN_R2_DOCS.map(d => ({
     ...d,
-    publicUrl: getGlobalAssetUrl(d.r2Key),
+    publicUrl: d.r2Key.startsWith('/') ? d.r2Key : getGlobalAssetUrl(d.r2Key),
   }))
 }
 

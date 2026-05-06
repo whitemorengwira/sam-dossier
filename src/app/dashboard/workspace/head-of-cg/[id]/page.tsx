@@ -13,8 +13,6 @@ import {
   type CGDocument,
 } from '@/lib/head-of-cg-documents'
 import { getDeletedDocIds } from '@/lib/deleted-docs'
-import NativeCGDoc from '@/components/documents/internal/NativeCGDoc'
-import { hrHtml, shareHtml } from '@/lib/cg-html-docs'
 
 const DocViewerWrapper = dynamic(() => import('@/components/documents/DocViewerWrapper'), {
   ssr: false,
@@ -57,8 +55,10 @@ export default function HeadOfCGDocViewerPage() {
   const statusMeta = CG_STATUS_META[doc.status] || CG_STATUS_META['active']
   const format = detectCGFormat(doc.fileName)
 
-  // Secure presigned URL via API route
-  const secureUrl = `/api/received-docs/view?r2Key=${encodeURIComponent(doc.r2Key)}`
+  // Secure presigned URL via API route or direct local path
+  const secureUrl = doc.r2Key.startsWith('/') 
+    ? doc.publicUrl 
+    : `/api/received-docs/view?r2Key=${encodeURIComponent(doc.r2Key)}`
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
@@ -131,11 +131,7 @@ export default function HeadOfCGDocViewerPage() {
 
       {/* Viewer - set height to a good percentage to allow scrolling to next docs */}
       <div style={{ display: 'flex', flexDirection: 'column', flex: '1 0 75vh', background: '#E8EAED', overflow: 'hidden' }}>
-        {doc.id === 'cg-doc-hr-policy' ? (
-          <NativeCGDoc htmlContent={hrHtml} />
-        ) : doc.id === 'cg-doc-share-structure' ? (
-          <NativeCGDoc htmlContent={shareHtml} />
-        ) : doc.fileName.toLowerCase().endsWith('.pdf') ? (
+        {doc.fileName.toLowerCase().endsWith('.pdf') ? (
           <iframe 
             src={`${secureUrl}#toolbar=1&navpanes=0&scrollbar=1&zoom=100`} 
             className="w-full h-full border-none bg-slate-900"
