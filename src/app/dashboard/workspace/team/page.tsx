@@ -83,7 +83,7 @@ export default function TeamPage() {
                 <div className="relative w-14 h-14 shrink-0">
                   <div className="w-14 h-14 bg-gradient-to-br from-gold/30 to-gold/10 border border-gold/30 flex items-center justify-center overflow-hidden">
                     {member.photoUrl ? (
-                      <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
+                      <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-center" />
                     ) : (
                       <span className="font-mono text-sm text-gold font-bold">{member.initials}</span>
                     )}
