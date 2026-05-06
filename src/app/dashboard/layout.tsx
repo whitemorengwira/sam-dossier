@@ -24,33 +24,41 @@ export default function DashboardLayout({
 
   useEffect(() => {
     async function checkAuth() {
-      // Local dev bypass if supabase url is placeholder
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL === '__REPLACE_ME__') {
+      // Local dev bypass if supabase url is placeholder or missing
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === '__REPLACE_ME__') {
         setUserStatus('approved');
         return;
       }
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
+      try {
+        const supabase = createClient()
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error || !session) {
+          setUserStatus('unauthenticated')
+          router.push('/')
+          return
+        }
+        
+        const meta = session.user.user_metadata || {}
+        
+        // Auto-approve the admin
+        if (session.user.email === 'hello@nwhite.systems') {
+          setUserStatus('approved')
+          setUserRole('admin')
+          return
+        }
+        
+        if (meta.is_approved === true || meta.role === 'admin') {
+          setUserStatus('approved')
+          setUserRole(meta.role || 'viewer')
+        } else {
+          setUserStatus('pending')
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err)
+        // If Supabase is misconfigured, fallback to unauthenticated so they don't get stuck
         setUserStatus('unauthenticated')
         router.push('/')
-        return
-      }
-      
-      const meta = session.user.user_metadata || {}
-      
-      // Auto-approve the admin
-      if (session.user.email === 'hello@nwhite.systems') {
-        setUserStatus('approved')
-        setUserRole('admin')
-        return
-      }
-      
-      if (meta.is_approved === true || meta.role === 'admin') {
-        setUserStatus('approved')
-        setUserRole(meta.role || 'viewer')
-      } else {
-        setUserStatus('pending')
       }
     }
     checkAuth()
