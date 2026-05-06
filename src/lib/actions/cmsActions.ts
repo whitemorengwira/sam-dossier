@@ -5,7 +5,7 @@ import { BlockData } from '@/lib/store/useCmsStore'
 
 // Save a new page version
 export async function savePageVersion(pageSlug: string, contentJson: BlockData[], label?: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   // get latest version number
@@ -42,7 +42,7 @@ export async function savePageVersion(pageSlug: string, contentJson: BlockData[]
 
 // Fetch latest page version
 export async function getLatestPageVersion(pageSlug: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('page_versions')
     .select('*')
@@ -56,7 +56,7 @@ export async function getLatestPageVersion(pageSlug: string) {
 
 // Fetch version history
 export async function getVersionHistory(pageSlug: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('page_versions')
     .select('id, version_number, saved_by, saved_at, label')
@@ -69,7 +69,7 @@ export async function getVersionHistory(pageSlug: string) {
 
 // Fetch specific version
 export async function getVersionById(versionId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('page_versions')
     .select('*')
@@ -88,7 +88,7 @@ export async function logCmsAction(
   beforeValue: any,
   afterValue: any
 ) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   await supabase.from('change_log').insert({
@@ -105,7 +105,7 @@ export async function logCmsAction(
 
 // Fetch audit log
 export async function getAuditLog() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('change_log')
     .select('*')
