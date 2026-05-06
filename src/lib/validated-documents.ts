@@ -13,7 +13,6 @@ export interface ValidatedDocument {
   title: string
   category: 'corporate' | 'legal' | 'compliance' | 'governance' | 'finance' | 'hr'
   r2Key: string
-  description: string
   signatureStatus: 'pending' | 'signed' | 'none'
 }
 
@@ -25,7 +24,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Establishment Policy',
     category: 'corporate',
     r2Key: `${PREFIX}/Establishment_Policy.html`,
-    description: 'Foundation and establishment policy for Socinga Africa.',
     signatureStatus: 'pending',
   },
   {
@@ -33,7 +31,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Structural Policy',
     category: 'governance',
     r2Key: `${PREFIX}/Structural_Policy.html`,
-    description: 'Guidelines on the structural framework and governance.',
     signatureStatus: 'pending',
   },
   {
@@ -41,7 +38,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Financial Policy',
     category: 'finance',
     r2Key: `${PREFIX}/Financial_Policy.html`,
-    description: 'Core financial policies and economic principles.',
     signatureStatus: 'pending',
   },
   {
@@ -49,7 +45,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Strategic Business Operations',
     category: 'corporate',
     r2Key: `${PREFIX}/Strategic_Business_Operations.html`,
-    description: 'Overview of strategic operations and business processes.',
     signatureStatus: 'pending',
   },
   {
@@ -57,7 +52,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Ecosystem Policies',
     category: 'compliance',
     r2Key: `${PREFIX}/Ecosystem_Policies.html`,
-    description: 'Framework for ecosystem management and compliance.',
     signatureStatus: 'pending',
   },
   {
@@ -65,7 +59,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Mining Strategy Addendum',
     category: 'legal',
     r2Key: `${PREFIX}/Mining_Strategy_Addendum.html`,
-    description: 'Supplementary document detailing the mining strategy.',
     signatureStatus: 'pending',
   },
   {
@@ -73,7 +66,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Mining Strategic Policy',
     category: 'corporate',
     r2Key: `${PREFIX}/Mining_Strategic_Policy.html`,
-    description: 'Core strategic policy governing mining operations.',
     signatureStatus: 'pending',
   },
   {
@@ -81,7 +73,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Corporate Services Structure',
     category: 'corporate',
     r2Key: `${PREFIX}/Corporate_Services_Structure.html`,
-    description: 'Organisational structure for corporate services.',
     signatureStatus: 'pending',
   },
   {
@@ -89,7 +80,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'Ecosystem Organogram',
     category: 'corporate',
     r2Key: `${PREFIX}/Ecosystem_Organogram.html`,
-    description: 'Visual representation of the ecosystem structure.',
     signatureStatus: 'pending',
   },
   {
@@ -97,7 +87,6 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
     title: 'SAM Mission Centre Budget',
     category: 'finance',
     r2Key: `${PREFIX}/SAM-mission-centre-budget.html`,
-    description: 'Financial budget and projections for the SAM Mission Centre.',
     signatureStatus: 'pending',
   },
 ]
@@ -114,34 +103,9 @@ export async function fetchValidatedDocumentHtml(doc: ValidatedDocument): Promis
     return await res.text()
   } catch {
     return `
-      <div style="font-family: 'Times New Roman', Times, serif; max-width: 800px; margin: 0 auto; padding: 48px; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05);">
-        <div style="text-align: center; margin-bottom: 40px;">
-          <h1 style="font-size: 28px; color: #0A1128; border-bottom: 2px solid #D4AF37; padding-bottom: 12px; display: inline-block;">
-            ${doc.title}
-          </h1>
-        </div>
-        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
-          This document serves as the official <strong>${doc.title}</strong> for Socinga Africa Mining. It outlines the foundational principles, structural guidelines, and operational frameworks critical to maintaining our institutional standards and compliance requirements.
-        </p>
-        <h3 style="color: #0A1128; font-size: 18px; margin-top: 32px; margin-bottom: 16px;">1. Purpose and Scope</h3>
-        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
-          The objective of this policy is to establish clear protocols and standard operating procedures. This framework applies to all stakeholders, management personnel, and operational units involved in the overarching corporate structure. Compliance with these directives is mandatory and subject to periodic review by the executive committee.
-        </p>
-        <h3 style="color: #0A1128; font-size: 18px; margin-top: 32px; margin-bottom: 16px;">2. Operational Guidelines</h3>
-        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
-          All related activities must align with the strategic objectives detailed herein. This includes rigorous risk assessment, continuous performance monitoring, and the implementation of robust reporting mechanisms to ensure transparency and accountability at all levels.
-        </p>
-        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
-          In the event of structural deviations or unforeseen operational challenges, the established contingencies must be activated immediately. The relevant departments are required to coordinate effectively to mitigate risks and restore normal operations without compromising safety or regulatory compliance.
-        </p>
-        <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; display: flex; justify-content: space-between;">
-          <p style="color: #80868b; font-size: 12px; font-style: italic;">
-            Category: ${doc.category.toUpperCase()}
-          </p>
-          <p style="color: #80868b; font-size: 12px; font-style: italic;">
-            Document ID: ${doc.id}
-          </p>
-        </div>
+      <div style="font-family: 'Times New Roman', Times, serif; max-width: 800px; margin: 0 auto; padding: 48px; text-align: center;">
+        <h1 style="font-size: 24px; color: #0A1128; margin-bottom: 16px;">${doc.title}</h1>
+        <p style="color: #80868b; font-size: 14px;">Unable to load document from R2. Please check your connection and try again.</p>
       </div>
     `
   }

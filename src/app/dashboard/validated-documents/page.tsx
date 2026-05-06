@@ -33,11 +33,10 @@ export default function ValidatedDocumentsPage() {
   const allDocs = useMemo(() => {
     const masterItems = VALIDATED_DOCUMENTS.map(d => ({
       id: d.id, title: d.title, category: d.category,
-      description: d.description, signatureStatus: d.signatureStatus,
+      signatureStatus: d.signatureStatus,
     }))
     const finItems = finalisedDocs.map(d => ({
       id: d.id, title: d.title, category: d.category || 'corporate',
-      description: `Finalised from Document Vault on ${new Date(d.lastModified).toLocaleDateString('en-GB')}`,
       signatureStatus: (d.signatureStatus || 'signed') as string,
     }))
     return [...finItems, ...masterItems]
@@ -47,7 +46,7 @@ export default function ValidatedDocumentsPage() {
     let list = [...allDocs]
     if (search) {
       const q = search.toLowerCase()
-      list = list.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q))
+      list = list.filter(d => d.title.toLowerCase().includes(q))
     }
     if (cat !== 'ALL') list = list.filter(d => d.category.toUpperCase() === cat)
     return list
@@ -111,9 +110,6 @@ export default function ValidatedDocumentsPage() {
                   <h4 className="text-text-primary font-body" style={{ fontWeight: 600, fontSize: 14, marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {doc.title}
                   </h4>
-                  <p className="text-text-muted" style={{ fontSize: 11, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {doc.description}
-                  </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
                     <span style={{ padding: '2px 8px', fontSize: 9, fontWeight: 700, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.5px', background: `${meta.colour}15`, color: meta.colour, border: `1px solid ${meta.colour}30` }}>
                       {doc.category}
