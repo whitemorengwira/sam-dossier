@@ -1,0 +1,99 @@
+/* Document Engine — SAM Dossier Shared Styles */
+
+/* ─── Toolbar ─────────────────────────────────────────────────── */
+.doc-toolbar {
+  position: sticky; top: 0; z-index: 99999;
+  display: flex; align-items: center; gap: 4px;
+  padding: 6px 12px;
+  background: #0A1128; border-bottom: 2px solid #D4AF37;
+  font-family: 'Inter', sans-serif;
+}
+.toolbar-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border: none; border-radius: 4px;
+  background: transparent; color: #D4AF37; cursor: pointer;
+  font-size: 14px; font-weight: 700; transition: all 0.15s;
+}
+.toolbar-btn:hover { background: rgba(212,175,55,0.15); }
+.toolbar-btn:active { background: rgba(212,175,55,0.25); }
+.toolbar-sep { width: 1px; height: 24px; background: rgba(212,175,55,0.2); margin: 0 4px; }
+.edit-toggle {
+  width: auto !important; padding: 4px 16px !important;
+  font-size: 11px !important; letter-spacing: 0.5px;
+  border: 1px solid #D4AF37 !important; margin-left: auto !important;
+  font-family: 'JetBrains Mono', monospace;
+}
+.edit-toggle.off { background: transparent; color: #D4AF37; }
+.edit-toggle.on { background: #D4AF37; color: #0A1128; }
+
+/* ─── Editable state ──────────────────────────────────────────── */
+#doc-content[contenteditable="true"] {
+  outline: none;
+}
+#doc-content[contenteditable="true"] p:hover,
+#doc-content[contenteditable="true"] li:hover,
+#doc-content[contenteditable="true"] td:hover,
+#doc-content[contenteditable="true"] h1:hover,
+#doc-content[contenteditable="true"] h2:hover,
+#doc-content[contenteditable="true"] h3:hover,
+#doc-content[contenteditable="true"] h4:hover {
+  outline: 2px dashed rgba(212,175,55,0.3);
+  outline-offset: 2px;
+  background: rgba(212,175,55,0.03);
+}
+#doc-content[contenteditable="true"] *:focus {
+  outline: 2px solid rgba(212,175,55,0.5);
+  outline-offset: 2px;
+}
+
+/* ─── Enhanced Signing Section ────────────────────────────────── */
+.enh-signing-section {
+  margin-top: 48px; border-top: 3px solid #D4AF37; padding-top: 32px;
+  page-break-before: always;
+}
+.enh-signing-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px; font-weight: 700; color: #0f172a;
+  text-align: center; text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.enh-signing-subtitle {
+  font-size: 13px; color: #64748b; text-align: center; margin-bottom: 24px;
+}
+.enh-sig-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+.enh-sig-block {
+  padding: 16px; background: #fafbfc; border: 1px solid #e2e8f0;
+}
+.sig-canvas {
+  display: block; width: 100%; height: 120px;
+  border: 1px solid #0A1128; cursor: crosshair;
+  background: #fff; touch-action: none;
+}
+.enh-sig-label {
+  font-size: 12px; font-weight: 700; color: #0A1128;
+  margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.enh-sig-date { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+.enh-sig-clear {
+  font-size: 10px; color: #ef4444; cursor: pointer;
+  border: none; background: none; float: right;
+  margin-top: -24px; font-weight: 600; padding: 4px 8px;
+}
+.enh-sig-clear:hover { color: #b91c1c; text-decoration: underline; }
+.enh-gold-bar {
+  height: 3px; margin-top: 32px;
+  background: linear-gradient(90deg, #D4AF37, #F0D060, #D4AF37);
+}
+.enh-footer {
+  text-align: center; margin-top: 16px; font-size: 11px; color: #94a3b8;
+}
+
+/* ─── Print ───────────────────────────────────────────────────── */
+@media print {
+  .doc-toolbar { display: none !important; }
+  .enh-sig-clear { display: none !important; }
+}

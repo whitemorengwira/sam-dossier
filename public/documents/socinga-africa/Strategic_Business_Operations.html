@@ -11,9 +11,10 @@
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #0f172a; }
         .canvas-container { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; touch-action: none; }
     </style>
+    <link rel="stylesheet" href="/document-engine.css">
 </head>
 <body class="p-8 md:p-16">
-    <div class="max-w-4xl mx-auto bg-white p-10 md:p-14 shadow-xl border-t-4 border-amber-600 rounded-sm">
+    <div id="doc-content" class="max-w-4xl mx-auto bg-white p-10 md:p-14 shadow-xl border-t-4 border-amber-600 rounded-sm">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold uppercase tracking-wider mb-2">Socinga Africa Business Company</h1>
             <h2 class="text-2xl text-amber-700">Strategic Business Operations Policy</h2>
@@ -58,35 +59,40 @@
 
         <h3 class="text-xl font-bold mt-8 border-b pb-2 mb-4">Manager Responsible</h3>
         <p class="mb-8">The Director of Corporate Services is the responsible manager or functionary to review and maintain this plan, and the CEO is responsible for approval. Once every year, the board must receive the full and complete update on the amendment or review of this document.</p>
-
-        <div class="mt-16 border-t-2 border-slate-200 pt-8">
-            <h3 class="text-lg font-bold mb-6 text-center uppercase tracking-wide">Duly Signed and Approved</h3>
-            <div class="flex flex-col md:flex-row justify-center gap-10 max-w-2xl mx-auto">
-                <div class="w-full">
-                    <canvas id="sig-md" width="300" height="100" class="canvas-container w-full mb-2"></canvas>
-                    <div class="flex justify-between items-center"><p class="font-bold">Managing Director</p><button onclick="clearPad('sig-md')" class="text-xs text-red-500">Clear</button></div>
-                </div>
-                <div class="w-full text-center">
-                    <div class="w-32 h-32 mx-auto border-4 border-slate-300 rounded-full flex items-center justify-center text-slate-300 opacity-50 font-serif text-xs">OATH STAMP</div>
-                    <p class="font-bold mt-2">Company Seal</p>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <script>
-        function initPad(id) {
-            const canvas = document.getElementById(id); const ctx = canvas.getContext('2d'); let isDrawing = false;
-            const getPos = (e) => { const rect = canvas.getBoundingClientRect(); return { x: (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left, y: (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top }; };
-            const start = (e) => { e.preventDefault(); isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
-            const draw = (e) => { if(!isDrawing) return; e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
-            const stop = () => { isDrawing = false; };
-            canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stop); canvas.addEventListener('mouseout', stop);
-            canvas.addEventListener('touchstart', start, {passive: false}); canvas.addEventListener('touchmove', draw, {passive: false}); canvas.addEventListener('touchend', stop);
-        }
-        window.onload = () => { document.querySelectorAll('.canvas-container').forEach(p => initPad(p.id)); };
-        function clearPad(id) { const c = document.getElementById(id); const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); ctx.beginPath(); }
-    </script>
+    <div class="enh-signing-section">
+        <h3 class="enh-signing-title">Duly Signed and Approved</h3>
+        <p class="enh-signing-subtitle">By affixing their signatures below, the undersigned confirm that this document has been duly approved by the Board of Directors of Socinga Africa.</p>
+        <div class="enh-sig-grid">
+
+            <div class="enh-sig-block">
+                <canvas id="sig-md" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-md')">✕ Clear</button>
+                <div class="enh-sig-label">Ms Jabulile Dladla — Managing Director</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-ceo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-ceo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Whitemore Ngwira — Chief Executive Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-chair" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-chair')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Tsekane Lukie Tshabalala — Chairperson</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+        </div>
+        <div class="enh-gold-bar"></div>
+        <p class="enh-footer">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved. Confidential &amp; Proprietary.</p>
+    </div>
+
+    <script src="/document-engine.js"></script>
+    <script src="/signing-bridge.js"></script>
 </body>
 </html>
     

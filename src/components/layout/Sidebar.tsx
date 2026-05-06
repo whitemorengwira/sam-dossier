@@ -176,10 +176,12 @@ export default function Sidebar() {
       )}
     >
       {/* ── Logo ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-gold/15 shrink-0">
-        <div className="w-8 h-8 bg-gradient-to-br from-gold to-gold-light flex items-center justify-center shrink-0">
-          <span className="text-onyx font-bold text-sm font-display">S</span>
-        </div>
+      <Link href="/dashboard" className="flex items-center gap-3 px-4 h-16 border-b border-gold/15 shrink-0 hover:bg-gold/[0.04] transition-colors">
+        <img
+          src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/socinga-logos/png/sa-icon-dark-ui.png"
+          alt="Socinga Africa"
+          className="w-8 h-8 object-contain shrink-0 drop-shadow-[0_0_6px_rgba(212,175,55,0.4)]"
+        />
         {!collapsed && (
           <div className="overflow-hidden">
             <h5 className="text-gold font-display text-sm font-bold tracking-wide leading-tight">
@@ -190,7 +192,7 @@ export default function Sidebar() {
             </p>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* ── Navigation ───────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6 scrollbar-thin">

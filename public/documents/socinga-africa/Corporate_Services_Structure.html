@@ -13,9 +13,10 @@
         .node-accent { background: #d97706; color: white; border-color: #b45309; }
         .sub-list p { font-size: 0.85rem; color: #475569; margin: 4px 0; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; }
     </style>
+    <link rel="stylesheet" href="/document-engine.css">
 </head>
 <body class="p-8">
-    <div class="max-w-5xl mx-auto bg-white p-10 shadow-xl rounded-xl">
+    <div id="doc-content" class="max-w-5xl mx-auto bg-white p-10 shadow-xl rounded-xl">
         <h1 class="text-3xl font-serif font-bold text-center mb-10 text-slate-900 border-b pb-4">Socinga Africa Corporate Services Structure</h1>
 
         <!-- Top Execs -->
@@ -108,6 +109,46 @@
         </div>
 
     </div>
+
+    <div class="enh-signing-section">
+        <h3 class="enh-signing-title">Duly Signed and Approved</h3>
+        <p class="enh-signing-subtitle">By affixing their signatures below, the undersigned confirm that this document has been duly approved by the Board of Directors of Socinga Africa.</p>
+        <div class="enh-sig-grid">
+
+            <div class="enh-sig-block">
+                <canvas id="sig-md" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-md')">✕ Clear</button>
+                <div class="enh-sig-label">Ms Jabulile Dladla — Managing Director</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-cfo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-cfo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Mike Dotsey — Chief Financial Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-ceo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-ceo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Whitemore Ngwira — Chief Executive Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-chair" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-chair')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Tsekane Lukie Tshabalala — Chairperson</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+        </div>
+        <div class="enh-gold-bar"></div>
+        <p class="enh-footer">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved. Confidential &amp; Proprietary.</p>
+    </div>
+
+    <script src="/document-engine.js"></script>
+    <script src="/signing-bridge.js"></script>
 </body>
 </html>
     

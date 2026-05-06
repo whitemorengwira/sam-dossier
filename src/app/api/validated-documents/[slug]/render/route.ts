@@ -1,49 +1,31 @@
 /**
  * Render Route — Validated Documents
  *
- * Serves the original HTML document with injected enhancements:
- * 1. A data-document-slug attribute on the <body> tag.
- * 2. Centering / overflow CSS fixes.
- * 3. The document-enhancer.js script (signing pads + editability).
- * 4. The signing-bridge.js script (persistence to Supabase).
+ * Serves the enhanced HTML document.
+ * It first checks R2 for any saved edits (acting like Google Docs).
+ * If no edits exist, it serves the pristine original from disc.
  *
- * The original file on disc is never modified.
+ * Injects:
+ * a data-document-slug attribute on the <body> tag (for signing-bridge).
  */
 
 import { NextRequest } from 'next/server';
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { getDocumentBySlug } from '@/lib/validated-documents/registry';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 export const dynamic = 'force-dynamic';
 
-/** CSS injected into every rendered document for proper centering and display */
-const INJECTED_CSS = `
-<style data-sam-enhancer="true">
-  /* Ensure the document fills the viewport and centres content */
-  html, body {
-    width: 100% !important;
-    min-height: 100vh;
-    margin: 0 !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box !important;
-  }
-  /* Constrain wide containers */
-  .container, [class*="max-w-"] {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  /* Ensure tables don't overflow */
-  table {
-    table-layout: auto !important;
-    word-break: break-word;
-  }
-  /* Print media - remove sticky bar */
-  @media print {
-    .enh-edit-bar { display: none !important; }
-  }
-</style>
-`;
+const s3 = new S3Client({
+  region: 'auto',
+  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT || 'https://905a6490298a11b3dfd862b68ff11f3d.r2.cloudflarestorage.com',
+  credentials: {
+    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || '562c53ab7c3a061251d97c1c97f04dca',
+    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || '3662479c2c15019e7cd0c45232e568f5f50ef68fa3c88e3f27b69af6ef13a9f4',
+  },
+});
+const BUCKET = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'socinga-heavy-assets';
 
 export async function GET(
   request: NextRequest,
@@ -56,38 +38,34 @@ export async function GET(
     return new Response('Document not found', { status: 404 });
   }
 
-  const filePath = path.join(
-    process.cwd(),
-    'public',
-    'documents',
-    'socinga-africa',
-    doc.filename
-  );
+  let html = '';
 
-  let html: string;
+  // 1. Try to fetch the latest edited version from R2
   try {
-    html = await readFile(filePath, 'utf-8');
-  } catch {
-    return new Response('Document file not found on disc', { status: 404 });
+    const key = `sam-dossier/edits/${slug}.html`;
+    const response = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+    const bodyString = await response.Body?.transformToString('utf-8');
+    if (bodyString) {
+      html = bodyString;
+    }
+  } catch (error) {
+    // If not found in R2, we fallback to the original file
   }
 
-  // Inject data-document-slug onto the <body> tag
-  html = html.replace(
-    /<body([^>]*)>/i,
-    `<body$1 data-document-slug="${slug}">`
-  );
+  // 2. Fallback to original local file
+  if (!html) {
+    const filePath = path.join(process.cwd(), 'public', 'documents', 'socinga-africa', doc.filename);
+    try {
+      html = await readFile(filePath, 'utf-8');
+    } catch {
+      return new Response('Document file not found on disc', { status: 404 });
+    }
+  }
 
-  // Inject centering CSS before </head>
-  html = html.replace(
-    /<\/head>/i,
-    `${INJECTED_CSS}\n</head>`
-  );
-
-  // Inject the enhancer and signing bridge scripts before </body>
-  html = html.replace(
-    /<\/body>/i,
-    '<script src="/document-enhancer.js" defer></script>\n<script src="/signing-bridge.js" defer></script>\n</body>'
-  );
+  // 3. Inject data-document-slug onto the <body> tag (for signing-bridge persistence)
+  if (!html.includes(`data-document-slug="${slug}"`)) {
+    html = html.replace(/<body([^>]*)>/i, `<body$1 data-document-slug="${slug}">`);
+  }
 
   return new Response(html, {
     status: 200,

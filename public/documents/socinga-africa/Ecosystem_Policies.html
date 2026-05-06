@@ -11,9 +11,10 @@
         h1, h2, h3 { font-family: 'Playfair Display', serif; color: #0f172a; }
         .canvas-container { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; touch-action: none; }
     </style>
+    <link rel="stylesheet" href="/document-engine.css">
 </head>
 <body class="p-8 md:p-16">
-    <div class="max-w-4xl mx-auto bg-white p-10 md:p-14 shadow-xl border-t-4 border-amber-600 rounded-sm">
+    <div id="doc-content" class="max-w-4xl mx-auto bg-white p-10 md:p-14 shadow-xl border-t-4 border-amber-600 rounded-sm">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold uppercase tracking-wider mb-2">Socinga Africa</h1>
             <h2 class="text-2xl text-amber-700">Ecosystem Policies & OPS Framework</h2>
@@ -74,54 +75,48 @@
         <h3 class="text-xl font-bold mt-8 border-b pb-2 mb-4">Final Decision Making During Transitional Window</h3>
         <p class="mb-4">The sole purpose is to give effect to the protection of the fiduciary records of Socinga Mgabadeli Pty Ltd to assist a smooth build-up of the new business juristic body, Socinga Africa.</p>
         <p class="mb-8">While Socinga Africa is being built, the Managing Director, Ms Jabulile Dladla, will have a final say or decision or word over the operational activities of Socinga Africa.</p>
-
-        <div class="mt-16 border-t-2 border-slate-200 pt-8">
-            <h3 class="text-lg font-bold mb-6 text-center uppercase tracking-wide">Declaration & Signatures</h3>
-            <p class="mb-6 text-sm">Thus done and signed under my hand on this day the _________ of ____________________ 2026.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <!-- Jabulile -->
-                <div>
-                    <canvas id="sig-jabu" width="300" height="100" class="canvas-container w-full mb-2"></canvas>
-                    <div class="flex justify-between items-center text-sm"><p class="font-bold">Jabulile Dladla (MD)</p><button onclick="clearPad('sig-jabu')" class="text-xs text-red-500">Clear</button></div>
-                    <div class="mt-2 text-xs text-slate-500 flex justify-between"><span>Date: _________</span><span>Witness: _________</span></div>
-                </div>
-                <!-- Mike -->
-                <div>
-                    <canvas id="sig-mike" width="300" height="100" class="canvas-container w-full mb-2"></canvas>
-                    <div class="flex justify-between items-center text-sm"><p class="font-bold">Mike Dotsey (CFO)</p><button onclick="clearPad('sig-mike')" class="text-xs text-red-500">Clear</button></div>
-                    <div class="mt-2 text-xs text-slate-500 flex justify-between"><span>Date: _________</span><span>Witness: _________</span></div>
-                </div>
-                <!-- Whitemore -->
-                <div>
-                    <canvas id="sig-white" width="300" height="100" class="canvas-container w-full mb-2"></canvas>
-                    <div class="flex justify-between items-center text-sm"><p class="font-bold">Whitemore Ngwira (CEO)</p><button onclick="clearPad('sig-white')" class="text-xs text-red-500">Clear</button></div>
-                    <div class="mt-2 text-xs text-slate-500 flex justify-between"><span>Date: _________</span><span>Witness: _________</span></div>
-                </div>
-                <!-- Tsekane -->
-                <div>
-                    <canvas id="sig-tsekane" width="300" height="100" class="canvas-container w-full mb-2"></canvas>
-                    <div class="flex justify-between items-center text-sm"><p class="font-bold">Tsekane Lukie Tshabalala (Chair)</p><button onclick="clearPad('sig-tsekane')" class="text-xs text-red-500">Clear</button></div>
-                    <div class="mt-2 text-xs text-slate-500 flex justify-between"><span>Date: _________</span><span>Witness: _________</span></div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <script>
-        function initPad(id) {
-            const canvas = document.getElementById(id); const ctx = canvas.getContext('2d');
-            let isDrawing = false;
-            const getPos = (e) => { const rect = canvas.getBoundingClientRect(); return { x: (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left, y: (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top }; };
-            const start = (e) => { e.preventDefault(); isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
-            const draw = (e) => { if(!isDrawing) return; e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
-            const stop = () => { isDrawing = false; };
-            canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stop); canvas.addEventListener('mouseout', stop);
-            canvas.addEventListener('touchstart', start, {passive: false}); canvas.addEventListener('touchmove', draw, {passive: false}); canvas.addEventListener('touchend', stop);
-        }
-        window.onload = () => { document.querySelectorAll('.canvas-container').forEach(p => initPad(p.id)); };
-        function clearPad(id) { const c = document.getElementById(id); const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); ctx.beginPath(); }
-    </script>
+    <div class="enh-signing-section">
+        <h3 class="enh-signing-title">Duly Signed and Approved</h3>
+        <p class="enh-signing-subtitle">By affixing their signatures below, the undersigned confirm that this document has been duly approved by the Board of Directors of Socinga Africa.</p>
+        <div class="enh-sig-grid">
+
+            <div class="enh-sig-block">
+                <canvas id="sig-jabu" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-jabu')">✕ Clear</button>
+                <div class="enh-sig-label">Ms Jabulile Dladla — Managing Director</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-mike" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-mike')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Mike Dotsey — Chief Financial Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-white" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-white')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Whitemore Ngwira — Chief Executive Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-tsekane" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-tsekane')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Tsekane Lukie Tshabalala — Chairperson</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+        </div>
+        <div class="enh-gold-bar"></div>
+        <p class="enh-footer">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved. Confidential &amp; Proprietary.</p>
+    </div>
+
+    <script src="/document-engine.js"></script>
+    <script src="/signing-bridge.js"></script>
 </body>
 </html>
     

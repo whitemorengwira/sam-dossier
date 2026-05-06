@@ -120,9 +120,10 @@
             border-radius: 6px;
         }
     </style>
+    <link rel="stylesheet" href="/document-engine.css">
 </head>
 <body>
-    <div class="container">
+    <div id="doc-content" class="container">
         <h1>Socinga Africa Mining - Strategic Mission Centre Budget</h1>
         <p class="subtitle">Comprehensive Capital Expenditure & First-Year Operational Runway<br>Estimated Exchange Rate Used: 1 USD = 18.00 ZAR</p>
         
@@ -438,5 +439,38 @@
             <p><strong>Financial Validation:</strong> This precise capital allocation strictly limits expenditure to high-yield infrastructural and technological investments. By funding the entire physical setup, hardware procurement, and the first 12 months of operational running costs within a guaranteed framework, this budget isolates the company from operational inflation and immediately anchors the investment in hard, appreciating assets. Fluctuations may apply based on the USD/ZAR baseline exchange rate (18.00) at the point of capital deployment.</p>
         </div>
     </div>
+
+    <div class="enh-signing-section">
+        <h3 class="enh-signing-title">Duly Signed and Approved</h3>
+        <p class="enh-signing-subtitle">By affixing their signatures below, the undersigned confirm that this document has been duly approved by the Board of Directors of Socinga Africa.</p>
+        <div class="enh-sig-grid">
+
+            <div class="enh-sig-block">
+                <canvas id="sig-cfo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-cfo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Mike Dotsey — Chief Financial Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-ceo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-ceo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Whitemore Ngwira — Chief Executive Officer</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-chair" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-chair')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Tsekane Lukie Tshabalala — Chairperson</div>
+                <p class="enh-sig-date">Date: _______________</p>
+            </div>
+        </div>
+        <div class="enh-gold-bar"></div>
+        <p class="enh-footer">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved. Confidential &amp; Proprietary.</p>
+    </div>
+
+    <script src="/document-engine.js"></script>
+    <script src="/signing-bridge.js"></script>
 </body>
 </html>
