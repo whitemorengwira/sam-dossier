@@ -136,7 +136,76 @@ function SystemHealth() {
   );
 }
 
-export default function ToolsHubClient({ miningNews, goldNews }: { miningNews: any[], goldNews: any[] }) {
+export default function ToolsHubClient() {
+  const [exchangeRate, setExchangeRate] = useState<string | null>(null);
+  const [exchangeLoading, setExchangeLoading] = useState(true);
+  
+  // News state
+  const [newsFeed, setNewsFeed] = useState<any[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState(false);
+  const regions = ['sa', 'southern-africa', 'africa', 'world'];
+  const regionLabels: Record<string, string> = {
+    'sa': 'South Africa Focus',
+    'southern-africa': 'Southern Africa Focus',
+    'africa': 'Africa Continent',
+    'world': 'Global Markets'
+  };
+  const [currentRegionIndex, setCurrentRegionIndex] = useState(0);
+
+  // Fetch Exchange Rate
+  useEffect(() => {
+    async function fetchExchange() {
+      try {
+        const res = await fetch('/api/tools/exchange');
+        if (res.ok) {
+          const data = await res.json();
+          setExchangeRate(data.rate ? Number(data.rate).toFixed(2) : 'Error');
+        } else {
+          setExchangeRate('Error');
+        }
+      } catch (e) {
+        setExchangeRate('Error');
+      } finally {
+        setExchangeLoading(false);
+      }
+    }
+    fetchExchange();
+  }, []);
+
+  // Fetch News for current region
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchNews() {
+      setNewsLoading(true);
+      setNewsError(false);
+      try {
+        const res = await fetch(`/api/tools/rss?region=${regions[currentRegionIndex]}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted) setNewsFeed(data.items || []);
+        } else {
+          if (isMounted) setNewsError(true);
+        }
+      } catch (e) {
+        if (isMounted) setNewsError(true);
+      } finally {
+        if (isMounted) setNewsLoading(false);
+      }
+    }
+    fetchNews();
+
+    // Auto-rotate region every 15 seconds
+    const interval = setInterval(() => {
+      setCurrentRegionIndex(prev => (prev + 1) % regions.length);
+    }, 15000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [currentRegionIndex]);
+
   return (
     <Tabs defaultValue="utilities" className="w-full">
       <TabsList className="bg-onyx border border-white/10 mb-8 flex flex-wrap">
@@ -147,11 +216,28 @@ export default function ToolsHubClient({ miningNews, goldNews }: { miningNews: a
       </TabsList>
 
       <TabsContent value="utilities" className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="bg-onyx border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold font-serif">Exchange Rates</CardTitle>
+              <CardDescription>Live USD/ZAR conversion</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center py-6">
+              <div className="text-slate-400 font-mono mb-2">1 USD =</div>
+              {exchangeLoading ? (
+                <div className="animate-pulse w-24 h-10 bg-gold/20 rounded"></div>
+              ) : (
+                <div className="text-4xl font-bold text-gold font-mono">
+                  R {exchangeRate}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card className="bg-onyx border-gold/20">
             <CardHeader>
               <CardTitle className="text-gold font-serif">Calculator</CardTitle>
-              <CardDescription>Quick financial & operational calculations</CardDescription>
+              <CardDescription>Quick financial calculations</CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
               <Calculator />
@@ -183,47 +269,40 @@ export default function ToolsHubClient({ miningNews, goldNews }: { miningNews: a
       </TabsContent>
 
       <TabsContent value="markets" className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <Card className="bg-onyx border-gold/20">
-            <CardHeader>
-              <CardTitle className="text-gold font-serif">Live Mining News</CardTitle>
-              <CardDescription>Global sector updates</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between border-b border-gold/10 pb-4">
+              <div>
+                <CardTitle className="text-gold font-serif flex items-center gap-2">
+                  <span className="text-2xl">📡</span> Live Mining News Network
+                </CardTitle>
+                <CardDescription>Auto-scrolling regional updates</CardDescription>
+              </div>
+              <div className="bg-gold/10 px-4 py-2 rounded border border-gold/20">
+                <span className="text-gold font-mono uppercase text-sm font-bold tracking-widest">
+                  {regionLabels[regions[currentRegionIndex]]}
+                </span>
+              </div>
             </CardHeader>
-            <CardContent>
-              {miningNews && miningNews.length > 0 ? (
-                <ul className="space-y-3">
-                  {miningNews.map((item, i) => (
-                    <li key={i} className="border-b border-white/5 pb-2">
-                      <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-300 hover:text-gold transition-colors">
+            <CardContent className="pt-6 relative h-96 overflow-hidden">
+              {newsLoading && newsFeed.length === 0 ? (
+                <div className="flex justify-center items-center h-full text-gold font-mono animate-pulse">Loading intel...</div>
+              ) : newsError ? (
+                <div className="flex justify-center items-center h-full text-red-400 font-mono">Failed to load RSS feed.</div>
+              ) : (
+                <div className="absolute inset-x-6 animate-slide-up space-y-4">
+                  {newsFeed.map((item, i) => (
+                    <div key={i} className="border-l-2 border-gold/30 pl-4 py-2 hover:border-gold transition-colors bg-onyx-light/50 rounded-r pr-4">
+                      <a href={item.link} target="_blank" rel="noopener noreferrer" className="block text-slate-200 hover:text-gold font-medium transition-colors mb-1">
                         {item.title}
                       </a>
-                    </li>
+                      <div className="flex items-center gap-3 font-mono text-[10px] text-slate-500 uppercase">
+                        <span className="text-gold">{item.source || 'Intel Report'}</span>
+                        <span>{item.pubDate ? new Date(item.pubDate).toLocaleDateString() : ''}</span>
+                      </div>
+                    </div>
                   ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-slate-500">Failed to load RSS feed.</p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="bg-onyx border-gold/20">
-            <CardHeader>
-              <CardTitle className="text-gold font-serif">Gold & Minerals Intel</CardTitle>
-              <CardDescription>Market news and analysis</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {goldNews && goldNews.length > 0 ? (
-                <ul className="space-y-3">
-                  {goldNews.map((item, i) => (
-                    <li key={i} className="border-b border-white/5 pb-2">
-                      <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-300 hover:text-gold transition-colors">
-                        {item.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-slate-500">Failed to load RSS feed.</p>
+                </div>
               )}
             </CardContent>
           </Card>

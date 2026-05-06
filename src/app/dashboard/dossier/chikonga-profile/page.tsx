@@ -25,17 +25,17 @@ const FALLBACK_BLOCKS: BlockData[] = [
     props: { style: "solid", colour: "rgba(212,175,55,0.25)" }
   },
   {
-    id: "text-1",
+    id: "summary",
     type: "TextBlock",
     props: {
-      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Introduction</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga mine is located within the Mutasa District about 40 km NE of the city of Mutare. It covers an area equivalent to 45 hectares of land. The mining property is locally owned by Hilltouch investments...</p>"
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Executive Summary</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is a subsidiary of Hilltouch Investments, an indigenous gold mining entity that is wholly owned by its Directors Mr Lufeyi Shato & Mrs Joyce Kujenga. Established in 2005, it has grown in leaps and bounds from humble beginnings to become Manicaland’s 3rd largest producer of the yellow mineral.</p><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is located 20km off Mutare CBD along the Mutare-Harare highway. The 45 hectare property is comprised of four 10 hectare registered claims. Improved gold grades averaged 15g/t, 18g/t to 25g/t in 2019, 2020 and 2021 respectively.</p>"
     }
   },
   {
-    id: "text-2",
+    id: "intro",
     type: "TextBlock",
     props: {
-      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Geological History, Characteristics and Mineralisation</h2><p class='text-text-secondary leading-relaxed mb-4'>The first ancient reference to the Chikonga Mine was in a report by geologist N. M. Harrison who examined the property on behalf of the Geological Survey of Rhodesia in 1972...</p>"
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Introduction & Geology</h2><p class='text-text-secondary leading-relaxed mb-4'>Geologically the Chikonga mine lies in the Northern part of Mutare and Odzi greenstone belt, which is divided into two arms, the Odzi limb, extending WNE from Odzi centre and the Mutare limb, trending East. Historically underground operations were developed to 2nd level and have been de-watered and channel sampled.</p><p class='text-text-secondary leading-relaxed mb-4'>Mineralized reefs/shear zones occur as siliceous mica schist and silicified andesite typically hosting bands of fine grained grey and black quartz with disseminated pyrrhotite, pyrite, arsenopyrite, chalcopyrite and gold.</p>"
     }
   },
   {
@@ -43,10 +43,11 @@ const FALLBACK_BLOCKS: BlockData[] = [
     type: "RichTable",
     props: {
       data: [
-        ["Location", "Grade", "Width"],
-        ["Start + 7m", "10 g/t", "80 cm"],
-        ["+ 8m", "30 g/t", "120 cm"],
-        ["+10m", "25.4 g/t", "146 cm (NFE)"]
+        ["Asset / Metric", "Description", "Details"],
+        ["Location", "Mutasa District", "40 km NE of Mutare city"],
+        ["Property Size", "45 Hectares", "Four 10 hectare registered claims"],
+        ["Gold Grade Averages", "2019 - 2021", "15g/t, 18g/t, up to 25g/t"],
+        ["Production Standard", "Cyanidation & Leaching", "Running elution plant producing >1kg gold/month"]
       ]
     }
   }

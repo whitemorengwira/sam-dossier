@@ -13,15 +13,6 @@ const reports = [
     status: 'Verified',
     description: 'Detailed geological analysis and viability assessment for the MENGXI prospective mining claims.',
     url: '/documents/socinga-africa/mengxi_prospects.pdf'
-  },
-  {
-    id: 'chikonga-geology',
-    title: 'Chikonga Deep Level Geology',
-    type: 'Core Analysis',
-    date: 'April 2026',
-    status: 'In Review',
-    description: 'Deep level core analysis indicating extended mineralization zones beyond 80m depth.',
-    url: '/documents/socinga-africa/chikonga_mine_profile.pdf'
   }
 ]
 
