@@ -36,6 +36,7 @@ import {
   Wrench,
   Microscope,
   ArrowSquareOut,
+  Crown,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useState, useEffect, useCallback } from 'react'
@@ -86,6 +87,8 @@ const navigation: NavGroup[] = [
       { label: 'Timeline / Gantt', href: '/dashboard/workspace/timeline', icon: <Clock size={20} weight="duotone" /> },
       { label: 'Team', href: '/dashboard/workspace/team', icon: <Users size={20} weight="duotone" /> },
       { label: 'Calendar', href: '/dashboard/workspace/calendar', icon: <CalendarDots size={20} weight="duotone" /> },
+      { label: 'CFO', href: '/dashboard/workspace/cfo', icon: <CurrencyCircleDollar size={20} weight="duotone" /> },
+      { label: 'Board Chair', href: '/dashboard/workspace/board-chair', icon: <Crown size={20} weight="duotone" /> },
       { label: 'Research & Development', href: '/dashboard/research-development', icon: <Microscope size={20} weight="duotone" /> },
       { label: 'Tools Hub', href: '/dashboard/tools', icon: <Wrench size={20} weight="duotone" /> },
       { label: 'My Work', href: '/dashboard/workspace/my-work', icon: <CheckCircle size={20} weight="duotone" /> },
