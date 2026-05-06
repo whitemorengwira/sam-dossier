@@ -132,7 +132,7 @@ export default function DocumentsPage() {
   }
 
   const filtered = useMemo(() => {
-    let list = [...docs]
+    let list = docs.filter(d => d.owner.id === 'u1' || d.isPublished)
     if (search) { const q = search.toLowerCase(); list = list.filter(d => d.title.toLowerCase().includes(q)) }
     if (cat !== 'ALL') list = list.filter(d => d.category === cat.toLowerCase())
     if (owner === 'me') list = list.filter(d => d.owner.id === 'u1')

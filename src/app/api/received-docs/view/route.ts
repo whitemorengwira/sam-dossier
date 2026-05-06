@@ -32,6 +32,11 @@ export async function GET(request: NextRequest) {
     });
     
     const signedUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 });
+    
+    if (searchParams.get('json') === 'true') {
+      return NextResponse.json({ url: signedUrl });
+    }
+    
     return NextResponse.redirect(signedUrl);
   } catch (err: any) {
     console.error('Presign GET error:', err);

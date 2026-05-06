@@ -21,7 +21,6 @@ interface MenuBarProps {
   onFindReplace: () => void
   onWordCount: () => void
   onPageSetup: () => void
-  onShare: () => void
   onShortcuts: () => void
   onOutline: (show: boolean) => void
   onRuler: (show: boolean) => void
@@ -92,10 +91,6 @@ export default function MenuBar(props: MenuBarProps) {
     { label: 'Open', shortcut: 'Ctrl+O', action: () => window.open('/dashboard/documents', '_self') },
     { label: 'Make a copy', action: props.onMakeCopy },
     { label: '', separator: true },
-    { label: 'Share', submenu: [
-      { label: 'Share with others', action: props.onShare },
-      { label: 'Publish to web', action: () => alert('This document will be published to the web. Share the URL with anyone.') },
-    ]},
     { label: 'Email', submenu: [
       { label: 'Email this file', action: () => { const subj = encodeURIComponent(document.title || 'Document'); window.open(`mailto:?subject=${subj}&body=${encodeURIComponent('Please find the document attached.')}`) } },
       { label: 'Email collaborators', action: () => { window.open('mailto:jabulile@socinga.africa,shingirai@socinga.africa,michael@socinga.africa?subject=' + encodeURIComponent('Re: ' + (document.title || 'Document'))) } },

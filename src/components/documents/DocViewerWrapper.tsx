@@ -11,8 +11,46 @@ interface Props {
 }
 
 export default function DocViewerWrapper({ uri, fileName, fileType }: Props) {
+  const [resolvedUri, setResolvedUri] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function resolve() {
+      if (uri.includes('/api/received-docs/view')) {
+        try {
+          const fetchUrl = uri + (uri.includes('?') ? '&' : '?') + 'json=true';
+          const res = await fetch(fetchUrl);
+          const data = await res.json();
+          if (data.url) {
+            setResolvedUri(data.url);
+          } else {
+            setResolvedUri(uri);
+          }
+        } catch (e) {
+          console.error('Failed to resolve document URL', e);
+          setResolvedUri(uri);
+        }
+      } else {
+        setResolvedUri(uri);
+      }
+    }
+    resolve();
+  }, [uri]);
+
+  if (!resolvedUri) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <p style={{ color: '#80868b', fontSize: 13, fontFamily: 'var(--font-mono)' }}>Loading Document...</p>
+      </div>
+    );
+  }
+
+  let absoluteUri = resolvedUri;
+  if (typeof window !== 'undefined' && absoluteUri.startsWith('/')) {
+    absoluteUri = `${window.location.origin}${absoluteUri}`;
+  }
+
   const docs = [
-    { uri, fileName, fileType }
+    { uri: absoluteUri, fileName, fileType }
   ];
 
   return (

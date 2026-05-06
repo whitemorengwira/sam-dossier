@@ -9,7 +9,6 @@ import Ruler from '@/components/documents/Ruler'
 import FindReplaceModal from '@/components/documents/modals/FindReplaceModal'
 import WordCountModal from '@/components/documents/modals/WordCountModal'
 import PageSetupModal, { type PageSettings } from '@/components/documents/modals/PageSetupModal'
-import ShareModal from '@/components/documents/modals/ShareModal'
 import KeyboardShortcutsModal from '@/components/documents/modals/KeyboardShortcutsModal'
 import SpecialCharactersModal from '@/components/documents/modals/SpecialCharactersModal'
 import DictionaryModal from '@/components/documents/modals/DictionaryModal'
@@ -52,7 +51,6 @@ export default function DocumentEditorPage() {
   const [showFindReplace, setShowFindReplace] = useState(false)
   const [showWordCount, setShowWordCount] = useState(false)
   const [showPageSetup, setShowPageSetup] = useState(false)
-  const [showShare, setShowShare] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showOutline, setShowOutline] = useState(false)
   const [showRuler, setShowRuler] = useState(true)
@@ -175,15 +173,6 @@ export default function DocumentEditorPage() {
     return () => window.removeEventListener('beforeunload', handler)
   }, [saveState])
 
-  /* ── Shared users update ──── */
-  const updateShared = (users: SharedUser[]) => {
-    if (!doc) return
-    const docs = loadDocuments()
-    const idx = docs.findIndex(d => d.id === doc.id)
-    if (idx >= 0) { docs[idx] = { ...docs[idx], shared: users }; saveDocuments(docs) }
-    setDoc(prev => prev ? { ...prev, shared: users } : prev)
-  }
-
   /* ── Download handler ──── */
   const handleDownload = (format: string) => {
     if (!canvasRef.current) return
@@ -231,7 +220,6 @@ export default function DocumentEditorPage() {
 
   // Sign
   const handleSign = () => {
-    if (signStatus === 'signed') return
     setIsSigning(true)
     // Init canvas
     setTimeout(() => {
@@ -347,7 +335,7 @@ export default function DocumentEditorPage() {
           </button>
 
           <button className={`${styles.signBtn} ${signStatus === 'signed' ? styles.signed : ''}`} onClick={handleSign}>
-            {signStatus === 'signed' ? <><CheckCircle size={16} /> Signed</> : <><PenNib size={16} /> e-Sign</>}
+            {signStatus === 'signed' ? <><CheckCircle size={16} /> Add Signature</> : <><PenNib size={16} /> e-Sign</>}
           </button>
 
           <button className={`${styles.publishBtn} ${isPublished ? styles.live : ''}`} onClick={togglePublish}>
@@ -381,8 +369,6 @@ export default function DocumentEditorPage() {
             <ChatCircle size={18} />
             {doc.comments.length > 0 && <span className={styles.commentBadge}>{doc.comments.length}</span>}
           </button>
-
-          <button className={styles.shareBtn} onClick={() => setShowShare(true)}><ShareNetwork size={16} /> Share</button>
         </div>
       </div>
 
@@ -393,7 +379,6 @@ export default function DocumentEditorPage() {
           onFindReplace={() => setShowFindReplace(true)}
           onWordCount={() => setShowWordCount(true)}
           onPageSetup={() => setShowPageSetup(true)}
-          onShare={() => setShowShare(true)}
           onShortcuts={() => setShowShortcuts(true)}
           onOutline={setShowOutline}
           onRuler={setShowRuler}
@@ -649,7 +634,6 @@ export default function DocumentEditorPage() {
       <FindReplaceModal open={showFindReplace} onClose={() => setShowFindReplace(false)} editorRef={canvasRef} />
       <WordCountModal open={showWordCount} onClose={() => setShowWordCount(false)} pages={pageCount} words={wordCount} characters={charCount} charsNoSpaces={charCountNoSpaces} onToggleLive={setLiveWordCount} liveEnabled={liveWordCount} />
       <PageSetupModal open={showPageSetup} onClose={() => setShowPageSetup(false)} onApply={setPageSettings} current={pageSettings} />
-      <ShareModal open={showShare} onClose={() => setShowShare(false)} shared={doc.shared} owner={doc.owner} onUpdateShared={updateShared} />
       <KeyboardShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
       <SpecialCharactersModal open={showSpecialChars} onClose={() => setShowSpecialChars(false)} onInsert={(char) => { canvasRef.current?.focus(); document.execCommand('insertText', false, char) }} />
       <DictionaryModal open={showDictionary} onClose={() => setShowDictionary(false)} editorRef={canvasRef} />
