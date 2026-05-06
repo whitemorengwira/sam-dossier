@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap, ShieldCheck } from '@phosphor-icons/react'
+import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap, ShieldCheck, Circle } from '@phosphor-icons/react'
 import EditorToolbar from '@/components/documents/EditorToolbar'
 import MenuBar from '@/components/documents/MenuBar'
 import Ruler from '@/components/documents/Ruler'
@@ -11,8 +11,13 @@ import WordCountModal from '@/components/documents/modals/WordCountModal'
 import PageSetupModal, { type PageSettings } from '@/components/documents/modals/PageSetupModal'
 import ShareModal from '@/components/documents/modals/ShareModal'
 import KeyboardShortcutsModal from '@/components/documents/modals/KeyboardShortcutsModal'
+import SpecialCharactersModal from '@/components/documents/modals/SpecialCharactersModal'
+import DictionaryModal from '@/components/documents/modals/DictionaryModal'
+import WatermarkModal from '@/components/documents/modals/WatermarkModal'
+import DocumentDetailsModal from '@/components/documents/modals/DocumentDetailsModal'
 import OutlinePanel from '@/components/documents/panels/OutlinePanel'
 import { loadDocuments, saveDocuments, loadVersions, saveVersion, saveFinalisedDocument, TEAM } from '@/lib/documents-data'
+import { usePresence, formatLastSeen } from '@/hooks/usePresence'
 import type { GDocsDocument, SharedUser } from '@/types'
 import type { DocVersion } from '@/lib/documents-data'
 import styles from './page.module.css'
@@ -57,6 +62,18 @@ export default function DocumentEditorPage() {
     marginTop: 2.54, marginBottom: 2.54, marginLeft: 2.54, marginRight: 2.54,
     pageColour: '#ffffff',
   })
+
+  /* ── New state for fully functional menus ──── */
+  const [showSpecialChars, setShowSpecialChars] = useState(false)
+  const [showDictionary, setShowDictionary] = useState(false)
+  const [showWatermark, setShowWatermark] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [voiceTyping, setVoiceTyping] = useState(false)
+  const [spellCheck, setSpellCheck] = useState(true)
+  const recognitionRef = useRef<any>(null)
+
+  /* ── Presence ──── */
+  const { users: presenceUsers, onlineCount, totalCount } = usePresence('/dashboard/documents')
 
   // Load document
   useEffect(() => {
@@ -304,8 +321,18 @@ export default function DocumentEditorPage() {
           </span>
 
           <div className={styles.avatarGroup}>
-            {doc.shared.slice(0, 3).map(u => <div key={u.id} className={styles.avatar}>{u.avatar}</div>)}
-            {doc.shared.length > 4 && <div className={styles.avatar} style={{background:'#e0e0e0',color:'#5f6368'}}>+{doc.shared.length - 3}</div>}
+            {doc.shared.slice(0, 4).map(u => {
+              const presence = presenceUsers.find(p => p.id === u.id || p.name === u.name)
+              const isOnline = presence?.isOnline ?? false
+              return (
+                <div key={u.id} className={styles.avatar} style={{ position:'relative' }} title={`${u.name} — ${isOnline ? '🟢 Online' : `⚫ ${presence ? formatLastSeen(presence.lastSeen) : 'Offline'}`}`}>
+                  {u.avatar}
+                  <span style={{ position:'absolute', bottom:-1, right:-1, width:8, height:8, borderRadius:'50%', background: isOnline ? '#34d399' : '#6b7280', border:'2px solid var(--navy)', display:'block' }} />
+                </div>
+              )
+            })}
+            {doc.shared.length > 4 && <div className={styles.avatar} style={{background:'#e0e0e0',color:'#5f6368'}}>+{doc.shared.length - 4}</div>}
+            <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'var(--font-mono)', marginLeft:4 }}>{onlineCount} online</span>
           </div>
 
           <button className={styles.versionBtn} onClick={() => { setShowVersions(!showVersions); setShowComments(false) }}>
@@ -412,7 +439,10 @@ export default function DocumentEditorPage() {
           }}
           onRename={() => { const el = document.querySelector(`.${styles.titleInput}`) as HTMLInputElement; el?.focus() }}
           onTrash={() => { router.push('/dashboard/documents') }}
-          onDetails={() => {}}
+          onDetails={() => setShowDetails(true)}
+          onSpecialChars={() => setShowSpecialChars(true)}
+          onDictionary={() => setShowDictionary(true)}
+          onWatermark={() => setShowWatermark(true)}
           showRuler={showRuler}
           showOutline={showOutline}
           currentMode={docMode}
@@ -562,6 +592,27 @@ export default function DocumentEditorPage() {
       <PageSetupModal open={showPageSetup} onClose={() => setShowPageSetup(false)} onApply={setPageSettings} current={pageSettings} />
       <ShareModal open={showShare} onClose={() => setShowShare(false)} shared={doc.shared} owner={doc.owner} onUpdateShared={updateShared} />
       <KeyboardShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+      <SpecialCharactersModal open={showSpecialChars} onClose={() => setShowSpecialChars(false)} onInsert={(char) => { canvasRef.current?.focus(); document.execCommand('insertText', false, char) }} />
+      <DictionaryModal open={showDictionary} onClose={() => setShowDictionary(false)} editorRef={canvasRef} />
+      <WatermarkModal open={showWatermark} onClose={() => setShowWatermark(false)} onApply={(text, opacity, angle) => {
+        if (!canvasRef.current) return
+        const watermarkEl = canvasRef.current.querySelector('.nexus-watermark') as HTMLElement
+        if (watermarkEl) watermarkEl.remove()
+        const wm = document.createElement('div')
+        wm.className = 'nexus-watermark'
+        wm.style.cssText = `position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;overflow:hidden;`
+        wm.innerHTML = `<span style="font-size:72px;font-weight:900;color:rgba(0,0,0,${opacity/100});transform:rotate(${angle}deg);letter-spacing:0.2em;text-transform:uppercase;user-select:none;font-family:var(--font-display)">${text}</span>`
+        canvasRef.current.style.position = 'relative'
+        canvasRef.current.prepend(wm)
+        save()
+      }} />
+      <DocumentDetailsModal
+        open={showDetails} onClose={() => setShowDetails(false)}
+        documentTitle={title} documentContent={canvasRef.current?.innerHTML || doc.content}
+        owner={doc.owner.name} created={doc.lastModified} lastModified={doc.lastModified}
+        wordCount={wordCount} charCount={charCount}
+        shared={doc.shared.map(s => ({ name: s.name, role: s.role }))}
+      />
     </div>
   )
 }
