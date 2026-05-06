@@ -72,6 +72,7 @@ const navigation: NavGroup[] = [
       { label: 'Geological Report', href: '/dashboard/dossier/geological-report', icon: <Mountains size={20} weight="duotone" /> },
       { label: 'Legal Structure', href: '/dashboard/dossier/legal-structure', icon: <Scales size={20} weight="duotone" /> },
       { label: 'Risk Matrix', href: '/dashboard/dossier/risk-matrix', icon: <Warning size={20} weight="duotone" /> },
+      { label: 'Chikonga Mine (PDF)', href: '/dashboard/dossier/chikonga-pdf', icon: <FilePdf size={20} weight="duotone" /> },
       { label: 'Exit Strategy', href: '/dashboard/dossier/exit-strategy', icon: <SignOutIcon size={20} weight="duotone" /> },
     ],
   },

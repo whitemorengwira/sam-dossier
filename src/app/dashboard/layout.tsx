@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import Sidebar from '@/components/layout/Sidebar'
 import Topbar from '@/components/layout/Topbar'
 import InlineEditProvider from '@/components/InlineEditProvider'
-import PWAInstallPrompt from '@/components/PWAInstallPrompt'
-import PWAUpdatePrompt from '@/components/PWAUpdatePrompt'
 import { cn } from '@/lib/utils'
 import { Toaster } from 'sonner'
 
@@ -94,8 +92,6 @@ export default function DashboardLayout({
       <Toaster position="bottom-right" richColors theme="dark" />
       {/* Inline edit engine */}
       <InlineEditProvider />
-      <PWAInstallPrompt />
-      <PWAUpdatePrompt />
 
       {/* Sidebar */}
       <Sidebar />

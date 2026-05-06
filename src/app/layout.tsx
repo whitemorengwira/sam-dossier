@@ -2,11 +2,21 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import PWAInstallPrompt from '@/components/PWAInstallPrompt'
+import PWAUpdatePrompt from '@/components/PWAUpdatePrompt'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
+export const viewport = {
+  themeColor: '#D4AF37',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   title: 'Socinga Africa Mining | Investment Dossier',
+  manifest: '/manifest.json',
   description:
     'Institutional-Grade Mining Investment Dossier for Chikonga Mine, Zimbabwe. Socinga Africa Mining deploys secured capital into de-risked, high-yield mineral assets across the African continent.',
   keywords: [
@@ -59,7 +69,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased" suppressHydrationWarning>{children}</body>
+      <body className="antialiased" suppressHydrationWarning>
+        {children}
+        <PWAInstallPrompt />
+        <PWAUpdatePrompt />
+      </body>
     </html>
   )
 }
