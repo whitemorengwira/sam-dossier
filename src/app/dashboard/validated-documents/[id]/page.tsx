@@ -19,7 +19,7 @@ import {
   Printer,
   X,
 } from '@phosphor-icons/react'
-import { VALIDATED_DOCUMENTS, fetchValidatedDocumentHtml } from '@/lib/validated-documents'
+import { VALIDATED_DOCUMENTS, type ValidatedDocument } from '@/lib/validated-documents'
 
 export default function ValidatedDocumentEditorPage() {
   const params = useParams()
@@ -27,7 +27,7 @@ export default function ValidatedDocumentEditorPage() {
   const editorRef = useRef<HTMLDivElement>(null)
   const signCanvasRef = useRef<HTMLCanvasElement>(null)
 
-  const [doc, setDoc] = useState<typeof VALIDATED_DOCUMENTS[0] | null>(null)
+  const [doc, setDoc] = useState<ValidatedDocument | null>(null)
   const [loading, setLoading] = useState(true)
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [isSigning, setIsSigning] = useState(false)
@@ -35,24 +35,24 @@ export default function ValidatedDocumentEditorPage() {
   const [signed, setSigned] = useState(false)
   const [showExport, setShowExport] = useState(false)
 
-  // Find the document by ID
+  // Find the document by ID and load embedded content
   useEffect(() => {
     const found = VALIDATED_DOCUMENTS.find(d => d.id === params.id)
-    if (found) setDoc(found)
-    else setLoading(false)
-  }, [params.id])
-
-  // Fetch HTML content from R2
-  useEffect(() => {
-    if (!doc) return
-    setLoading(true)
-    fetchValidatedDocumentHtml(doc).then(html => {
-      if (editorRef.current) {
-        editorRef.current.innerHTML = html
-      }
+    if (found) {
+      setDoc(found)
+      setSigned(found.signatureStatus === 'signed')
+      // Load content — check sessionStorage first for edits, fallback to embedded
+      setTimeout(() => {
+        if (editorRef.current) {
+          const saved = sessionStorage.getItem(`vd-${found.id}`)
+          editorRef.current.innerHTML = saved || found.content
+        }
+        setLoading(false)
+      }, 100)
+    } else {
       setLoading(false)
-    })
-  }, [doc])
+    }
+  }, [params.id])
 
   // Auto-save to sessionStorage
   const save = useCallback(() => {

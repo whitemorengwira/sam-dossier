@@ -13,6 +13,10 @@ import {
   Users,
   Leaf,
   ArrowRight,
+  Mountains,
+  ChartLine,
+  PenNib,
+  CheckCircle,
 } from '@phosphor-icons/react'
 import { VALIDATED_DOCUMENTS } from '@/lib/validated-documents'
 import { loadFinalisedDocuments } from '@/lib/documents-data'
@@ -25,9 +29,11 @@ const CATEGORY_META: Record<string, { colour: string; icon: React.ReactNode }> =
   governance: { colour: '#9334e6', icon: <ShieldCheck size={18} weight="duotone" /> },
   compliance: { colour: '#137333', icon: <Leaf size={18} weight="duotone" /> },
   hr: { colour: '#c5221f', icon: <Users size={18} weight="duotone" /> },
+  strategy: { colour: '#ff6f00', icon: <ChartLine size={18} weight="duotone" /> },
+  geological: { colour: '#795548', icon: <Mountains size={18} weight="duotone" /> },
 }
 
-const CATEGORIES = ['ALL', 'CORPORATE', 'LEGAL', 'FINANCE', 'GOVERNANCE', 'COMPLIANCE', 'HR']
+const CATEGORIES = ['ALL', 'GOVERNANCE', 'LEGAL', 'FINANCE', 'STRATEGY', 'GEOLOGICAL', 'CORPORATE', 'COMPLIANCE', 'HR']
 
 export default function ValidatedDocumentsPage() {
   const router = useRouter()
@@ -39,18 +45,20 @@ export default function ValidatedDocumentsPage() {
     setFinalisedDocs(loadFinalisedDocuments())
   }, [])
 
-  // Merge R2 master docs + finalised docs from the vault
+  // Merge master docs + finalised docs from the vault
   const allDocs = useMemo(() => {
-    const r2Items = VALIDATED_DOCUMENTS.map(d => ({
+    const masterItems = VALIDATED_DOCUMENTS.map(d => ({
       id: d.id, title: d.title, category: d.category,
-      description: d.description, source: 'r2' as const,
+      description: d.description, signatureStatus: d.signatureStatus,
+      source: 'master' as const,
     }))
     const finItems = finalisedDocs.map(d => ({
       id: d.id, title: d.title, category: d.category || 'corporate',
       description: `Finalised from Document Vault on ${new Date(d.lastModified).toLocaleDateString('en-GB')}`,
+      signatureStatus: d.signatureStatus as string,
       source: 'finalised' as const,
     }))
-    return [...finItems, ...r2Items]
+    return [...finItems, ...masterItems]
   }, [finalisedDocs])
 
   const filtered = useMemo(() => {
@@ -207,6 +215,16 @@ export default function ValidatedDocumentsPage() {
                       <ShieldCheck size={10} weight="fill" style={{ display: 'inline', marginRight: 3, color: '#137333' }} />
                       Validated
                     </span>
+                    {doc.signatureStatus === 'pending' && (
+                      <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: '#D4AF37', display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <PenNib size={10} weight="fill" /> Awaiting Signature
+                      </span>
+                    )}
+                    {doc.signatureStatus === 'signed' && (
+                      <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: '#137333', display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <CheckCircle size={10} weight="fill" /> Signed
+                      </span>
+                    )}
                   </div>
                 </div>
                 <ArrowRight

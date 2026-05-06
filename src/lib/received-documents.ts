@@ -20,17 +20,8 @@ export interface ReceivedDoc {
 
 const PREFIX = 'sam-dossier/public/received-verified-documents'
 
-/** Known documents already uploaded to R2 */
-const KNOWN_R2_DOCS: Omit<ReceivedDoc, 'publicUrl'>[] = [
-  { id: 'rd-1', fileName: 'chikonga-mine-profile.pdf', title: 'Chikonga Mine Profile', format: 'pdf', r2Key: `${PREFIX}/chikonga-mine-profile.pdf`, uploadedAt: '2026-04-15T10:00:00Z', source: 'r2' },
-  { id: 'rd-2', fileName: 'socinga-establishment-policy.pdf', title: 'Establishment Policy', format: 'pdf', r2Key: `${PREFIX}/socinga-establishment-policy.pdf`, uploadedAt: '2026-04-20T09:00:00Z', source: 'r2' },
-  { id: 'rd-3', fileName: 'mining-strategy-addendum.html', title: 'Mining Strategy Addendum', format: 'html', r2Key: `${PREFIX}/mining-strategy-addendum.html`, uploadedAt: '2026-04-22T11:00:00Z', source: 'r2' },
-  { id: 'rd-4', fileName: 'financial-policy.pdf', title: 'Financial Policy', format: 'pdf', r2Key: `${PREFIX}/financial-policy.pdf`, uploadedAt: '2026-04-25T08:00:00Z', source: 'r2' },
-  { id: 'rd-5', fileName: 'zedek-mining-mou.pdf', title: 'Zedek Mining MoU', format: 'pdf', r2Key: `${PREFIX}/zedek-mining-mou.pdf`, uploadedAt: '2026-01-12T11:00:00Z', source: 'r2' },
-  { id: 'rd-6', fileName: 'loi-ares-antimony.pdf', title: 'LOI — ARES Antimony', format: 'pdf', r2Key: `${PREFIX}/loi-ares-antimony.pdf`, uploadedAt: '2025-12-09T10:00:00Z', source: 'r2' },
-  { id: 'rd-7', fileName: 'mengxi-geological-survey.pdf', title: 'MENGXI Geological Survey', format: 'pdf', r2Key: `${PREFIX}/mengxi-geological-survey.pdf`, uploadedAt: '2026-02-10T08:00:00Z', source: 'r2' },
-  { id: 'rd-8', fileName: 'swift-ventures-opportunities.html', title: 'Swift Ventures — Mining Opportunities', format: 'html', r2Key: `${PREFIX}/swift-ventures-opportunities.html`, uploadedAt: '2026-01-05T10:00:00Z', source: 'r2' },
-]
+/** Known documents already uploaded to R2 — add entries here when real files exist */
+const KNOWN_R2_DOCS: Omit<ReceivedDoc, 'publicUrl'>[] = []
 
 export function getKnownReceivedDocs(): ReceivedDoc[] {
   return KNOWN_R2_DOCS.map(d => ({
