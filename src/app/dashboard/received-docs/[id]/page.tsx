@@ -8,10 +8,20 @@ import {
   MicrosoftWordLogo, MicrosoftPowerpointLogo, Table, Image as ImageIcon,
   File, LinkSimple,
 } from '@phosphor-icons/react'
+import dynamic from 'next/dynamic'
 import {
   getKnownReceivedDocs, loadLocalReceivedDocs, getViewerUrl,
   type ReceivedDoc,
 } from '@/lib/received-documents'
+
+const DocViewerWrapper = dynamic(() => import('@/components/documents/DocViewerWrapper'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <p style={{ color: '#80868b', fontSize: 13, fontFamily: 'var(--font-mono)' }}>Loading Document Viewer...</p>
+    </div>
+  ),
+})
 
 const FORMAT_META: Record<string, { colour: string; icon: React.ReactNode; label: string }> = {
   pdf:   { colour: '#c5221f', icon: <FilePdf size={18} weight="duotone" />, label: 'PDF' },
@@ -122,13 +132,7 @@ export default function ReceivedDocViewerPage() {
 
       {/* Viewer */}
       <div style={{ flex: 1, background: '#E8EAED', overflow: 'hidden' }}>
-        {doc.format === 'image' ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 32 }}>
-            <img src={secureUrl} alt={doc.title}
-              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }}
-            />
-          </div>
-        ) : doc.format === 'video' ? (
+        {doc.format === 'video' ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 32, background: '#000' }}>
             <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '100%' }}>
               <source src={secureUrl} />
@@ -136,12 +140,7 @@ export default function ReceivedDocViewerPage() {
             </video>
           </div>
         ) : (
-          <iframe
-            src={viewUrl}
-            title={doc.title}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-            style={{ width: '100%', height: '100%', border: 'none' }}
-          />
+          <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} />
         )}
       </div>
     </div>

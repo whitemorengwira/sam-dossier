@@ -65,12 +65,18 @@ export default function ReceivedExternalDocsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size }),
       })
-      const { signedUrl, storagePath, fileName: sanitised } = await res.json()
-
-      if (signedUrl) {
-        // Direct upload to R2
-        await fetch(signedUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
+      const resData = await res.json()
+      if (resData.error) {
+        throw new Error(resData.error)
       }
+      const { signedUrl, storagePath, fileName: sanitised } = resData
+
+      if (!signedUrl) {
+        throw new Error('Failed to generate secure upload URL.')
+      }
+      
+      // Direct upload to R2
+      await fetch(signedUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
 
       // Register locally
       const newDoc: ReceivedDoc = {

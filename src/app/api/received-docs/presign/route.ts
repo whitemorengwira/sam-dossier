@@ -6,12 +6,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
+if (!process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || !process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
+  console.warn('CRITICAL WARNING: Vercel environment variables for Cloudflare R2 are missing!');
+}
+
 const r2Client = new S3Client({
   region: 'auto',
-  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT!,
+  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT || '',
   credentials: {
-    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || 'MISSING_ACCESS_KEY',
+    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || 'MISSING_SECRET_KEY',
   },
 });
 
