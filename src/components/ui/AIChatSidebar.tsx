@@ -3,10 +3,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { getGlobalAssetUrl } from "@/lib/getGlobalAssetUrl";
 import styles from "./AIChatSidebar.module.css";
 
-const LISA_PORTRAIT = getGlobalAssetUrl("sam-dossier/public/images/lisa-portrait.png");
+const LISA_PORTRAIT = "/images/lisa-portrait.png";
 
 type Message = {
   id: string;

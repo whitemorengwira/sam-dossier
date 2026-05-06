@@ -17,8 +17,15 @@ import {
   ChartLine,
   PenNib,
   CheckCircle,
+  FilePdf,
+  FileHtml,
+  SpinnerGap,
 } from '@phosphor-icons/react'
-import { VALIDATED_DOCUMENTS } from '@/lib/validated-documents'
+import {
+  fetchApprovedDocuments,
+  getStaticValidatedDocuments,
+  type ValidatedDocument,
+} from '@/lib/validated-documents'
 import { loadFinalisedDocuments } from '@/lib/documents-data'
 import type { GDocsDocument } from '@/types'
 
@@ -33,33 +40,49 @@ const CATEGORY_META: Record<string, { colour: string; icon: React.ReactNode }> =
   geological: { colour: '#795548', icon: <Mountains size={18} weight="duotone" /> },
 }
 
-const CATEGORIES = ['ALL', 'GOVERNANCE', 'LEGAL', 'FINANCE', 'STRATEGY', 'GEOLOGICAL', 'CORPORATE', 'COMPLIANCE', 'HR']
+const FORMAT_ICON: Record<string, React.ReactNode> = {
+  pdf: <FilePdf size={14} weight="fill" style={{ color: '#c5221f' }} />,
+  html: <FileHtml size={14} weight="fill" style={{ color: '#e8710a' }} />,
+}
+
+const CATEGORIES = ['ALL', 'CORPORATE', 'GOVERNANCE', 'LEGAL', 'FINANCE', 'STRATEGY', 'COMPLIANCE', 'HR']
 
 export default function ValidatedDocumentsPage() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [cat, setCat] = useState('ALL')
+  const [documents, setDocuments] = useState<ValidatedDocument[]>(getStaticValidatedDocuments())
   const [finalisedDocs, setFinalisedDocs] = useState<GDocsDocument[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setFinalisedDocs(loadFinalisedDocuments())
+    // Try fetching live from R2 API
+    fetchApprovedDocuments()
+      .then(docs => {
+        if (docs.length > 0) setDocuments(docs)
+      })
+      .finally(() => setLoading(false))
   }, [])
 
-  // Merge master docs + finalised docs from the vault
   const allDocs = useMemo(() => {
-    const masterItems = VALIDATED_DOCUMENTS.map(d => ({
-      id: d.id, title: d.title, category: d.category,
-      description: d.description, signatureStatus: d.signatureStatus,
-      source: 'master' as const,
+    const masterItems = documents.map(d => ({
+      ...d, source: 'r2' as const,
     }))
     const finItems = finalisedDocs.map(d => ({
-      id: d.id, title: d.title, category: d.category || 'corporate',
+      id: d.id,
+      title: d.title,
+      fileName: `${d.title}.html`,
+      category: d.category || 'corporate',
+      format: 'html' as const,
       description: `Finalised from Document Vault on ${new Date(d.lastModified).toLocaleDateString('en-GB')}`,
-      signatureStatus: d.signatureStatus as string,
+      publicUrl: '',
+      signatureStatus: (d.signatureStatus || 'signed') as 'signed',
+      lastModified: d.lastModified,
       source: 'finalised' as const,
     }))
     return [...finItems, ...masterItems]
-  }, [finalisedDocs])
+  }, [documents, finalisedDocs])
 
   const filtered = useMemo(() => {
     let list = [...allDocs]
@@ -68,7 +91,7 @@ export default function ValidatedDocumentsPage() {
       list = list.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q))
     }
     if (cat !== 'ALL') {
-      list = list.filter(d => d.category === cat.toLowerCase())
+      list = list.filter(d => d.category.toUpperCase() === cat)
     }
     return list
   }, [search, cat, allDocs])
@@ -76,31 +99,24 @@ export default function ValidatedDocumentsPage() {
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
       {/* Hero */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        style={{ marginBottom: 32 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} style={{ marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
           <span className="badge badge-gold">Validated Documents</span>
           <span className="badge badge-success">Approved</span>
+          {loading && <SpinnerGap size={14} className="animate-spin text-gold" />}
         </div>
         <h1 className="text-gold font-display font-black" style={{ fontSize: 32, marginBottom: 6 }}>
           Validated Documents Vault
         </h1>
         <p className="text-text-secondary" style={{ fontSize: 15, maxWidth: 600 }}>
-          Master corporate documents approved by Socinga Africa. Each document can be opened,
-          edited inline, digitally signed, and exported as PDF, Word, or HTML.
+          Approved corporate documents from the Socinga Africa R2 archive. Click any document to
+          view, edit, sign, and export.
         </p>
         <hr className="divider-gold" style={{ marginTop: 20 }} />
       </motion.div>
 
       {/* Search + Filters */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
         style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}
       >
         <div style={{
@@ -109,32 +125,24 @@ export default function ValidatedDocumentsPage() {
           padding: '8px 14px', flex: '1 1 300px', maxWidth: 400,
         }}>
           <MagnifyingGlass size={16} className="text-gold" />
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+          <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search validated documents..."
             style={{
               background: 'transparent', border: 'none', outline: 'none',
-              color: 'var(--text-primary)', fontSize: 13, width: '100%',
-              fontFamily: 'inherit',
+              color: 'var(--text-primary)', fontSize: 13, width: '100%', fontFamily: 'inherit',
             }}
           />
         </div>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {CATEGORIES.map(c => (
-            <button
-              key={c}
-              onClick={() => setCat(c)}
-              style={{
-                padding: '5px 12px', fontSize: 11, fontWeight: 600,
-                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                background: cat === c ? 'rgba(212,175,55,0.15)' : 'transparent',
-                color: cat === c ? 'var(--gold)' : 'var(--text-muted)',
-                border: `1px solid ${cat === c ? 'rgba(212,175,55,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                cursor: 'pointer', transition: 'all 0.2s',
-              }}
-            >
+            <button key={c} onClick={() => setCat(c)} style={{
+              padding: '5px 12px', fontSize: 11, fontWeight: 600,
+              fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.5px',
+              background: cat === c ? 'rgba(212,175,55,0.15)' : 'transparent',
+              color: cat === c ? 'var(--gold)' : 'var(--text-muted)',
+              border: `1px solid ${cat === c ? 'rgba(212,175,55,0.4)' : 'rgba(255,255,255,0.08)'}`,
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}>
               {c.charAt(0) + c.slice(1).toLowerCase()}
             </button>
           ))}
@@ -143,46 +151,25 @@ export default function ValidatedDocumentsPage() {
 
       {/* Document Grid */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-        gap: 16,
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16,
       }}>
         {filtered.map((doc, i) => {
           const meta = CATEGORY_META[doc.category] || CATEGORY_META.corporate
           return (
-            <motion.div
-              key={doc.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+            <motion.div key={doc.id}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + i * 0.05, duration: 0.5 }}
               onClick={() => router.push(`/dashboard/validated-documents/${doc.id}`)}
               className="glass-card group"
-              style={{
-                cursor: 'pointer',
-                transition: 'border-color 0.25s, box-shadow 0.25s',
-                position: 'relative', overflow: 'hidden',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = `${meta.colour}50`
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,175,55,0.12)'
-              }}
+              style={{ cursor: 'pointer', transition: 'border-color 0.25s, box-shadow 0.25s', position: 'relative', overflow: 'hidden' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${meta.colour}50` }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,175,55,0.12)' }}
             >
-              {/* Category accent */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-                background: `linear-gradient(90deg, ${meta.colour}, transparent)`,
-                opacity: 0.6,
-              }} />
+              {/* Accent */}
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${meta.colour}, transparent)`, opacity: 0.6 }} />
 
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                <div style={{
-                  padding: 10,
-                  background: `${meta.colour}15`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
+                <div style={{ padding: 10, background: `${meta.colour}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ color: meta.colour }}>{meta.icon}</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -194,30 +181,27 @@ export default function ValidatedDocumentsPage() {
                   </h4>
                   <p className="text-text-muted" style={{
                     fontSize: 11, lineHeight: 1.5,
-                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                   }}>
                     {doc.description}
                   </p>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 8, marginTop: 10,
-                  }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
                     <span style={{
                       padding: '2px 8px', fontSize: 9, fontWeight: 700,
-                      fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.5px',
                       background: `${meta.colour}15`, color: meta.colour,
                       border: `1px solid ${meta.colour}30`,
                     }}>
                       {doc.category}
                     </span>
-                    <span className="text-text-muted" style={{ fontSize: 9, fontFamily: 'var(--font-mono)' }}>
-                      <ShieldCheck size={10} weight="fill" style={{ display: 'inline', marginRight: 3, color: '#137333' }} />
-                      Validated
-                    </span>
+                    {FORMAT_ICON[doc.format] && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 9, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                        {FORMAT_ICON[doc.format]} {doc.format.toUpperCase()}
+                      </span>
+                    )}
                     {doc.signatureStatus === 'pending' && (
                       <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', color: '#D4AF37', display: 'flex', alignItems: 'center', gap: 3 }}>
-                        <PenNib size={10} weight="fill" /> Awaiting Signature
+                        <PenNib size={10} weight="fill" /> Ready to Sign
                       </span>
                     )}
                     {doc.signatureStatus === 'signed' && (
@@ -227,11 +211,7 @@ export default function ValidatedDocumentsPage() {
                     )}
                   </div>
                 </div>
-                <ArrowRight
-                  size={16}
-                  className="text-text-muted"
-                  style={{ flexShrink: 0, marginTop: 4, transition: 'all 0.3s' }}
-                />
+                <ArrowRight size={16} className="text-text-muted" style={{ flexShrink: 0, marginTop: 4, transition: 'all 0.3s' }} />
               </div>
             </motion.div>
           )

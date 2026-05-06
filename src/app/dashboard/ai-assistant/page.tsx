@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { getGlobalAssetUrl } from '@/lib/getGlobalAssetUrl'
 import {
   PaperPlaneTilt,
   Sparkle,
@@ -16,7 +15,7 @@ import {
   Stop,
 } from '@phosphor-icons/react'
 
-const LISA_PORTRAIT = getGlobalAssetUrl('sam-dossier/public/images/lisa-portrait.png')
+const LISA_PORTRAIT = '/images/lisa-portrait.png'
 
 interface Message {
   role: 'assistant' | 'user'
