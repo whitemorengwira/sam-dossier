@@ -30,21 +30,6 @@ const FALLBACK_BLOCKS: BlockData[] = [
     props: {
       text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>The Opportunity</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is a subsidiary of Hilltouch Investments...</p>"
     }
-  },
-  {
-    id: "team-title",
-    type: "TextBlock",
-    props: { text: "<h2 class='text-xl font-display font-bold text-gold mb-4 mt-8'>The Team</h2><p class='text-text-secondary text-sm max-w-2xl'>Socinga Africa's executive team brings together decades of experience across mining, finance, legal, technology, and corporate governance.</p>" }
-  },
-  {
-    id: "team-1",
-    type: "TeamMemberCard",
-    props: { name: "Jabulile Dladla", title: "Managing Director", role: "Strategic leadership and corporate governance across all Socinga entities.", initials: "JD", bgColour: "#0A1128" }
-  },
-  {
-    id: "team-2",
-    type: "TeamMemberCard",
-    props: { name: "Michael Dotsey", title: "Chief Financial Officer", role: "Financial oversight, investment structuring, and capital deployment.", initials: "MD", bgColour: "#0A1128" }
   }
 ]
 

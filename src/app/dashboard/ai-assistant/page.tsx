@@ -121,6 +121,16 @@ export default function AIAssistantPage() {
       }
     }
 
+    // Try to find South African (en-ZA) female voice
+    if (!selectedVoice) {
+      selectedVoice = voices.find((v) => v.lang === 'en-ZA' && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.toLowerCase().includes('zira'))) || null
+    }
+    
+    // Any South African voice
+    if (!selectedVoice) {
+      selectedVoice = voices.find((v) => v.lang === 'en-ZA') || null
+    }
+
     // Fallback: find any female-sounding English voice
     if (!selectedVoice) {
       selectedVoice =

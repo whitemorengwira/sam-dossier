@@ -165,6 +165,23 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     canvasPadMap: {},
     paperFormat: 'A4-landscape',
   },
+  {
+    slug: 'chikonga-mine-profile',
+    filename: 'Chikonga_Mine_Profile.html',
+    title: 'Chikonga Mine Profile',
+    reference: '02/CHIKONGA/2026',
+    category: 'mining',
+    pillar: 'mining',
+    description:
+      'Comprehensive profile of the Chikonga Mine subsidiary, detailing geological extracts, strategic assets, CAPEX, and operational history.',
+    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
+    canvasPadMap: {
+      'sig-md': 'managing-director',
+      'sig-ceo': 'ceo',
+      'sig-chair': 'chairperson',
+    },
+    paperFormat: 'A4-portrait',
+  },
 ];
 
 /** Look up a document by slug */

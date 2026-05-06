@@ -142,6 +142,10 @@ export default function LoginPage() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/dashboard/overview`,
+          data: {
+            role: 'pending',
+            is_approved: false
+          }
         },
       })
 
@@ -150,6 +154,15 @@ export default function LoginPage() {
         setLoading(false)
         return
       }
+
+      // Send the admin alert email
+      try {
+        await fetch('/api/auth/signup-alert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+      } catch (e) { console.error('Alert email error', e) }
 
       setLoading(false)
       setMode('verify-sent')
@@ -461,9 +474,14 @@ export default function LoginPage() {
           </div>
         </motion.div>
 
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.5 }} className="mt-8 text-center text-xs font-body font-light" style={{ color: 'var(--text-muted)' }}>
-          By invitation only — Socinga Africa Holdings
-        </motion.p>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.5 }} className="mt-8 text-center flex flex-col gap-2">
+          <p className="text-xs font-body font-light" style={{ color: 'var(--text-muted)' }}>
+            By invitation only — Socinga Africa Holdings
+          </p>
+          <a href="https://www.socinga.africa/" target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-gold hover:text-gold-light transition-colors underline underline-offset-4 tracking-wide">
+            www.socinga.africa
+          </a>
+        </motion.div>
       </div>
     </main>
   )

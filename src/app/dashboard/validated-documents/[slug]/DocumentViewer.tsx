@@ -51,22 +51,6 @@ export function DocumentViewer({
     }
   };
 
-  const handleClearSignature = async () => {
-    try {
-      await fetch(`/api/validated-documents/${slug}/signatures`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ padId: 'all' }),
-        credentials: 'same-origin',
-      });
-      if (iframeRef.current) {
-        iframeRef.current.src = renderUrl;
-      }
-    } catch {
-      // Silently fail
-    }
-  };
-
   return (
     <div>
       {/* Action toolbar */}
@@ -97,17 +81,7 @@ export function DocumentViewer({
         >
           ⎙ Download PDF
         </button>
-        <button
-          onClick={handleClearSignature}
-          style={{
-            ...toolbarBtnStyle,
-            color: 'rgba(239,68,68,0.8)',
-            borderColor: 'rgba(239,68,68,0.2)',
-          }}
-          title="Clear your own signatures"
-        >
-          ✕ Clear My Signature
-        </button>
+
         <span
           style={{
             marginLeft: 'auto',

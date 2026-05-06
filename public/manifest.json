@@ -1,0 +1,22 @@
+{
+  "name": "SAM Dossier",
+  "short_name": "SAM",
+  "description": "Socinga Africa Mining Management Platform",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0A1128",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/socinga-logos/png/sa-icon-dark-ui.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/socinga-logos/png/sa-icon-dark-ui.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

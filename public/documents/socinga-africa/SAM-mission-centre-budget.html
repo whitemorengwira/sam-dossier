@@ -472,5 +472,47 @@
 
     <script src="/document-engine.js"></script>
     <script src="/signing-bridge.js"></script>
+
+    <div class="enh-signing-section">
+        <h3 class="enh-signing-title">Duly Signed and Approved</h3>
+        <p class="enh-signing-subtitle">By affixing their signatures below, the undersigned confirm that this document has been duly approved by the Board of Directors of Socinga Africa.</p>
+        <div class="enh-sig-grid">
+
+            <div class="enh-sig-block">
+                <canvas id="sig-cfo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-cfo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Mike Dotsey — Chief Financial Officer</div>
+                <div class="enh-sig-date-container">
+                    <label for="date-sig-cfo" class="enh-sig-date">Date:</label>
+                    <input type="date" id="date-sig-cfo" class="enh-sig-date-input" />
+                </div>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-ceo" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-ceo')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Whitemore Ngwira — Chief Executive Officer</div>
+                <div class="enh-sig-date-container">
+                    <label for="date-sig-ceo" class="enh-sig-date">Date:</label>
+                    <input type="date" id="date-sig-ceo" class="enh-sig-date-input" />
+                </div>
+            </div>
+
+            <div class="enh-sig-block">
+                <canvas id="sig-chair" class="sig-canvas" width="400" height="120"></canvas>
+                <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('sig-chair')">✕ Clear</button>
+                <div class="enh-sig-label">Mr Tsekane Lukie Tshabalala — Chairperson</div>
+                <div class="enh-sig-date-container">
+                    <label for="date-sig-chair" class="enh-sig-date">Date:</label>
+                    <input type="date" id="date-sig-chair" class="enh-sig-date-input" />
+                </div>
+            </div>
+        </div>
+        <div class="enh-gold-bar"></div>
+        <p class="enh-footer">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved. Confidential &amp; Proprietary.</p>
+    </div>
+
+    <script src="/document-engine.js"></script>
+    <script src="/signing-bridge.js"></script>
 </body>
 </html>

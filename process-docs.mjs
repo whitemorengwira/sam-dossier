@@ -103,7 +103,10 @@ function buildSigningHTML(signatories) {
                 <canvas id="${s.id}" class="sig-canvas" width="400" height="120"></canvas>
                 <button type="button" class="enh-sig-clear" onclick="clearSignaturePad('${s.id}')">✕ Clear</button>
                 <div class="enh-sig-label">${s.name} — ${s.title}</div>
-                <p class="enh-sig-date">Date: _______________</p>
+                <div class="enh-sig-date-container">
+                    <label for="date-${s.id}" class="enh-sig-date">Date:</label>
+                    <input type="date" id="date-${s.id}" class="enh-sig-date-input" />
+                </div>
             </div>`
     )
     .join('\n');

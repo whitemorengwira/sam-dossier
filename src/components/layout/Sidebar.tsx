@@ -31,6 +31,10 @@ import {
   CheckCircle,
   ShieldCheck,
   Tray,
+  MapPin,
+  CalendarBlank,
+  Wrench,
+  Microscope,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useState, useEffect, useCallback } from 'react'
@@ -78,6 +82,8 @@ const navigation: NavGroup[] = [
       { label: 'Timeline / Gantt', href: '/dashboard/workspace/timeline', icon: <Clock size={20} weight="duotone" /> },
       { label: 'Team', href: '/dashboard/workspace/team', icon: <Users size={20} weight="duotone" /> },
       { label: 'Calendar', href: '/dashboard/workspace/calendar', icon: <CalendarDots size={20} weight="duotone" /> },
+      { label: 'Research & Development', href: '/dashboard/research-development', icon: <Microscope size={20} weight="duotone" /> },
+      { label: 'Tools Hub', href: '/dashboard/tools', icon: <Wrench size={20} weight="duotone" /> },
       { label: 'My Work', href: '/dashboard/workspace/my-work', icon: <CheckCircle size={20} weight="duotone" /> },
     ],
   },
@@ -265,6 +271,21 @@ export default function Sidebar() {
           />
           {!collapsed && <span>Collapse</span>}
         </button>
+        {!collapsed && (
+          <div className="mt-4 pt-4 border-t border-gold/10 text-center">
+            <p className="text-[10px] text-slate-500 font-mono">
+              Meticulously built by{' '}
+              <a 
+                href="https://nwhite.systems/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gold/70 hover:text-gold transition-colors font-bold tracking-wide"
+              >
+                N.White Systems
+              </a>
+            </p>
+          </div>
+        )}
       </div>
     </aside>
   )
