@@ -14,7 +14,7 @@ export function DocumentViewer({
   paperFormat,
 }: DocumentViewerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [iframeHeight, setIframeHeight] = useState(1100);
+  const [iframeHeight, setIframeHeight] = useState(1200);
   const renderUrl = `/api/validated-documents/${slug}/render`;
 
   // Listen for postMessage from the signing bridge
@@ -29,7 +29,7 @@ export function DocumentViewer({
         data.slug === slug &&
         typeof data.height === 'number'
       ) {
-        setIframeHeight(data.height + 40);
+        setIframeHeight(data.height + 60);
       }
     },
     [slug]
@@ -52,7 +52,6 @@ export function DocumentViewer({
   };
 
   const handleClearSignature = async () => {
-    // This will be a no-op if not authenticated
     try {
       await fetch(`/api/validated-documents/${slug}/signatures`, {
         method: 'DELETE',
@@ -60,7 +59,6 @@ export function DocumentViewer({
         body: JSON.stringify({ padId: 'all' }),
         credentials: 'same-origin',
       });
-      // Reload the iframe to reflect changes
       if (iframeRef.current) {
         iframeRef.current.src = renderUrl;
       }
@@ -68,9 +66,6 @@ export function DocumentViewer({
       // Silently fail
     }
   };
-
-  const allowHorizontalScroll =
-    paperFormat === 'A4-landscape' || paperFormat === 'A3-landscape';
 
   return (
     <div>
@@ -125,13 +120,12 @@ export function DocumentViewer({
         </span>
       </div>
 
-      {/* Iframe */}
+      {/* Iframe container — always 100% width, no horizontal scroll */}
       <div
         style={{
           border: '1px solid rgba(212,175,55,0.1)',
           background: '#fff',
-          overflowX: allowHorizontalScroll ? 'auto' : 'hidden',
-          overflowY: 'hidden',
+          overflow: 'hidden',
         }}
       >
         <iframe
@@ -141,7 +135,7 @@ export function DocumentViewer({
           loading="eager"
           referrerPolicy="same-origin"
           style={{
-            width: allowHorizontalScroll ? '1400px' : '100%',
+            width: '100%',
             height: iframeHeight,
             border: 'none',
             display: 'block',
