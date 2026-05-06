@@ -1,77 +1,141 @@
 /**
  * Validated Documents — R2 Integration
  *
- * Fetches the actual approved documents from the Cloudflare R2 bucket
- * via the /api/approved-documents listing endpoint. No hardcoded filenames —
- * the API dynamically discovers what's in the bucket.
+ * The 10 Socinga Africa approved corporate documents hosted on
+ * Cloudflare R2 at the `socinga-africa-approved-documents/` prefix.
+ * Each document is fetched on-demand into the rich-text editor.
  */
+
+import { getGlobalAssetUrl } from './getGlobalAssetUrl'
 
 export interface ValidatedDocument {
   id: string
   title: string
-  fileName: string
-  category: string
-  format: 'pdf' | 'html' | 'docx' | 'pptx' | 'xlsx' | 'image' | 'other'
+  category: 'corporate' | 'legal' | 'compliance' | 'governance' | 'finance' | 'hr'
+  r2Key: string
   description: string
-  publicUrl: string
   signatureStatus: 'pending' | 'signed' | 'none'
-  lastModified: string
 }
 
-function detectFormat(name: string): ValidatedDocument['format'] {
-  const ext = name.split('.').pop()?.toLowerCase() || ''
-  if (ext === 'pdf') return 'pdf'
-  if (ext === 'html' || ext === 'htm') return 'html'
-  if (ext === 'docx' || ext === 'doc') return 'docx'
-  if (ext === 'pptx' || ext === 'ppt') return 'pptx'
-  if (ext === 'xlsx' || ext === 'xls') return 'xlsx'
-  if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image'
-  return 'other'
-}
+const PREFIX = 'sam-dossier/public/socinga-africa-approved-documents'
 
-function detectCategory(name: string): string {
-  const lower = name.toLowerCase()
-  if (lower.includes('financial') || lower.includes('finance')) return 'finance'
-  if (lower.includes('legal') || lower.includes('nda') || lower.includes('loi') || lower.includes('mou') || lower.includes('letter-of-intent') || lower.includes('memorandum')) return 'legal'
-  if (lower.includes('compliance') || lower.includes('eia') || lower.includes('conduct')) return 'compliance'
-  if (lower.includes('governance') || lower.includes('moi') || lower.includes('spv')) return 'governance'
-  if (lower.includes('hr') || lower.includes('employment') || lower.includes('human-resource')) return 'hr'
-  if (lower.includes('mining') || lower.includes('geological') || lower.includes('mine')) return 'strategy'
-  return 'corporate'
-}
+export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
+  {
+    id: 'vd-corporate-profile',
+    title: 'Socinga Africa Corporate Profile',
+    category: 'corporate',
+    r2Key: `${PREFIX}/corporate-profile.html`,
+    description: 'Official corporate overview, history, and organisational positioning.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-shareholder-agreement',
+    title: 'Shareholder Agreement',
+    category: 'legal',
+    r2Key: `${PREFIX}/shareholder-agreement.html`,
+    description: 'Binding shareholder agreement governing equity, voting rights, and distributions.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-investment-term-sheet',
+    title: 'Investment Term Sheet',
+    category: 'finance',
+    r2Key: `${PREFIX}/investment-term-sheet.html`,
+    description: 'Formal term sheet outlining capital commitment, interest, and profit-sharing.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-nda-mutual',
+    title: 'Mutual Non-Disclosure Agreement',
+    category: 'legal',
+    r2Key: `${PREFIX}/nda-mutual.html`,
+    description: 'Standard mutual NDA for counterparties and prospective investors.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-spv-memorandum',
+    title: 'SPV Memorandum of Incorporation',
+    category: 'governance',
+    r2Key: `${PREFIX}/spv-memorandum.html`,
+    description: 'Memorandum of Incorporation for the ring-fenced mining SPV entity.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-mining-services-agreement',
+    title: 'Mining Services Agreement',
+    category: 'legal',
+    r2Key: `${PREFIX}/mining-services-agreement.html`,
+    description: 'Service-level agreement between the SPV and operational mining contractors.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-offtake-agreement',
+    title: 'Off-Take Agreement Template',
+    category: 'finance',
+    r2Key: `${PREFIX}/offtake-agreement.html`,
+    description: 'Standard off-take agreement for commodity sales to licensed buyers.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-code-of-conduct',
+    title: 'Code of Conduct & Ethics Policy',
+    category: 'compliance',
+    r2Key: `${PREFIX}/code-of-conduct.html`,
+    description: 'Company-wide behavioural code, anti-bribery, and compliance standards.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-employment-contract',
+    title: 'Employment Contract Template',
+    category: 'hr',
+    r2Key: `${PREFIX}/employment-contract.html`,
+    description: 'Standard employment contract for field and corporate employees.',
+    signatureStatus: 'pending',
+  },
+  {
+    id: 'vd-environmental-impact',
+    title: 'Environmental Impact Assessment',
+    category: 'compliance',
+    r2Key: `${PREFIX}/environmental-impact-assessment.html`,
+    description: 'EIA documentation for regulatory submissions and mine-site compliance.',
+    signatureStatus: 'pending',
+  },
+]
 
-function humanTitle(fileName: string): string {
-  return fileName
-    .replace(/\.[^.]+$/, '')
-    .replace(/[-_]+/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase())
-}
-
-/** Fetch documents from the R2 listing API — the only source of truth */
-export async function fetchApprovedDocuments(): Promise<ValidatedDocument[]> {
+/**
+ * Fetch the raw HTML content of a validated document from R2.
+ * Falls back to a styled editable placeholder if not yet uploaded.
+ */
+export async function fetchValidatedDocumentHtml(doc: ValidatedDocument): Promise<string> {
   try {
-    const res = await fetch('/api/approved-documents')
-    const data = await res.json()
-    if (data.documents && data.documents.length > 0) {
-      return data.documents.map((d: any, i: number) => ({
-        id: `vd-r2-${i}`,
-        title: d.title || humanTitle(d.fileName),
-        fileName: d.fileName,
-        category: detectCategory(d.fileName),
-        format: d.format || detectFormat(d.fileName),
-        description: 'Approved corporate document stored in R2.',
-        publicUrl: d.publicUrl,
-        signatureStatus: 'pending' as const,
-        lastModified: d.lastModified,
-      }))
-    }
+    const url = getGlobalAssetUrl(doc.r2Key)
+    const res = await fetch(url, { cache: 'no-store' })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return await res.text()
   } catch {
-    // API unavailable — return empty
+    return `
+      <div style="font-family: 'Georgia', serif; max-width: 680px; margin: 0 auto; padding: 48px 0;">
+        <h1 style="font-size: 28px; color: #0A1128; border-bottom: 2px solid #D4AF37; padding-bottom: 12px; margin-bottom: 24px;">
+          ${doc.title}
+        </h1>
+        <p style="color: #5f6368; font-size: 15px; line-height: 1.8; margin-bottom: 16px;">
+          This is the <strong>${doc.title}</strong> document.
+          The master HTML file will be loaded from the Cloudflare R2 secure vault once public access is enabled.
+        </p>
+        <p style="color: #5f6368; font-size: 15px; line-height: 1.8;">
+          You may begin editing this document directly. Your changes are preserved in
+          the local session. Use the <em>Export</em> function to download as PDF, Word, or HTML.
+          Use the <em>e-Sign</em> button to apply your digital signature.
+        </p>
+        <p style="color: #80868b; font-size: 12px; margin-top: 32px; font-style: italic;">
+          Category: ${doc.category.charAt(0).toUpperCase() + doc.category.slice(1)} &bull; Document ID: ${doc.id}
+        </p>
+      </div>
+    `
   }
-  return []
 }
 
-/** Returns empty — documents come exclusively from the R2 API */
-export function getStaticValidatedDocuments(): ValidatedDocument[] {
-  return []
+/** Get a document by ID */
+export function getValidatedDocumentById(id: string): ValidatedDocument | undefined {
+  return VALIDATED_DOCUMENTS.find(d => d.id === id)
 }

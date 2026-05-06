@@ -4,26 +4,11 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ArrowLeft,
-  PenNib,
-  CheckCircle,
-  DownloadSimple,
-  UploadSimple,
-  FilePdf,
-  MicrosoftWordLogo,
-  FileHtml,
-  ShieldCheck,
-  CaretDown,
-  SpinnerGap,
-  CloudCheck,
-  Printer,
-  X,
+  ArrowLeft, PenNib, CheckCircle, DownloadSimple, UploadSimple,
+  FilePdf, MicrosoftWordLogo, FileHtml, ShieldCheck, CaretDown,
+  SpinnerGap, CloudCheck, Printer, X,
 } from '@phosphor-icons/react'
-import {
-  getStaticValidatedDocuments,
-  fetchApprovedDocuments,
-  type ValidatedDocument,
-} from '@/lib/validated-documents'
+import { VALIDATED_DOCUMENTS, fetchValidatedDocumentHtml, type ValidatedDocument } from '@/lib/validated-documents'
 
 export default function ValidatedDocumentEditorPage() {
   const params = useParams()
@@ -39,54 +24,27 @@ export default function ValidatedDocumentEditorPage() {
   const [signed, setSigned] = useState(false)
   const [showExport, setShowExport] = useState(false)
 
-  // Find doc and load content
   useEffect(() => {
-    async function loadDoc() {
-      // Try API first, fall back to static
-      let docs = getStaticValidatedDocuments()
-      try {
-        const apiDocs = await fetchApprovedDocuments()
-        if (apiDocs.length > 0) docs = apiDocs
-      } catch { /* use static */ }
+    const found = VALIDATED_DOCUMENTS.find(d => d.id === params.id)
+    if (!found) { setLoading(false); return }
+    setDoc(found)
+    setSigned(found.signatureStatus === 'signed')
 
-      const found = docs.find(d => d.id === params.id)
-      if (!found) { setLoading(false); return }
-
-      setDoc(found)
-      setSigned(found.signatureStatus === 'signed')
-
-      // Check sessionStorage for previous edits
-      const saved = sessionStorage.getItem(`vd-${found.id}`)
-      if (saved && editorRef.current) {
-        editorRef.current.innerHTML = saved
-        setLoading(false)
-        return
-      }
-
-      // For HTML files — fetch content from R2
-      if (found.format === 'html' && found.publicUrl) {
-        try {
-          const res = await fetch(found.publicUrl)
-          if (res.ok) {
-            const html = await res.text()
-            if (editorRef.current) editorRef.current.innerHTML = html
-            setLoading(false)
-            return
-          }
-        } catch { /* fall through */ }
-      }
-
-      // For PDFs — show in iframe mode (handled in render)
-      // For other formats or fetch failure — show placeholder
-      if (editorRef.current && found.format !== 'pdf') {
-        editorRef.current.innerHTML = `<h1>${found.title}</h1><p>This document is stored in the Cloudflare R2 archive. If it does not load automatically, use the "Open Original" button in the toolbar to view it directly.</p><p><a href="${found.publicUrl}" target="_blank" rel="noopener">Open document →</a></p>`
-      }
+    // Check sessionStorage for previous edits first
+    const saved = sessionStorage.getItem(`vd-${found.id}`)
+    if (saved && editorRef.current) {
+      editorRef.current.innerHTML = saved
       setLoading(false)
+      return
     }
-    loadDoc()
+
+    // Fetch from R2 (with graceful fallback)
+    fetchValidatedDocumentHtml(found).then(html => {
+      if (editorRef.current) editorRef.current.innerHTML = html
+      setLoading(false)
+    })
   }, [params.id])
 
-  // Auto-save to sessionStorage
   const save = useCallback(() => {
     if (!editorRef.current || !doc) return
     setSaveState('saving')
@@ -95,7 +53,7 @@ export default function ValidatedDocumentEditorPage() {
     setTimeout(() => setSaveState('idle'), 2000)
   }, [doc])
 
-  // Signing logic
+  // Signing
   const handleSign = () => {
     if (signed) return
     setIsSigning(true)
@@ -104,46 +62,30 @@ export default function ValidatedDocumentEditorPage() {
       if (!c) return
       const ctx = c.getContext('2d')
       if (!ctx) return
-      c.width = c.offsetWidth
-      c.height = c.offsetHeight
-      ctx.strokeStyle = '#0A1128'
-      ctx.lineWidth = 2
-      ctx.lineCap = 'round'
+      c.width = c.offsetWidth; c.height = c.offsetHeight
+      ctx.strokeStyle = '#0A1128'; ctx.lineWidth = 2; ctx.lineCap = 'round'
     }, 100)
   }
-
   const startDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDrawing(true)
-    const c = signCanvasRef.current
-    if (!c) return
-    const ctx = c.getContext('2d')
-    if (!ctx) return
+    const c = signCanvasRef.current; if (!c) return
+    const ctx = c.getContext('2d'); if (!ctx) return
     const r = c.getBoundingClientRect()
-    ctx.beginPath()
-    ctx.moveTo(e.clientX - r.left, e.clientY - r.top)
+    ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top)
   }
-
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return
-    const c = signCanvasRef.current
-    if (!c) return
-    const ctx = c.getContext('2d')
-    if (!ctx) return
+    const c = signCanvasRef.current; if (!c) return
+    const ctx = c.getContext('2d'); if (!ctx) return
     const r = c.getBoundingClientRect()
-    ctx.lineTo(e.clientX - r.left, e.clientY - r.top)
-    ctx.stroke()
+    ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke()
   }
-
   const endDraw = () => setIsDrawing(false)
-
   const clearSignature = () => {
-    const c = signCanvasRef.current
-    if (!c) return
-    const ctx = c.getContext('2d')
-    if (!ctx) return
+    const c = signCanvasRef.current; if (!c) return
+    const ctx = c.getContext('2d'); if (!ctx) return
     ctx.clearRect(0, 0, c.width, c.height)
   }
-
   const applySignature = () => {
     const c = signCanvasRef.current
     if (!c || !editorRef.current) return
@@ -153,243 +95,112 @@ export default function ValidatedDocumentEditorPage() {
         <p style="color:#137333;font-weight:600;font-size:14px">✓ Electronically Signed</p>
         <img src="${dataUrl}" style="max-width:280px;height:auto;margin:8px 0" alt="Digital Signature"/>
         <p style="font-size:12px;color:#80868b">Authorised Signatory — ${new Date().toLocaleString('en-GB')}</p>
-      </div>
-    `
-    setSigned(true)
-    setIsSigning(false)
-    save()
+      </div>`
+    setSigned(true); setIsSigning(false); save()
   }
 
-  // Export functions
+  // Exports
   const exportHTML = () => {
     if (!editorRef.current || !doc) return
-    const blob = new Blob([
-      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${doc.title}</title><style>body{font-family:Georgia,serif;max-width:800px;margin:0 auto;padding:48px;color:#202124;line-height:1.7}</style></head><body>${editorRef.current.innerHTML}</body></html>`
-    ], { type: 'text/html' })
+    const blob = new Blob([`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${doc.title}</title><style>body{font-family:Georgia,serif;max-width:800px;margin:0 auto;padding:48px;color:#202124;line-height:1.7}</style></head><body>${editorRef.current.innerHTML}</body></html>`], { type: 'text/html' })
     downloadBlob(blob, `${doc.title}.html`)
   }
-
   const exportPDF = async () => {
     if (!editorRef.current || !doc) return
     try {
       const html2pdf = (await import('html2pdf.js')).default
-      html2pdf()
-        .set({
-          margin: [15, 15, 15, 15],
-          filename: `${doc.title}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        })
-        .from(editorRef.current)
-        .save()
-    } catch {
-      window.print()
-    }
+      html2pdf().set({ margin: [15,15,15,15], filename: `${doc.title}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(editorRef.current).save()
+    } catch { window.print() }
     setShowExport(false)
   }
-
   const exportDOCX = () => {
     if (!editorRef.current || !doc) return
-    const content = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${doc.title}</title><style>body{font-family:'Calibri',sans-serif;font-size:12pt;line-height:1.6;color:#202124}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}img{max-width:100%}</style></head><body>${editorRef.current.innerHTML}</body></html>`
-    const blob = new Blob([content], { type: 'application/msword' })
-    downloadBlob(blob, `${doc.title}.doc`)
-    setShowExport(false)
+    const blob = new Blob([`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${doc.title}</title><style>body{font-family:'Calibri',sans-serif;font-size:12pt;line-height:1.6;color:#202124}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}img{max-width:100%}</style></head><body>${editorRef.current.innerHTML}</body></html>`], { type: 'application/msword' })
+    downloadBlob(blob, `${doc.title}.doc`); setShowExport(false)
   }
-
   const downloadBlob = (blob: Blob, filename: string) => {
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
+    const url = URL.createObjectURL(blob); const a = document.createElement('a')
+    a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url)
   }
 
-  // Upload handler
+  // Upload
   const handleUpload = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
+    const input = document.createElement('input'); input.type = 'file'
     input.accept = '.html,.htm,.txt,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.svg,.bmp,.tiff,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg'
     input.onchange = () => {
-      const file = input.files?.[0]
-      if (!file) return
-      if (file.size > 100 * 1024 * 1024) {
-        alert('File exceeds the 100 MB limit. Please choose a smaller file.')
-        return
-      }
+      const file = input.files?.[0]; if (!file) return
+      if (file.size > 100 * 1024 * 1024) { alert('File exceeds the 100 MB limit.'); return }
       if (file.type.startsWith('image/')) {
-        const reader = new FileReader()
-        reader.onload = () => {
-          if (editorRef.current) {
-            editorRef.current.innerHTML += `<div style="margin:16px 0"><img src="${reader.result}" style="max-width:100%;height:auto" alt="${file.name}"/></div>`
-            save()
-          }
-        }
-        reader.readAsDataURL(file)
-        return
+        const r = new FileReader(); r.onload = () => { if (editorRef.current) { editorRef.current.innerHTML += `<div style="margin:16px 0"><img src="${r.result}" style="max-width:100%;height:auto" alt="${file.name}"/></div>`; save() } }; r.readAsDataURL(file); return
       }
       if (file.type.startsWith('video/')) {
-        const reader = new FileReader()
-        reader.onload = () => {
-          if (editorRef.current) {
-            editorRef.current.innerHTML += `<div style="margin:16px 0"><video controls style="max-width:100%"><source src="${reader.result}" type="${file.type}"/>Your browser does not support the video tag.</video></div>`
-            save()
-          }
-        }
-        reader.readAsDataURL(file)
-        return
+        const r = new FileReader(); r.onload = () => { if (editorRef.current) { editorRef.current.innerHTML += `<div style="margin:16px 0"><video controls style="max-width:100%"><source src="${r.result}" type="${file.type}"/></video></div>`; save() } }; r.readAsDataURL(file); return
       }
-      const reader = new FileReader()
-      reader.onload = () => {
-        if (editorRef.current) {
-          editorRef.current.innerHTML = reader.result as string
-          save()
-        }
-      }
-      reader.readAsText(file)
+      const r = new FileReader(); r.onload = () => { if (editorRef.current) { editorRef.current.innerHTML = r.result as string; save() } }; r.readAsText(file)
     }
     input.click()
   }
 
-  if (!doc && !loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-        <p className="text-text-muted font-mono">Document not found.</p>
-      </div>
-    )
-  }
-
-  const isPdf = doc?.format === 'pdf'
+  if (!doc && !loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}><p className="text-text-muted font-mono">Document not found.</p></div>
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '100vh', background: '#E8EAED' }}>
-
       {/* Chrome bar */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '8px 16px', background: '#0A1128', borderBottom: '1px solid rgba(212,175,55,0.15)',
-        position: 'sticky', top: 0, zIndex: 50,
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px', background: '#0A1128', borderBottom: '1px solid rgba(212,175,55,0.15)', position: 'sticky', top: 0, zIndex: 50 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => router.push('/dashboard/validated-documents')} style={{
-            background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)',
-            color: 'var(--gold)', padding: '6px 8px', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', transition: 'all 0.2s',
-          }}>
+          <button onClick={() => router.push('/dashboard/validated-documents')} style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', color: 'var(--gold)', padding: '6px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <ArrowLeft size={16} />
           </button>
           <div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--gold)', margin: 0 }}>
-              {doc?.title || 'Loading...'}
-            </h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--gold)', margin: 0 }}>{doc?.title || 'Loading...'}</h2>
             <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
               {saveState === 'saving' && <><SpinnerGap size={10} className="animate-spin" style={{ display: 'inline', marginRight: 4 }} />Saving…</>}
               {saveState === 'saved' && <><CloudCheck size={10} style={{ display: 'inline', marginRight: 4, color: '#137333' }} />All changes saved</>}
-              {saveState === 'idle' && (doc?.fileName || 'Validated Document')}
+              {saveState === 'idle' && 'Validated Document'}
             </span>
           </div>
         </div>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* Open original in new tab */}
-          {doc?.publicUrl && (
-            <a href={doc.publicUrl} target="_blank" rel="noopener noreferrer" style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-mono)',
-              background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)',
-              color: 'var(--gold)', cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s',
-            }}>
-              <DownloadSimple size={14} /> Original
-            </a>
-          )}
-
-          {/* Upload */}
-          <button onClick={handleUpload} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '6px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-mono)',
-            background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)',
-            color: 'var(--gold)', cursor: 'pointer', transition: 'all 0.2s',
-          }}>
-            <UploadSimple size={14} /> Upload
-          </button>
-
-          {/* Export dropdown */}
+          <button onClick={handleUpload} style={actionBtnStyle}><UploadSimple size={14} /> Upload</button>
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setShowExport(!showExport)} style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-mono)',
-              background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)',
-              color: 'var(--gold)', cursor: 'pointer', transition: 'all 0.2s',
-            }}>
-              <DownloadSimple size={14} /> Export <CaretDown size={10} />
-            </button>
+            <button onClick={() => setShowExport(!showExport)} style={actionBtnStyle}><DownloadSimple size={14} /> Export <CaretDown size={10} /></button>
             <AnimatePresence>
               {showExport && (
                 <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-                  style={{
-                    position: 'absolute', top: '100%', right: 0, marginTop: 4,
-                    background: '#0A1128', border: '1px solid rgba(212,175,55,0.2)',
-                    minWidth: 200, zIndex: 60, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                  }}
-                >
+                  style={{ position: 'absolute', top: '100%', right: 0, marginTop: 4, background: '#0A1128', border: '1px solid rgba(212,175,55,0.2)', minWidth: 200, zIndex: 60, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
                   <button onClick={exportPDF} style={menuItemStyle}><FilePdf size={16} style={{ color: '#c5221f' }} /> Export as PDF</button>
-                  <button onClick={exportDOCX} style={menuItemStyle}><MicrosoftWordLogo size={16} style={{ color: '#1a73e8' }} /> Export as Word (.doc)</button>
+                  <button onClick={exportDOCX} style={menuItemStyle}><MicrosoftWordLogo size={16} style={{ color: '#1a73e8' }} /> Export as Word</button>
                   <button onClick={() => { exportHTML(); setShowExport(false) }} style={menuItemStyle}><FileHtml size={16} style={{ color: '#e8710a' }} /> Export as HTML</button>
                   <button onClick={() => { window.print(); setShowExport(false) }} style={menuItemStyle}><Printer size={16} style={{ color: '#5f6368' }} /> Print</button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
-          {/* Sign */}
           <button onClick={handleSign} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '6px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-mono)',
+            ...actionBtnStyle,
             background: signed ? 'rgba(19,115,51,0.15)' : 'rgba(212,175,55,0.15)',
             border: `1px solid ${signed ? 'rgba(19,115,51,0.4)' : 'rgba(212,175,55,0.4)'}`,
             color: signed ? '#137333' : 'var(--gold)',
-            cursor: signed ? 'default' : 'pointer', transition: 'all 0.2s',
+            cursor: signed ? 'default' : 'pointer',
           }}>
             {signed ? <><CheckCircle size={14} weight="fill" /> Signed</> : <><PenNib size={14} /> e-Sign</>}
           </button>
-
-          {/* Badge */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            padding: '5px 10px', fontSize: 10, fontWeight: 700,
-            fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.5px',
-            background: 'rgba(19,115,51,0.1)', color: '#137333',
-            border: '1px solid rgba(19,115,51,0.25)',
-          }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.5px', background: 'rgba(19,115,51,0.1)', color: '#137333', border: '1px solid rgba(19,115,51,0.25)' }}>
             <ShieldCheck size={12} weight="fill" /> Validated
           </div>
         </div>
       </div>
 
-      {/* Editor body */}
+      {/* Editor */}
       <div style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center', padding: '32px 16px' }}>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 400 }}>
             <SpinnerGap size={36} className="animate-spin" style={{ color: '#D4AF37', marginBottom: 12 }} />
             <p style={{ color: '#80868b', fontSize: 13, fontFamily: 'var(--font-mono)' }}>Fetching document from R2 vault...</p>
           </div>
-        ) : isPdf ? (
-          <iframe src={doc?.publicUrl} title={doc?.title} style={{ width: 816, minHeight: 1056, border: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.12)' }} />
         ) : (
-          <div
-            ref={editorRef}
-            contentEditable
-            suppressContentEditableWarning
-            onInput={save}
-            style={{
-              width: 816, minHeight: 1056,
-              background: '#fff', padding: 96,
-              boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
-              outline: 'none', fontFamily: 'Georgia, "Times New Roman", serif',
-              fontSize: 15, lineHeight: 1.8, color: '#202124',
-            }}
-          />
+          <div ref={editorRef} contentEditable suppressContentEditableWarning onInput={save}
+            style={{ width: 816, minHeight: 1056, background: '#fff', padding: 96, boxShadow: '0 2px 12px rgba(0,0,0,0.12)', outline: 'none', fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 15, lineHeight: 1.8, color: '#202124' }} />
         )}
       </div>
 
@@ -397,29 +208,16 @@ export default function ValidatedDocumentEditorPage() {
       <AnimatePresence>
         {isSigning && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 100,
-              background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
+            style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              style={{
-                background: '#0A1128', border: '1px solid rgba(212,175,55,0.2)',
-                padding: 32, width: 500, boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
-              }}
-            >
+              style={{ background: '#0A1128', border: '1px solid rgba(212,175,55,0.2)', padding: 32, width: 500, boxShadow: '0 24px 64px rgba(0,0,0,0.4)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h3 className="text-gold font-display" style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>Digital Signature</h3>
                 <button onClick={() => setIsSigning(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={18} /></button>
               </div>
-              <p className="text-text-secondary" style={{ fontSize: 13, marginBottom: 16 }}>
-                Draw your signature below. This will be appended to the document as a binding electronic signature.
-              </p>
-              <canvas ref={signCanvasRef}
-                style={{ width: '100%', height: 140, border: '1px solid rgba(212,175,55,0.2)', cursor: 'crosshair', background: 'rgba(255,255,255,0.05)' }}
-                onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
-              />
+              <p className="text-text-secondary" style={{ fontSize: 13, marginBottom: 16 }}>Draw your signature below. This will be appended as a binding electronic signature.</p>
+              <canvas ref={signCanvasRef} style={{ width: '100%', height: 140, border: '1px solid rgba(212,175,55,0.2)', cursor: 'crosshair', background: 'rgba(255,255,255,0.05)' }}
+                onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw} />
               <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end' }}>
                 <button onClick={clearSignature} style={secondaryBtnStyle}>Clear</button>
                 <button onClick={() => setIsSigning(false)} style={secondaryBtnStyle}>Cancel</button>
@@ -433,20 +231,23 @@ export default function ValidatedDocumentEditorPage() {
   )
 }
 
-const menuItemStyle: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: 10,
-  width: '100%', padding: '10px 16px', background: 'transparent',
-  border: 'none', borderBottom: '1px solid rgba(255,255,255,0.04)',
-  color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer',
-  fontFamily: 'inherit', textAlign: 'left' as const, transition: 'background 0.15s',
+const actionBtnStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 6,
+  padding: '6px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-mono)',
+  background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)',
+  color: 'var(--gold)', cursor: 'pointer', transition: 'all 0.2s',
 }
-
+const menuItemStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '10px 16px',
+  background: 'transparent', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.04)',
+  color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+  transition: 'background 0.15s',
+}
 const secondaryBtnStyle: React.CSSProperties = {
   padding: '8px 16px', fontSize: 12, fontWeight: 600,
   background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)',
   color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'var(--font-mono)',
 }
-
 const primaryBtnStyle: React.CSSProperties = {
   padding: '8px 20px', fontSize: 12, fontWeight: 700,
   background: 'linear-gradient(135deg, var(--gold), #c4a030)',

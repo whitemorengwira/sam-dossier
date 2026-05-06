@@ -1,7 +1,6 @@
 'use client'
 import { useReducer, useEffect, useRef, useCallback } from 'react'
 import { useReducedMotion } from 'framer-motion'
-import dynamic from 'next/dynamic'
 import {
   SimulationState,
   SimulationAction,
@@ -9,31 +8,7 @@ import {
 } from './simulation.data'
 import SimulationControls from './components/SimulationControls'
 import LiveSimulationMetrics from './components/LiveSimulationMetrics'
-
-const MineEcosystemSimulation = dynamic(() => import('./components/MineEcosystemSimulation'), {
-  ssr: false,
-  loading: () => (
-    <div
-      className="w-full flex items-center justify-center"
-      style={{ aspectRatio: '16/9', background: '#0A1128', border: '1px solid rgba(212,175,55,0.06)' }}
-    >
-      <div className="text-center">
-        <div className="mb-3" style={{ width: 40, height: 40, border: '1px solid rgba(212,175,55,0.3)', margin: '0 auto' }}>
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              background: 'linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.3) 50%, rgba(212,175,55,0.1) 100%)',
-              backgroundSize: '200% 200%',
-              animation: 'shimmer 1.5s infinite',
-            }}
-          />
-        </div>
-        <p className="text-xs font-mono" style={{ color: '#6B7280' }}>Loading simulation...</p>
-      </div>
-    </div>
-  ),
-})
+import MineEcosystemSimulation from './components/MineEcosystemSimulation'
 
 function computeGrade(simulatedDays: number): number {
   const { min, max, periodDays } = SIMULATION_PARAMS.gradeOscillation
