@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { DownloadSimple, MagnifyingGlassPlus } from '@phosphor-icons/react';
 
