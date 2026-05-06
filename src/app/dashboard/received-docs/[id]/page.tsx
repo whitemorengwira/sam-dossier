@@ -45,7 +45,13 @@ export default function ReceivedDocViewerPage() {
   }
 
   const meta = FORMAT_META[doc.format] || FORMAT_META.other
-  const viewUrl = getViewerUrl(doc)
+
+  // Generate a secure, presigned GET URL via our API route to bypass the Cloudflare 401 Unauthorized public access errors
+  const secureUrl = `/api/received-docs/view?r2Key=${encodeURIComponent(doc.r2Key)}`
+  
+  // Replace doc.publicUrl with our secureUrl for the Office viewer and iframe
+  const docWithSecureUrl = { ...doc, publicUrl: secureUrl }
+  const viewUrl = getViewerUrl(docWithSecureUrl)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
@@ -81,7 +87,7 @@ export default function ReceivedDocViewerPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <a href={doc.publicUrl} download target="_blank" rel="noopener noreferrer"
+          <a href={secureUrl} download target="_blank" rel="noopener noreferrer"
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 14px', fontSize: 12, fontWeight: 600,
@@ -92,7 +98,7 @@ export default function ReceivedDocViewerPage() {
           >
             <DownloadSimple size={14} /> Download
           </a>
-          <a href={doc.publicUrl} target="_blank" rel="noopener noreferrer"
+          <a href={secureUrl} target="_blank" rel="noopener noreferrer"
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 14px', fontSize: 12, fontWeight: 600,
@@ -118,14 +124,14 @@ export default function ReceivedDocViewerPage() {
       <div style={{ flex: 1, background: '#E8EAED', overflow: 'hidden' }}>
         {doc.format === 'image' ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 32 }}>
-            <img src={doc.publicUrl} alt={doc.title}
+            <img src={secureUrl} alt={doc.title}
               style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }}
             />
           </div>
         ) : doc.format === 'video' ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 32, background: '#000' }}>
             <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '100%' }}>
-              <source src={doc.publicUrl} />
+              <source src={secureUrl} />
               Your browser does not support the video tag.
             </video>
           </div>
