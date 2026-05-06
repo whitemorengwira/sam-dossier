@@ -8,6 +8,8 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { FileText, FilePdf } from '@phosphor-icons/react'
 
 const PAGE_SLUG = 'executive-summary'
 
@@ -83,19 +85,44 @@ export default function ExecutiveSummaryPage() {
   }
 
   return (
-    <div className="space-y-4 max-w-6xl pb-32">
-      {editingMode && (
-        <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />
-      )}
-      
-      <CmsProvider>
-        {blocks.map(block => (
-          <BlockRenderer key={block.id} block={block} />
-        ))}
-      </CmsProvider>
+    <Tabs orientation="vertical" defaultValue="summary" className="w-full flex flex-col md:flex-row gap-6 min-h-[85vh] pb-10">
+      <div className="w-full md:w-64 shrink-0">
+        <TabsList className="flex flex-col h-auto w-full bg-onyx-light border border-gold/20 p-2 items-stretch gap-2">
+          <TabsTrigger value="summary" className="data-[state=active]:bg-gold data-[state=active]:text-onyx justify-start px-4 py-3 h-auto rounded">
+            <span className="flex items-center gap-3 font-mono font-bold text-sm"><FileText size={20} /> Executive Summary</span>
+          </TabsTrigger>
+          <TabsTrigger value="pdf" className="data-[state=active]:bg-gold data-[state=active]:text-onyx justify-start px-4 py-3 h-auto text-left rounded">
+            <span className="flex items-center gap-3 font-mono font-bold text-sm"><FilePdf size={20} className="shrink-0" /> Chikonga Mine Profile</span>
+          </TabsTrigger>
+        </TabsList>
+      </div>
 
-      <PropertyPanel />
-      <BlockPickerModal />
-    </div>
+      <div className="flex-1 min-w-0">
+        <TabsContent value="summary" className="mt-0 h-full">
+          <div className="space-y-4 max-w-4xl pb-32">
+            {editingMode && (
+              <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />
+            )}
+            
+            <CmsProvider>
+              {blocks.map(block => (
+                <BlockRenderer key={block.id} block={block} />
+              ))}
+            </CmsProvider>
+
+            <PropertyPanel />
+            <BlockPickerModal />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="pdf" className="mt-0 h-[calc(100vh-150px)] min-h-[800px] border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
+          <iframe 
+            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100" 
+            className="w-full h-full border-none"
+            title="Chikonga Mine Profile PDF"
+          />
+        </TabsContent>
+      </div>
+    </Tabs>
   )
 }
