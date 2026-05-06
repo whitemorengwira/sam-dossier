@@ -3,7 +3,7 @@
  *
  * Metadata for the 10 board-approved Socinga Africa governance documents.
  * Each entry maps to a static HTML file in public/documents/socinga-africa/.
- * The signing-bridge script and API routes reference this registry.
+ * Canvas pad IDs are taken directly from the original HTML source files.
  */
 
 export type SigningRole = 'managing-director' | 'cfo' | 'ceo' | 'chairperson';
@@ -30,13 +30,12 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     category: 'governance',
     pillar: 'group',
     description:
-      'Founding charter, governance framework, and operational mandate of Socinga Africa Mining (Pty) Ltd.',
-    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
+      'Founding charter setting out business establishment rules, governance structures, transitional arrangements, and jurisdictional mandate for Socinga Africa.',
+    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
     canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-cfo': 'cfo',
+      'sig-md': 'managing-director',
       'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
+      'sig-chair': 'chairperson',
     },
     paperFormat: 'A4-portrait',
   },
@@ -48,13 +47,12 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     category: 'structural',
     pillar: 'group',
     description:
-      'Organisational architecture, departmental hierarchy, reporting lines, and decision-making authority.',
-    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
+      'Organisational architecture, departmental hierarchy, reporting lines, and decision-making authority framework.',
+    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
     canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-cfo': 'cfo',
+      'sig-md': 'managing-director',
       'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
+      'sig-chair': 'chairperson',
     },
     paperFormat: 'A4-portrait',
   },
@@ -65,13 +63,12 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     category: 'financial',
     pillar: 'group',
     description:
-      'Fiscal governance framework prescribing budget standards, expenditure controls, and financial reporting.',
-    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
+      'Fiscal governance framework prescribing budget standards, expenditure controls, and financial reporting obligations.',
+    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
     canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-cfo': 'cfo',
+      'sig-md': 'managing-director',
       'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
+      'sig-chair': 'chairperson',
     },
     paperFormat: 'A4-portrait',
   },
@@ -82,12 +79,13 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     category: 'governance',
     pillar: 'group',
     description:
-      'Cross-pillar governance standards covering conduct, ESG, health and safety, and inter-pillar collaboration.',
-    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
+      'Cross-pillar governance standards covering conduct, ESG, health and safety, and inter-pillar collaboration protocols.',
+    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
     canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
+      'sig-jabu': 'managing-director',
+      'sig-mike': 'cfo',
+      'sig-white': 'ceo',
+      'sig-tsekane': 'chairperson',
     },
     paperFormat: 'A4-portrait',
   },
@@ -99,12 +97,9 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     pillar: 'mining',
     description:
       'Mineral extraction strategy, asset portfolio overview, operational phases, and capital allocation model.',
-    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
+    requiredSigningRoles: ['managing-director'],
     canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-cfo': 'cfo',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
+      'sig-md': 'managing-director',
     },
     paperFormat: 'A4-portrait',
   },
@@ -116,12 +111,8 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     pillar: 'mining',
     description:
       'Chikonga Mine development specifics — geological summary, mine plan, processing flowsheet, and community targets.',
-    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
-    canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
-    },
+    requiredSigningRoles: [],
+    canvasPadMap: {},
     paperFormat: 'A4-portrait',
   },
   {
@@ -131,13 +122,10 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     category: 'strategic',
     pillar: 'group',
     description:
-      'Operational excellence framework, performance management, supply chain strategy, and continuous improvement.',
-    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
+      'Operational excellence framework, performance management, supply chain strategy, and continuous improvement mandate.',
+    requiredSigningRoles: ['managing-director'],
     canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-cfo': 'cfo',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
+      'sig-md': 'managing-director',
     },
     paperFormat: 'A4-portrait',
   },
@@ -149,12 +137,8 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     pillar: 'group',
     description:
       'Shared corporate functions organisational chart — legal, HR, IT, finance, and administration mandates.',
-    requiredSigningRoles: ['managing-director', 'ceo', 'chairperson'],
-    canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
-    },
+    requiredSigningRoles: [],
+    canvasPadMap: {},
     paperFormat: 'A4-landscape',
   },
   {
@@ -165,13 +149,8 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     pillar: 'group',
     description:
       'Full ecosystem hierarchy — board, executive committee, five strategic pillars, and divisional sub-functions.',
-    requiredSigningRoles: ['managing-director', 'cfo', 'ceo', 'chairperson'],
-    canvasPadMap: {
-      'sig-managing-director': 'managing-director',
-      'sig-cfo': 'cfo',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
-    },
+    requiredSigningRoles: [],
+    canvasPadMap: {},
     paperFormat: 'A3-landscape',
   },
   {
@@ -181,13 +160,9 @@ export const VALIDATED_DOCUMENTS_REGISTRY: ValidatedDocument[] = [
     category: 'financial',
     pillar: 'group',
     description:
-      'FY2026 operational budget — revenue projections, capital expenditure, operational costs, and consolidated summary.',
-    requiredSigningRoles: ['cfo', 'ceo', 'chairperson'],
-    canvasPadMap: {
-      'sig-cfo': 'cfo',
-      'sig-ceo': 'ceo',
-      'sig-chairperson': 'chairperson',
-    },
+      'Operational budget — revenue projections, capital expenditure, operational costs, and consolidated financial summary.',
+    requiredSigningRoles: [],
+    canvasPadMap: {},
     paperFormat: 'A4-landscape',
   },
 ];

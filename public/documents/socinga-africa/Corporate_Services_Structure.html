@@ -1,124 +1,113 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Corporate Services Structure — Socinga Africa Mining (Pty) Ltd</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-    @page { size: A4 landscape; margin: 15mm; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a2e; line-height: 1.75; }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #0A1128; }
-    .gold-bar { height: 4px; background: linear-gradient(90deg, #D4AF37, #F0D060, #D4AF37); }
-    .section-title { border-left: 4px solid #D4AF37; padding-left: 16px; margin: 32px 0 16px; }
-    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-    th, td { border: 1px solid #d1d5db; padding: 10px 14px; text-align: left; font-size: 13px; }
-    th { background: #0A1128; color: #D4AF37; font-weight: 600; }
-    .org-chart { display: flex; flex-direction: column; align-items: center; gap: 24px; margin: 32px 0; }
-    .org-level { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .org-card { background: #0A1128; color: #F5F0E8; padding: 12px 20px; text-align: center; min-width: 180px; border: 1px solid #D4AF37; }
-    .org-card h4 { color: #D4AF37; font-size: 14px; margin: 0 0 4px; font-weight: 700; }
-    .org-card p { font-size: 11px; margin: 0; opacity: 0.8; }
-    .org-connector { width: 2px; height: 24px; background: #D4AF37; margin: 0 auto; }
-    .signature-block { display: inline-block; width: 30%; margin: 24px 1.5%; vertical-align: top; }
-    .signature-block canvas { border: 1px solid #0A1128; cursor: crosshair; width: 100%; height: 100px; background: #fafafa; }
-    .signature-label { font-size: 11px; font-weight: 600; color: #0A1128; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socinga Africa - Corporate Services Structure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #0f172a; }
+        .node { background: white; border: 2px solid #cbd5e1; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .node-dark { background: #0f172a; color: white; border-color: #0f172a; }
+        .node-accent { background: #d97706; color: white; border-color: #b45309; }
+        .sub-list p { font-size: 0.85rem; color: #475569; margin: 4px 0; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; }
+    </style>
 </head>
-<body class="mx-auto px-8 py-12" style="max-width: 1200px;">
-  <div class="gold-bar mb-8"></div>
-  <header class="mb-10">
-    <h1 class="text-4xl font-black mb-2">Corporate Services Structure</h1>
-    <p class="text-lg text-gray-600">Socinga Africa Mining (Pty) Ltd — Shared Services &amp; Corporate Functions</p>
-    <p class="text-sm text-gray-400 mt-2">Effective Date: 1 January 2026 &bull; Board Approved</p>
-  </header>
-  <div class="gold-bar mb-8" style="height:2px;"></div>
+<body class="p-8">
+    <div class="max-w-5xl mx-auto bg-white p-10 shadow-xl rounded-xl">
+        <h1 class="text-3xl font-serif font-bold text-center mb-10 text-slate-900 border-b pb-4">Socinga Africa Corporate Services Structure</h1>
 
-  <section>
-    <h2 class="section-title text-2xl font-bold">1. Corporate Services Overview</h2>
-    <p>The Corporate Services division provides shared functional support to all five pillars of the Socinga Africa ecosystem. It operates as the operational backbone, ensuring that legal, compliance, human resources, information technology, and administrative functions are delivered efficiently, consistently, and in alignment with the group's strategic objectives.</p>
-  </section>
+        <!-- Top Execs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="node node-dark"><p class="font-bold">Chief Financial Officer</p></div>
+            <div class="node node-dark"><p class="font-bold">Managing Director</p></div>
+            <div class="node node-dark"><p class="font-bold">Chief Executive Officer</p></div>
+        </div>
 
-  <section>
-    <h2 class="section-title text-2xl font-bold">2. Organisational Chart — Corporate Services</h2>
-    <div class="org-chart">
-      <div class="org-level">
-        <div class="org-card"><h4>Chief Executive Officer</h4><p>Mr Whitemore Ngwira</p></div>
-      </div>
-      <div class="org-connector"></div>
-      <div class="org-level">
-        <div class="org-card"><h4>Managing Director</h4><p>Ms Jabulile Dladla</p></div>
-        <div class="org-card"><h4>Chief Financial Officer</h4><p>Mr Mike Dotsey</p></div>
-      </div>
-      <div class="org-connector"></div>
-      <div class="org-level">
-        <div class="org-card"><h4>Legal &amp; Compliance</h4><p>Corporate Counsel &bull; Regulatory Affairs</p></div>
-        <div class="org-card"><h4>Human Resources</h4><p>Talent &bull; Payroll &bull; Industrial Relations</p></div>
-        <div class="org-card"><h4>Information Technology</h4><p>Infrastructure &bull; Cybersecurity &bull; Development</p></div>
-        <div class="org-card"><h4>Finance &amp; Treasury</h4><p>Accounting &bull; Tax &bull; Cash Management</p></div>
-        <div class="org-card"><h4>Administration</h4><p>Facilities &bull; Procurement &bull; Fleet</p></div>
-      </div>
+        <!-- Director -->
+        <div class="flex justify-center mb-12 relative">
+            <div class="w-1 bg-slate-300 h-8 absolute -top-8"></div>
+            <div class="node node-accent w-full md:w-1/2 shadow-lg">
+                <h2 class="text-xl font-bold uppercase tracking-wider">Director: Corporate Services</h2>
+            </div>
+            <div class="w-1 bg-slate-300 h-8 absolute -bottom-8"></div>
+        </div>
+
+        <!-- Admin Support -->
+        <div class="flex justify-center mb-12">
+            <div class="bg-slate-100 border-2 border-slate-300 px-8 py-3 rounded-full font-semibold text-slate-700 z-10 shadow-sm relative">
+                Admin Support
+            </div>
+        </div>
+
+        <!-- Departments -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 border-t-2 border-slate-300 pt-8 relative">
+            
+            <div class="node">
+                <h3 class="font-bold text-sm text-slate-800 mb-4 bg-slate-100 py-2 rounded">Legal Services</h3>
+                <div class="sub-list text-left">
+                    <p>Para-Legal Opinions</p>
+                    <p>Contracts</p>
+                    <p>Agreements</p>
+                    <p>Disputes & Cases</p>
+                    <p>Policy</p>
+                </div>
+            </div>
+
+            <div class="node">
+                <h3 class="font-bold text-sm text-slate-800 mb-4 bg-slate-100 py-2 rounded">Human Resources</h3>
+                <div class="sub-list text-left">
+                    <p>Recruitment</p>
+                    <p>Development</p>
+                    <p>Discipline</p>
+                    <p>Policy</p>
+                </div>
+            </div>
+
+            <div class="node">
+                <h3 class="font-bold text-sm text-slate-800 mb-4 bg-slate-100 py-2 rounded">Industrial Relations</h3>
+                <div class="sub-list text-left">
+                    <p>Bargaining Advice</p>
+                    <p>Negotiations</p>
+                    <p>Policy</p>
+                </div>
+            </div>
+
+            <div class="node">
+                <h3 class="font-bold text-sm text-slate-800 mb-4 bg-slate-100 py-2 rounded">Facilities Mngnt</h3>
+                <div class="sub-list text-left">
+                    <p>Fleet Mngnt</p>
+                    <p>Bookings & Flights</p>
+                    <p>Fuel Mngnt</p>
+                    <p>Policy</p>
+                </div>
+            </div>
+
+            <div class="node">
+                <h3 class="font-bold text-sm text-slate-800 mb-4 bg-slate-100 py-2 rounded">Health & Safety</h3>
+                <div class="sub-list text-left">
+                    <p>Enforcement</p>
+                    <p>Compliance Support</p>
+                    <p>Protection Services</p>
+                    <p>Policy</p>
+                </div>
+            </div>
+
+            <div class="node">
+                <h3 class="font-bold text-sm text-slate-800 mb-4 bg-slate-100 py-2 rounded">Public Relations</h3>
+                <div class="sub-list text-left">
+                    <p>Communications</p>
+                    <p>Integrity & Promotions</p>
+                    <p>Secretariat duties</p>
+                    <p>Marketing & IT</p>
+                    <p>International Relations</p>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-  </section>
-
-  <section>
-    <h2 class="section-title text-2xl font-bold">3. Functional Mandates</h2>
-    <table>
-      <tr><th>Function</th><th>Mandate</th><th>Head Count (Target)</th></tr>
-      <tr><td>Legal &amp; Compliance</td><td>Contract drafting, regulatory filings, licence maintenance, dispute resolution, POPIA/PAIA compliance.</td><td>4</td></tr>
-      <tr><td>Human Resources</td><td>Recruitment, onboarding, performance management, payroll, benefits administration, labour relations.</td><td>6</td></tr>
-      <tr><td>Information Technology</td><td>Network infrastructure, ERP systems, cybersecurity, SAM Dossier platform management, data backup.</td><td>5</td></tr>
-      <tr><td>Finance &amp; Treasury</td><td>General ledger, accounts payable/receivable, tax compliance, banking, hedging, investor reporting.</td><td>8</td></tr>
-      <tr><td>Administration</td><td>Office management, travel coordination, fleet management, procurement processing, asset register.</td><td>4</td></tr>
-    </table>
-  </section>
-
-  <section>
-    <h2 class="section-title text-2xl font-bold">4. Service Level Commitments</h2>
-    <ul class="list-disc pl-6 space-y-2">
-      <li>Legal contract review turnaround: 5 business days for standard agreements; 10 for complex transactions.</li>
-      <li>IT helpdesk first response: within 2 hours during business hours; critical systems 24/7 monitoring.</li>
-      <li>Payroll processing: completed by the 25th of each month, no exceptions.</li>
-      <li>Procurement order processing: 48-hour turnaround for standard items; 5 days for non-standard.</li>
-      <li>Monthly management accounts: delivered to EXCO by the 10th business day of the following month.</li>
-    </ul>
-  </section>
-
-  <div class="gold-bar my-10" style="height:2px;"></div>
-
-  <section>
-    <h2 class="text-xl font-bold mb-6">Authorised Signatories</h2>
-    <div class="signature-block">
-      <canvas id="sig-managing-director" width="400" height="100"></canvas>
-      <div class="signature-label">Ms Jabulile Dladla — MD</div>
-    </div>
-    <div class="signature-block">
-      <canvas id="sig-ceo" width="400" height="100"></canvas>
-      <div class="signature-label">Mr Whitemore Ngwira — CEO</div>
-    </div>
-    <div class="signature-block">
-      <canvas id="sig-chairperson" width="400" height="100"></canvas>
-      <div class="signature-label">Mr Tsekane Lukie Tshabalala — Chairperson</div>
-    </div>
-  </section>
-
-  <div class="gold-bar mt-12"></div>
-  <footer class="mt-6 text-center"><p class="text-xs text-gray-400">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved.</p></footer>
-
-  <script>
-    document.querySelectorAll('canvas').forEach(function(canvas) {
-      var ctx = canvas.getContext('2d'); var drawing = false;
-      canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-      ctx.strokeStyle = '#0A1128'; ctx.lineWidth = 2; ctx.lineCap = 'round';
-      canvas.addEventListener('mousedown', function(e) { drawing = true; var r = canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); });
-      canvas.addEventListener('mousemove', function(e) { if (!drawing) return; var r = canvas.getBoundingClientRect(); ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); });
-      canvas.addEventListener('mouseup', function() { drawing = false; });
-      canvas.addEventListener('mouseleave', function() { drawing = false; });
-      canvas.addEventListener('touchstart', function(e) { e.preventDefault(); drawing = true; var r = canvas.getBoundingClientRect(); var t = e.touches[0]; ctx.beginPath(); ctx.moveTo(t.clientX - r.left, t.clientY - r.top); });
-      canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!drawing) return; var r = canvas.getBoundingClientRect(); var t = e.touches[0]; ctx.lineTo(t.clientX - r.left, t.clientY - r.top); ctx.stroke(); });
-      canvas.addEventListener('touchend', function() { drawing = false; });
-    });
-  </script>
 </body>
 </html>
+    

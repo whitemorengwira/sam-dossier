@@ -1,124 +1,442 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAM Mission Centre Budget — Socinga Africa Mining (Pty) Ltd</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-    @page { size: A4 landscape; margin: 15mm; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a2e; line-height: 1.6; }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #0A1128; }
-    .gold-bar { height: 4px; background: linear-gradient(90deg, #D4AF37, #F0D060, #D4AF37); }
-    .section-title { border-left: 4px solid #D4AF37; padding-left: 16px; margin: 32px 0 16px; }
-    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
-    th, td { border: 1px solid #d1d5db; padding: 8px 12px; text-align: left; }
-    th { background: #0A1128; color: #D4AF37; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-    td.amount { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
-    tr.subtotal { background: rgba(212,175,55,0.08); font-weight: 600; }
-    tr.total { background: #0A1128; color: #D4AF37; font-weight: 700; }
-    .signature-block { display: inline-block; width: 30%; margin: 16px 1.5%; vertical-align: top; }
-    .signature-block canvas { border: 1px solid #0A1128; cursor: crosshair; width: 100%; height: 90px; background: #fafafa; }
-    .signature-label { font-size: 10px; font-weight: 600; color: #0A1128; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socinga Africa Mining - Strategic Mission Centre Investment Budget</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f8f9fa; 
+            margin: 0; 
+            padding: 40px; 
+            color: #1e293b; 
+            line-height: 1.6;
+        }
+       .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: #fff; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+        h1 { 
+            text-align: center; 
+            color: #0f172a; 
+            border-bottom: 3px solid #e2e8f0; 
+            padding-bottom: 20px; 
+            margin-bottom: 10px; 
+            font-size: 28px;
+            font-weight: 800;
+        }
+        p.subtitle { 
+            text-align: center; 
+            color: #64748b; 
+            font-size: 15px; 
+            margin-top: 0; 
+            margin-bottom: 35px; 
+            font-style: italic;
+        }
+        .roi-section {
+            background-color: #f8fafc;
+            border-left: 5px solid #0369a1; /* Corporate Trust Blue */
+            padding: 25px 30px;
+            margin-bottom: 40px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .roi-section h2 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .roi-section p {
+            font-size: 14.5px;
+            color: #334155;
+            margin-bottom: 14px;
+            text-align: justify;
+        }
+        .roi-section strong {
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .roi-section a {
+            color: #0369a1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 40px; 
+        }
+        th, td { 
+            padding: 14px 16px; 
+            border-bottom: 1px solid #e2e8f0; 
+            text-align: left; 
+            font-size: 14px;
+        }
+        th { 
+            background-color: #f1f5f9; 
+            color: #475569; 
+            font-weight: 700; 
+            font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+       .section-header { 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+            font-weight: bold; 
+            font-size: 15px; 
+            letter-spacing: 0.5px;
+        }
+       .currency { 
+            text-align: right; 
+            font-variant-numeric: tabular-nums; 
+        }
+       .total-row { 
+            background-color: #f8fafc; 
+            font-weight: bold; 
+            color: #0f172a;
+        }
+       .grand-total { 
+            background-color: #0369a1; 
+            color: #fff; 
+            font-weight: bold; 
+            font-size: 16px; 
+        }
+       .grand-total td { 
+            border: none; 
+        }
+       .notes { 
+            font-size: 13px; 
+            color: #64748b; 
+            margin-top: 25px; 
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+    </style>
 </head>
-<body class="mx-auto px-6 py-10" style="max-width: 1100px;">
-  <div class="gold-bar mb-6"></div>
-  <header class="mb-8">
-    <h1 class="text-3xl font-black mb-2">SAM Mission Centre Budget</h1>
-    <p class="text-lg text-gray-600">Socinga Africa Mining (Pty) Ltd — FY2026 Operational Budget</p>
-    <p class="text-sm text-gray-400 mt-2">Financial Year: 1 March 2026 – 28 February 2027 &bull; Board Approved</p>
-  </header>
-  <div class="gold-bar mb-6" style="height:2px;"></div>
+<body>
+    <div class="container">
+        <h1>Socinga Africa Mining - Strategic Mission Centre Budget</h1>
+        <p class="subtitle">Comprehensive Capital Expenditure & First-Year Operational Runway<br>Estimated Exchange Rate Used: 1 USD = 18.00 ZAR</p>
+        
+        <div class="roi-section">
+            <h2>Executive Summary: R20M Investment Validation & Return on Investment (ROI)</h2>
+            <p><strong>Strategic Real Estate Asset Acquisition:</strong> This budget strategically allocates capital to an excellent, scalable commercial property in Midrand (~R9.9M), successfully converting sunk rental costs into an appreciating balance sheet asset. This gives <a href="https://www.socinga.africa/mining" target="_blank">Socinga Mining</a> and the <a href="https://www.socinga.africa/mining-hub" target="_blank">Mining Hub</a> a permanent, secure Mission Control Centre while actively building long-term equity and preserving capital for investors.</p>
+            
+            <p><strong>Enterprise IT & Predictive Analytics Efficiency:</strong> We are deploying a powerful in-house computing cluster featuring two Dell PowerEdge AI Servers and an immersive 98-inch Central Display. This architecture guarantees zero-latency telemetry monitoring and predictive machinery analytics. This directly pays back the investment by saving massive third-party cloud computing fees, boosting mining yield efficiencies, and preventing costly heavy machinery downtime.</p>
+            
+            <p><strong>Mobile DOOH Screen & OB Logistics Revenue:</strong> Our cross-border operations are supported by a high-mobility Mobile LED Truck with an integrated OB (Outside Broadcast) suite. Beyond its operational mandate, it functions as a highly lucrative Digital Out-Of-Home (DOOH) advertising asset. By leasing premium digital ad space to our mining supply chain partners, this vehicle will generate consistent monthly revenue, acting as a direct financial payback mechanism.</p>
+            
+            <p><strong>Total Operational Resilience & Risk Mitigation:</strong> Operations are fully insulated to guarantee absolute capital efficiency and uninterrupted uptime. The budget covers a robust commercial solar power array, dedicated 1Gbps fiber, mobile Starlink connectivity, and a fully capitalized first year of OpEx (insurance, utilities, software)—ensuring Socinga experiences zero load-shedding downtime and actively safeguards all revenue-generating mining activities from day one.</p>
+        </div>
 
-  <section>
-    <h2 class="section-title text-xl font-bold">1. Budget Summary</h2>
-    <table>
-      <tr><th>Category</th><th>Q1 (Mar–May)</th><th>Q2 (Jun–Aug)</th><th>Q3 (Sep–Nov)</th><th>Q4 (Dec–Feb)</th><th>FY2026 Total</th></tr>
-      <tr><td>Revenue — Gold Sales</td><td class="amount">R 12,500,000</td><td class="amount">R 15,800,000</td><td class="amount">R 18,200,000</td><td class="amount">R 21,000,000</td><td class="amount">R 67,500,000</td></tr>
-      <tr><td>Revenue — Ancillary</td><td class="amount">R 850,000</td><td class="amount">R 900,000</td><td class="amount">R 1,100,000</td><td class="amount">R 1,200,000</td><td class="amount">R 4,050,000</td></tr>
-      <tr class="subtotal"><td>Total Revenue</td><td class="amount">R 13,350,000</td><td class="amount">R 16,700,000</td><td class="amount">R 19,300,000</td><td class="amount">R 22,200,000</td><td class="amount">R 71,550,000</td></tr>
-    </table>
-  </section>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th>Qty</th>
+                    <th class="currency">Unit Price (USD)</th>
+                    <th class="currency">Unit Price (ZAR)</th>
+                    <th class="currency">Total (USD)</th>
+                    <th class="currency">Total (ZAR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" class="section-header">1. Real Estate Asset Acquisition & Infrastructure Retrofit</td></tr>
+                <tr>
+                    <td>Prime Commercial Property Purchase (Midrand HQ)</td>
+                    <td>1</td>
+                    <td class="currency">$550,000</td><td class="currency">R9,900,000</td>
+                    <td class="currency">$550,000</td><td class="currency">R9,900,000</td>
+                </tr>
+                <tr>
+                    <td>Mission Control Retrofit & Architectural Conversion</td>
+                    <td>1</td>
+                    <td class="currency">$100,000</td><td class="currency">R1,800,000</td>
+                    <td class="currency">$100,000</td><td class="currency">R1,800,000</td>
+                </tr>
+                <tr>
+                    <td>Enterprise Security System (Biometrics, CCTV, Perimeter Defense)</td>
+                    <td>1</td>
+                    <td class="currency">$20,000</td><td class="currency">R360,000</td>
+                    <td class="currency">$20,000</td><td class="currency">R360,000</td>
+                </tr>
+                <tr>
+                    <td>AV, Core Server & Technology Installation Services</td>
+                    <td>1</td>
+                    <td class="currency">$25,000</td><td class="currency">R450,000</td>
+                    <td class="currency">$25,000</td><td class="currency">R450,000</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$695,000</td><td class="currency">R12,510,000</td>
+                </tr>
 
-  <section>
-    <h2 class="section-title text-xl font-bold">2. Capital Expenditure</h2>
-    <table>
-      <tr><th>Item</th><th>Description</th><th>Budget (ZAR)</th><th>Timeline</th></tr>
-      <tr><td>Processing Plant Phase 1</td><td>Stamp mill, ball mill, CIP circuit installation</td><td class="amount">R 18,500,000</td><td>Q1–Q2</td></tr>
-      <tr><td>Underground Development</td><td>Decline shaft, ventilation, and dewatering</td><td class="amount">R 8,200,000</td><td>Q2–Q3</td></tr>
-      <tr><td>Camp Infrastructure</td><td>Accommodation, offices, water treatment</td><td class="amount">R 4,800,000</td><td>Q1</td></tr>
-      <tr><td>Vehicles &amp; Equipment</td><td>Excavators, dump trucks, LHDs</td><td class="amount">R 6,500,000</td><td>Q1–Q2</td></tr>
-      <tr><td>Laboratory Setup</td><td>Fire assay &amp; sample preparation facility</td><td class="amount">R 2,800,000</td><td>Q1</td></tr>
-      <tr><td>Security Infrastructure</td><td>Fencing, CCTV, access control</td><td class="amount">R 1,500,000</td><td>Q1</td></tr>
-      <tr class="subtotal"><td colspan="2">Total CAPEX</td><td class="amount">R 42,300,000</td><td>—</td></tr>
-    </table>
-  </section>
+                <tr><td colspan="6" class="section-header">2. Enterprise Edge-Computing & Mission Control Architecture</td></tr>
+                <tr>
+                    <td>Enterprise Mining AI Servers (Dell PowerEdge)</td>
+                    <td>2</td>
+                    <td class="currency">$15,000</td><td class="currency">R270,000</td>
+                    <td class="currency">$30,000</td><td class="currency">R540,000</td>
+                </tr>
+                <tr>
+                    <td>Server Rack, Cabling & Core Switch Hardware</td>
+                    <td>1</td>
+                    <td class="currency">$8,000</td><td class="currency">R144,000</td>
+                    <td class="currency">$8,000</td><td class="currency">R144,000</td>
+                </tr>
+                <tr>
+                    <td>HP Z4 G5 Vertical AI Workstation</td>
+                    <td>1</td>
+                    <td class="currency">$10,000</td><td class="currency">R180,000</td>
+                    <td class="currency">$10,000</td><td class="currency">R180,000</td>
+                </tr>
+                <tr>
+                    <td>Apple Mac Studio M3 Ultra</td>
+                    <td>1</td>
+                    <td class="currency">$7,500</td><td class="currency">R135,000</td>
+                    <td class="currency">$7,500</td><td class="currency">R135,000</td>
+                </tr>
+                <tr>
+                    <td>Samsung 98-inch Commercial Display (Central Dashboard)</td>
+                    <td>1</td>
+                    <td class="currency">$12,000</td><td class="currency">R216,000</td>
+                    <td class="currency">$12,000</td><td class="currency">R216,000</td>
+                </tr>
+                <tr>
+                    <td>Apple Studio Display (5K)</td>
+                    <td>2</td>
+                    <td class="currency">$1,600</td><td class="currency">R28,800</td>
+                    <td class="currency">$3,200</td><td class="currency">R57,600</td>
+                </tr>
+                <tr>
+                    <td>QNAP Enterprise Network Attached Storage (NAS)</td>
+                    <td>1</td>
+                    <td class="currency">$2,200</td><td class="currency">R39,600</td>
+                    <td class="currency">$2,200</td><td class="currency">R39,600</td>
+                </tr>
+                <tr>
+                    <td>High-Capacity Storage Disks & Enterprise NVMe Pool</td>
+                    <td>1</td>
+                    <td class="currency">$3,600</td><td class="currency">R64,800</td>
+                    <td class="currency">$3,600</td><td class="currency">R64,800</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$76,500</td><td class="currency">R1,377,000</td>
+                </tr>
 
-  <section>
-    <h2 class="section-title text-xl font-bold">3. Operational Expenditure (Monthly)</h2>
-    <table>
-      <tr><th>Category</th><th>Monthly Budget</th><th>Annual Budget</th><th>Notes</th></tr>
-      <tr><td>Labour — Mining Operations</td><td class="amount">R 1,200,000</td><td class="amount">R 14,400,000</td><td>120 staff incl. contractors</td></tr>
-      <tr><td>Labour — Processing</td><td class="amount">R 650,000</td><td class="amount">R 7,800,000</td><td>45 staff</td></tr>
-      <tr><td>Labour — Administration</td><td class="amount">R 480,000</td><td class="amount">R 5,760,000</td><td>Corporate services team</td></tr>
-      <tr><td>Consumables — Chemicals</td><td class="amount">R 380,000</td><td class="amount">R 4,560,000</td><td>NaCN, lime, activated carbon</td></tr>
-      <tr><td>Consumables — Fuel</td><td class="amount">R 520,000</td><td class="amount">R 6,240,000</td><td>Diesel + generator fuel</td></tr>
-      <tr><td>Consumables — Grinding Media</td><td class="amount">R 180,000</td><td class="amount">R 2,160,000</td><td>Steel balls, liners</td></tr>
-      <tr><td>Utilities</td><td class="amount">R 250,000</td><td class="amount">R 3,000,000</td><td>Electricity, water</td></tr>
-      <tr><td>Community Development Fund</td><td class="amount">R 200,000</td><td class="amount">R 2,400,000</td><td>5% of net profit allocation</td></tr>
-      <tr class="subtotal"><td>Total Monthly OPEX</td><td class="amount">R 3,860,000</td><td class="amount">R 46,320,000</td><td>—</td></tr>
-    </table>
-  </section>
+                <tr><td colspan="6" class="section-header">3. High-Mobility Digital DOOH Broadcast Vehicle</td></tr>
+                <tr>
+                    <td>2026 Mobile Digital LED Truck (Commercial Outdoor DOOH Display)</td>
+                    <td>1</td>
+                    <td class="currency">$130,000</td><td class="currency">R2,340,000</td>
+                    <td class="currency">$130,000</td><td class="currency">R2,340,000</td>
+                </tr>
+                <tr>
+                    <td>Integrated Outside Broadcast (OB) Control Room Suite</td>
+                    <td>1</td>
+                    <td class="currency">$35,000</td><td class="currency">R630,000</td>
+                    <td class="currency">$35,000</td><td class="currency">R630,000</td>
+                </tr>
+                <tr>
+                    <td>SpaceX Starlink Flat High-Performance (Mobile Internet for Fleet)</td>
+                    <td>1</td>
+                    <td class="currency">$2,500</td><td class="currency">R45,000</td>
+                    <td class="currency">$2,500</td><td class="currency">R45,000</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$167,500</td><td class="currency">R3,015,000</td>
+                </tr>
 
-  <section>
-    <h2 class="section-title text-xl font-bold">4. Consolidated Budget Summary</h2>
-    <table>
-      <tr><th>Line Item</th><th>FY2026 Amount (ZAR)</th></tr>
-      <tr><td>Projected Revenue</td><td class="amount">R 71,550,000</td></tr>
-      <tr><td>Total CAPEX</td><td class="amount">(R 42,300,000)</td></tr>
-      <tr><td>Total OPEX</td><td class="amount">(R 46,320,000)</td></tr>
-      <tr><td>Total Required Funding</td><td class="amount">R 88,620,000</td></tr>
-      <tr class="total"><td>Net Position (Revenue less OPEX)</td><td class="amount">R 25,230,000</td></tr>
-      <tr class="total"><td>Investment Capital Required (CAPEX)</td><td class="amount">R 42,300,000</td></tr>
-    </table>
-  </section>
+                <tr><td colspan="6" class="section-header">4. Aerial Topography & Field Communications Suite</td></tr>
+                <tr>
+                    <td>DJI Inspire 3 Drone (Precision Site Topography)</td>
+                    <td>1</td>
+                    <td class="currency">$16,500</td><td class="currency">R297,000</td>
+                    <td class="currency">$16,500</td><td class="currency">R297,000</td>
+                </tr>
+                <tr>
+                    <td>DJI Mavic 4 Pro Drones (Daily Operational Inspections)</td>
+                    <td>2</td>
+                    <td class="currency">$2,200</td><td class="currency">R39,600</td>
+                    <td class="currency">$4,400</td><td class="currency">R79,200</td>
+                </tr>
+                <tr>
+                    <td>Sony FX6 Cinema Line Cameras (Investor & Media Relations)</td>
+                    <td>2</td>
+                    <td class="currency">$6,000</td><td class="currency">R108,000</td>
+                    <td class="currency">$12,000</td><td class="currency">R216,000</td>
+                </tr>
+                <tr>
+                    <td>Professional Broadcast Audio & Acquisition Hardware</td>
+                    <td>1</td>
+                    <td class="currency">$6,000</td><td class="currency">R108,000</td>
+                    <td class="currency">$6,000</td><td class="currency">R108,000</td>
+                </tr>
+                <tr>
+                    <td>Studio Lighting & Room Acoustic Treatment Package</td>
+                    <td>1</td>
+                    <td class="currency">$4,000</td><td class="currency">R72,000</td>
+                    <td class="currency">$4,000</td><td class="currency">R72,000</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$42,900</td><td class="currency">R772,200</td>
+                </tr>
 
-  <div class="gold-bar my-8" style="height:2px;"></div>
+                <tr><td colspan="6" class="section-header">5. Mission Centre Enterprise Furnishings</td></tr>
+                <tr>
+                    <td>Control Suite: Industrial-Grade Workstations & 24/7 Seating</td>
+                    <td>4</td>
+                    <td class="currency">$1,500</td><td class="currency">R27,000</td>
+                    <td class="currency">$6,000</td><td class="currency">R108,000</td>
+                </tr>
+                <tr>
+                    <td>Executive Boardroom & Strategy Suite Setup</td>
+                    <td>1</td>
+                    <td class="currency">$4,000</td><td class="currency">R72,000</td>
+                    <td class="currency">$4,000</td><td class="currency">R72,000</td>
+                </tr>
+                <tr>
+                    <td>Employee Canteen & Welfare Facility Outfitting</td>
+                    <td>1</td>
+                    <td class="currency">$5,000</td><td class="currency">R90,000</td>
+                    <td class="currency">$5,000</td><td class="currency">R90,000</td>
+                </tr>
+                <tr>
+                    <td>Management Office Furniture Package</td>
+                    <td>1</td>
+                    <td class="currency">$3,000</td><td class="currency">R54,000</td>
+                    <td class="currency">$3,000</td><td class="currency">R54,000</td>
+                </tr>
+                <tr>
+                    <td>Server Room Environmental Protection (Cabinet & HVAC System)</td>
+                    <td>1</td>
+                    <td class="currency">$3,000</td><td class="currency">R54,000</td>
+                    <td class="currency">$3,000</td><td class="currency">R54,000</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$21,000</td><td class="currency">R378,000</td>
+                </tr>
 
-  <section>
-    <h2 class="text-lg font-bold mb-4">Authorised Signatories</h2>
-    <div class="signature-block">
-      <canvas id="sig-cfo" width="300" height="90"></canvas>
-      <div class="signature-label">Mr Mike Dotsey — CFO</div>
+                <tr><td colspan="6" class="section-header">6. Core Field Computing Logistics</td></tr>
+                <tr>
+                    <td>Apple MacBook Pro 16-inch M4 Max (Lead Data Scientists)</td>
+                    <td>1</td>
+                    <td class="currency">$4,000</td><td class="currency">R72,000</td>
+                    <td class="currency">$4,000</td><td class="currency">R72,000</td>
+                </tr>
+                <tr>
+                    <td>Apple MacBook Pro 16-inch M4 Pro (Engineers)</td>
+                    <td>2</td>
+                    <td class="currency">$2,500</td><td class="currency">R45,000</td>
+                    <td class="currency">$5,000</td><td class="currency">R90,000</td>
+                </tr>
+                <tr>
+                    <td>Apple MacBook Pro 14-inch M3 (Operations Management)</td>
+                    <td>4</td>
+                    <td class="currency">$2,000</td><td class="currency">R36,000</td>
+                    <td class="currency">$8,000</td><td class="currency">R144,000</td>
+                </tr>
+                <tr>
+                    <td>Encrypted Flagship Android Phones (Field Communications)</td>
+                    <td>5</td>
+                    <td class="currency">$1,200</td><td class="currency">R21,600</td>
+                    <td class="currency">$6,000</td><td class="currency">R108,000</td>
+                </tr>
+                <tr>
+                    <td>Workstation Accessories & Rugged Field Transport Cases</td>
+                    <td>1</td>
+                    <td class="currency">$2,100</td><td class="currency">R37,800</td>
+                    <td class="currency">$2,100</td><td class="currency">R37,800</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$25,100</td><td class="currency">R451,800</td>
+                </tr>
+
+                <tr><td colspan="6" class="section-header">7. Off-Grid Power Security & Energy Independence</td></tr>
+                <tr>
+                    <td>Commercial Hybrid Solar Inverter + Storage Bank (HQ Hub)</td>
+                    <td>1</td>
+                    <td class="currency">$37,500</td><td class="currency">R675,000</td>
+                    <td class="currency">$37,500</td><td class="currency">R675,000</td>
+                </tr>
+                <tr>
+                    <td>EcoFlow Portable Power Station (Redundancy for Mobile OB)</td>
+                    <td>1</td>
+                    <td class="currency">$3,500</td><td class="currency">R63,000</td>
+                    <td class="currency">$3,500</td><td class="currency">R63,000</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align:right">Subtotal</td>
+                    <td class="currency">$41,000</td><td class="currency">R738,000</td>
+                </tr>
+
+                <tr class="grand-total" style="background-color: #0f172a;">
+                    <td colspan="4" style="text-align:right">TOTAL CAPITAL EXPENDITURE (CapEx)</td>
+                    <td class="currency">$1,069,000</td><td class="currency">R19,242,000</td>
+                </tr>
+                
+                <tr><td colspan="6" class="section-header" style="margin-top: 20px;">8. Connectivity, Insurances & Utilities (Monthly OpEx Runway)</td></tr>
+                <tr>
+                    <td>Comprehensive Asset Insurance (Real Estate, Servers, Vehicles)</td>
+                    <td>1</td>
+                    <td class="currency">$1,000</td><td class="currency">R18,000</td>
+                    <td class="currency">$1,000</td><td class="currency">R18,000</td>
+                </tr>
+                <tr>
+                    <td>1Gbps High-Speed Fibre Dedicated Backbone</td>
+                    <td>1</td>
+                    <td class="currency">$500</td><td class="currency">R9,000</td>
+                    <td class="currency">$500</td><td class="currency">R9,000</td>
+                </tr>
+                <tr>
+                    <td>Starlink Mobility Enterprise Roam Subscription</td>
+                    <td>1</td>
+                    <td class="currency">$250</td><td class="currency">R4,500</td>
+                    <td class="currency">$250</td><td class="currency">R4,500</td>
+                </tr>
+                <tr>
+                    <td>Facility Utilities (Water, Supplemental Power, Municipal Rates)</td>
+                    <td>1</td>
+                    <td class="currency">$950</td><td class="currency">R17,100</td>
+                    <td class="currency">$950</td><td class="currency">R17,100</td>
+                </tr>
+                <tr>
+                    <td>Enterprise Software Subscriptions & Cloud AI API Processing</td>
+                    <td>1</td>
+                    <td class="currency">$800</td><td class="currency">R14,400</td>
+                    <td class="currency">$800</td><td class="currency">R14,400</td>
+                </tr>
+                <tr class="total-row" style="background-color: #f1f5f9;">
+                    <td colspan="4" style="text-align:right; font-weight:bold;">Monthly OpEx Total</td>
+                    <td class="currency">$3,500 /mo</td><td class="currency">R63,000 /mo</td>
+                </tr>
+                <tr class="grand-total" style="background-color: #1e293b;">
+                    <td colspan="4" style="text-align:right">12-MONTH OPEX RUNWAY (Fully Funded Year 1)</td>
+                    <td class="currency">$42,000 /yr</td><td class="currency">R756,000 /yr</td>
+                </tr>
+                <tr class="grand-total" style="background-color: #0369a1;">
+                    <td colspan="4" style="text-align:right; padding: 15px;">TOTAL FUNDING REQUIREMENT (Total CapEx + 12 Months OpEx)</td>
+                    <td class="currency" style="font-size: 18px;">$1,111,000</td><td class="currency" style="font-size: 18px;">R19,998,000</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="notes">
+            <p><strong>Financial Validation:</strong> This precise capital allocation strictly limits expenditure to high-yield infrastructural and technological investments. By funding the entire physical setup, hardware procurement, and the first 12 months of operational running costs within a guaranteed framework, this budget isolates the company from operational inflation and immediately anchors the investment in hard, appreciating assets. Fluctuations may apply based on the USD/ZAR baseline exchange rate (18.00) at the point of capital deployment.</p>
+        </div>
     </div>
-    <div class="signature-block">
-      <canvas id="sig-ceo" width="300" height="90"></canvas>
-      <div class="signature-label">Mr Whitemore Ngwira — CEO</div>
-    </div>
-    <div class="signature-block">
-      <canvas id="sig-chairperson" width="300" height="90"></canvas>
-      <div class="signature-label">Mr T.L. Tshabalala — Chairperson</div>
-    </div>
-  </section>
-
-  <div class="gold-bar mt-10"></div>
-  <footer class="mt-4 text-center"><p class="text-xs text-gray-400">&copy; 2026 Socinga Africa Mining (Pty) Ltd. All rights reserved.</p></footer>
-
-  <script>
-    document.querySelectorAll('canvas').forEach(function(canvas) {
-      var ctx = canvas.getContext('2d'); var drawing = false;
-      canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-      ctx.strokeStyle = '#0A1128'; ctx.lineWidth = 2; ctx.lineCap = 'round';
-      canvas.addEventListener('mousedown', function(e) { drawing = true; var r = canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); });
-      canvas.addEventListener('mousemove', function(e) { if (!drawing) return; var r = canvas.getBoundingClientRect(); ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); });
-      canvas.addEventListener('mouseup', function() { drawing = false; });
-      canvas.addEventListener('mouseleave', function() { drawing = false; });
-      canvas.addEventListener('touchstart', function(e) { e.preventDefault(); drawing = true; var r = canvas.getBoundingClientRect(); var t = e.touches[0]; ctx.beginPath(); ctx.moveTo(t.clientX - r.left, t.clientY - r.top); });
-      canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!drawing) return; var r = canvas.getBoundingClientRect(); var t = e.touches[0]; ctx.lineTo(t.clientX - r.left, t.clientY - r.top); ctx.stroke(); });
-      canvas.addEventListener('touchend', function() { drawing = false; });
-    });
-  </script>
 </body>
 </html>
