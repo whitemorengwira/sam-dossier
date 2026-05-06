@@ -35,6 +35,7 @@ import {
   CalendarBlank,
   Wrench,
   Microscope,
+  ArrowSquareOut,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useState, useEffect, useCallback } from 'react'
@@ -45,6 +46,7 @@ interface NavItem {
   label: string
   href: string
   icon: React.ReactNode
+  external?: boolean
 }
 
 interface NavGroup {
@@ -57,6 +59,7 @@ const navigation: NavGroup[] = [
     title: 'Main',
     items: [
       { label: 'Overview', href: '/dashboard/overview', icon: <House size={20} weight="duotone" /> },
+      { label: 'Socinga Africa Group', href: 'https://www.socinga.africa/', icon: <ArrowSquareOut size={20} weight="duotone" />, external: true },
       { label: 'SAM-X Platform', href: '/samx-app', icon: <Globe size={20} weight="duotone" /> },
       { label: 'Investor Pitch Deck', href: '/dashboard/pitch-deck', icon: <PresentationChart size={20} weight="duotone" /> },
       { label: 'Lisa AI', href: '/dashboard/ai-assistant', icon: <Sparkle size={20} weight="duotone" /> },
@@ -234,27 +237,48 @@ export default function Sidebar() {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        'flex items-center gap-3 px-3 py-2 text-[13px] font-body transition-all duration-200',
-                        'hover:bg-gold/[0.08] group',
-                        isActive
-                          ? 'text-gold bg-gold/[0.06] border-l-2 border-gold shadow-[inset_0_0_20px_rgba(212,175,55,0.05)]'
-                          : 'text-text-secondary border-l-2 border-transparent'
-                      )}
-                      title={collapsed ? item.label : undefined}
-                    >
-                      <span className={cn(
-                        'shrink-0 transition-colors',
-                        isActive ? 'text-gold' : 'text-text-secondary group-hover:text-gold/80'
-                      )}>
-                        {item.icon}
-                      </span>
-                      {!collapsed && (
-                        <span className="truncate">{item.label}</span>
-                      )}
-                    </Link>
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          'flex items-center gap-3 px-3 py-2 text-[13px] font-body transition-all duration-200',
+                          'hover:bg-gold/[0.08] group',
+                          'text-text-secondary border-l-2 border-transparent'
+                        )}
+                        title={collapsed ? item.label : undefined}
+                      >
+                        <span className="shrink-0 transition-colors text-text-secondary group-hover:text-gold/80">
+                          {item.icon}
+                        </span>
+                        {!collapsed && (
+                          <span className="truncate">{item.label}</span>
+                        )}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          'flex items-center gap-3 px-3 py-2 text-[13px] font-body transition-all duration-200',
+                          'hover:bg-gold/[0.08] group',
+                          isActive
+                            ? 'text-gold bg-gold/[0.06] border-l-2 border-gold shadow-[inset_0_0_20px_rgba(212,175,55,0.05)]'
+                            : 'text-text-secondary border-l-2 border-transparent'
+                        )}
+                        title={collapsed ? item.label : undefined}
+                      >
+                        <span className={cn(
+                          'shrink-0 transition-colors',
+                          isActive ? 'text-gold' : 'text-text-secondary group-hover:text-gold/80'
+                        )}>
+                          {item.icon}
+                        </span>
+                        {!collapsed && (
+                          <span className="truncate">{item.label}</span>
+                        )}
+                      </Link>
+                    )}
                   </li>
                 )
               })}
