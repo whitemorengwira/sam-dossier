@@ -97,7 +97,11 @@ export default function LoginPage() {
       const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
 
       if (authError) {
-        setError(authError.message)
+        if (authError.message.toLowerCase().includes('rate limit')) {
+          setError('Too many login attempts. Please wait a few minutes before trying again.')
+        } else {
+          setError(authError.message)
+        }
         setLoading(false)
         return
       }
@@ -110,7 +114,7 @@ export default function LoginPage() {
     }
   }
 
-  /* ── Signup handler (email + password + confirm → verification email) ── */
+  /* ── Signup handler ─────────────────────────────────────────── */
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -141,7 +145,7 @@ export default function LoginPage() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard/overview`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             role: 'pending',
             is_approved: false
@@ -150,19 +154,22 @@ export default function LoginPage() {
       })
 
       if (signupError) {
-        setError(signupError.message)
+        // Friendly rate-limit message
+        if (signupError.message.toLowerCase().includes('rate limit')) {
+          setError('Too many requests. Please wait a few minutes before trying again.')
+        } else {
+          setError(signupError.message)
+        }
         setLoading(false)
         return
       }
 
-      // Send the admin alert email
-      try {
-        await fetch('/api/auth/signup-alert', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-      } catch (e) { console.error('Alert email error', e) }
+      // Notify admin (fire-and-forget, don't block user flow)
+      fetch('/api/auth/signup-alert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }).catch(() => {})
 
       setLoading(false)
       setMode('verify-sent')
@@ -192,7 +199,7 @@ export default function LoginPage() {
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/update-password`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/update-password`,
       })
 
       if (resetError) {
@@ -375,40 +382,31 @@ export default function LoginPage() {
               </form>
             )}
 
-            {/* ═══ VERIFICATION SENT ═══ */}
+            {/* ═══ REGISTRATION COMPLETE ═══ */}
             {mode === 'verify-sent' && (
               <div className="text-center space-y-5 py-4">
                 <div className="w-16 h-16 mx-auto bg-gold/10 border border-gold/30 flex items-center justify-center mb-4" style={{ fontSize: '28px' }}>
-                  ✉️
+                  ✅
                 </div>
-                <h2 className="text-white font-display text-lg">Check Your Email</h2>
+                <h2 className="text-white font-display text-lg">Registration Submitted</h2>
                 <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  We have sent a verification link to<br />
-                  <span className="text-gold font-medium">{email}</span>
-                </p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                  Click the link in the email to verify your account and gain access to the dossier.
+                  Your access request for<br />
+                  <span className="text-gold font-medium">{email}</span><br />
+                  has been submitted successfully.
                 </p>
 
-                <div className="pt-4 space-y-3">
+                <div className="bg-gold/5 border border-gold/20 rounded p-4 text-left space-y-2">
+                  <h3 className="text-gold text-xs font-mono uppercase tracking-widest">What happens next?</h3>
+                  <ol className="text-xs leading-relaxed space-y-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Check your email for a verification link and click it to confirm your address.</li>
+                    <li className="flex gap-2"><span className="text-gold font-bold">2.</span> An administrator will review and approve your access request.</li>
+                    <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Once approved, log in with your credentials to access the dossier.</li>
+                  </ol>
+                </div>
+
+                <div className="pt-4">
                   <button type="button" onClick={() => { setMode('login'); setError('') }} className="btn-gold w-full py-3">
-                    Back to Login
-                  </button>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setLoading(true)
-                      try {
-                        const { createClient } = await import('@/lib/supabase/client')
-                        const supabase = createClient()
-                        await supabase.auth.resend({ type: 'signup', email })
-                      } catch { /* ignore */ }
-                      setLoading(false)
-                    }}
-                    disabled={loading}
-                    className="text-sm text-gold hover:text-gold-light transition-colors font-body underline underline-offset-4"
-                  >
-                    {loading ? 'Resending…' : 'Resend verification email'}
+                    Return to Login
                   </button>
                 </div>
               </div>

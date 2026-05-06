@@ -75,11 +75,24 @@ export default function DashboardLayout({
             <span className="text-3xl">⏳</span>
           </div>
           <h2 className="text-gold font-serif text-2xl font-bold mb-4">Account Pending Approval</h2>
-          <p className="text-slate-300 text-sm mb-6">Your account has been successfully created and is currently awaiting administrator approval. You will receive an email once your access level has been assigned.</p>
+          <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+            Your account has been successfully created and is currently awaiting administrator approval.
+            Once approved, you will be able to access the full SAM Dossier platform.
+          </p>
+
+          <div className="bg-gold/5 border border-gold/20 rounded p-4 text-left space-y-2 mb-6">
+            <h3 className="text-gold text-xs font-mono uppercase tracking-widest">While you wait</h3>
+            <ul className="text-xs leading-relaxed space-y-1.5 text-slate-400">
+              <li className="flex gap-2"><span className="text-gold">•</span> Ensure you have verified your email address by clicking the link sent to your inbox.</li>
+              <li className="flex gap-2"><span className="text-gold">•</span> The administrator has been notified of your request and will action it shortly.</li>
+              <li className="flex gap-2"><span className="text-gold">•</span> Once approved, simply return here and log in with your credentials.</li>
+            </ul>
+          </div>
+
           <button onClick={() => {
             const supabase = createClient()
             supabase.auth.signOut().then(() => router.push('/'))
-          }} className="text-gold hover:text-gold-light underline underline-offset-4 text-sm font-mono transition-colors">
+          }} className="btn-gold w-full py-3 text-sm">
             Return to Login
           </button>
         </div>
