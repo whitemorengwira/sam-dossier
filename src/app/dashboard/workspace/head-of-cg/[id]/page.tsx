@@ -128,16 +128,18 @@ export default function HeadOfCGDocViewerPage() {
       </motion.div>
 
       {/* Viewer - set height to a good percentage to allow scrolling to next docs */}
-      <div style={{ minHeight: '75vh', background: '#E8EAED', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: '1 0 75vh', background: '#E8EAED', overflow: 'hidden' }}>
         {doc.fileName.toLowerCase().endsWith('.pdf') ? (
           <iframe 
             src={`${secureUrl}#toolbar=1&navpanes=0&scrollbar=1&zoom=100`} 
             className="w-full h-full border-none bg-slate-900"
-            style={{ width: '100%', height: '100%', border: 'none' }}
+            style={{ width: '100%', height: '100%', border: 'none', flex: 1 }}
             title={doc.title}
           />
         ) : (
-          <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} fileType={doc.fileName.split('.').pop()} />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} fileType={doc.fileName.split('.').pop()} />
+          </div>
         )}
       </div>
 
