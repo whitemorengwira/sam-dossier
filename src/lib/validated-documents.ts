@@ -1,12 +1,10 @@
 /**
- * Validated Documents — R2 Manifest
+ * Validated Documents — R2 Integration
  *
  * Fetches the actual approved documents from the Cloudflare R2 bucket
- * via the /api/approved-documents listing endpoint. Falls back to the
- * manifest below if the API is unavailable or credentials are not set.
+ * via the /api/approved-documents listing endpoint. No hardcoded filenames —
+ * the API dynamically discovers what's in the bucket.
  */
-
-import { getGlobalAssetUrl } from './getGlobalAssetUrl'
 
 export interface ValidatedDocument {
   id: string
@@ -19,8 +17,6 @@ export interface ValidatedDocument {
   signatureStatus: 'pending' | 'signed' | 'none'
   lastModified: string
 }
-
-const PREFIX = 'sam-dossier/public/socinga-africa-approved-documents'
 
 function detectFormat(name: string): ValidatedDocument['format'] {
   const ext = name.split('.').pop()?.toLowerCase() || ''
@@ -51,7 +47,7 @@ function humanTitle(fileName: string): string {
     .replace(/\b\w/g, c => c.toUpperCase())
 }
 
-/** Fetch documents from the R2 listing API */
+/** Fetch documents from the R2 listing API — the only source of truth */
 export async function fetchApprovedDocuments(): Promise<ValidatedDocument[]> {
   try {
     const res = await fetch('/api/approved-documents')
@@ -63,54 +59,19 @@ export async function fetchApprovedDocuments(): Promise<ValidatedDocument[]> {
         fileName: d.fileName,
         category: detectCategory(d.fileName),
         format: d.format || detectFormat(d.fileName),
-        description: `Approved corporate document stored in R2.`,
+        description: 'Approved corporate document stored in R2.',
         publicUrl: d.publicUrl,
         signatureStatus: 'pending' as const,
         lastModified: d.lastModified,
       }))
     }
   } catch {
-    // API unavailable — fall through to static manifest
+    // API unavailable — return empty
   }
-  return STATIC_MANIFEST
+  return []
 }
 
-/**
- * Static manifest — used when the R2 listing API is unavailable.
- * These are the known filenames in the approved-documents prefix.
- * Update this list when new documents are uploaded to R2.
- */
-const KNOWN_FILES = [
-  'Socinga-Africa-Establishment-Policy.html',
-  'Socinga-Africa-Structural-Policy.html',
-  'Socinga-Africa-Financial-Policy.html',
-  'Strategic-Business-Operations-Policy.html',
-  'Socinga-Africa-Ecosystem-Policies-OPS-Framework.html',
-  'Mining-Strategy-Addendum-Agenda-V1.html',
-  'Socinga-Africa-Mining-Strategic-Policy.html',
-  'Letter-of-Intent-ARES-Antimony.html',
-  'Zedek-Mining-MoU-Gold-Mining-Zimbabwe.html',
-  'Chikonga-Mine-Profile-Hilltouch-Investments.html',
-]
-
-const STATIC_MANIFEST: ValidatedDocument[] = KNOWN_FILES.map((fileName, i) => ({
-  id: `vd-${i + 1}`,
-  title: humanTitle(fileName),
-  fileName,
-  category: detectCategory(fileName),
-  format: detectFormat(fileName),
-  description: 'Approved corporate document from the Socinga Africa archive.',
-  publicUrl: getGlobalAssetUrl(`${PREFIX}/${fileName}`),
-  signatureStatus: 'pending' as const,
-  lastModified: '2026-05-01T00:00:00Z',
-}))
-
-/** Get all documents (static fallback — for SSR/initial render) */
+/** Returns empty — documents come exclusively from the R2 API */
 export function getStaticValidatedDocuments(): ValidatedDocument[] {
-  return STATIC_MANIFEST
-}
-
-/** Get a single document by ID */
-export function getValidatedDocumentById(id: string): ValidatedDocument | undefined {
-  return STATIC_MANIFEST.find(d => d.id === id)
+  return []
 }
