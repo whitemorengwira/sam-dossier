@@ -108,17 +108,6 @@ export default function ReceivedDocViewerPage() {
           >
             <DownloadSimple size={14} /> Download
           </a>
-          <a href={secureUrl} target="_blank" rel="noopener noreferrer"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', fontSize: 12, fontWeight: 600,
-              fontFamily: 'var(--font-mono)',
-              background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)',
-              color: 'var(--gold)', cursor: 'pointer', textDecoration: 'none',
-            }}
-          >
-            <ArrowSquareOut size={14} /> Open Original
-          </a>
           <span style={{
             padding: '4px 10px', fontSize: 9, fontWeight: 700,
             fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
@@ -140,7 +129,7 @@ export default function ReceivedDocViewerPage() {
             </video>
           </div>
         ) : (
-          <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} />
+          <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} fileType={doc.format} />
         )}
       </div>
     </div>

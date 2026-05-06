@@ -7,11 +7,12 @@ import "@cyntler/react-doc-viewer/dist/index.css";
 interface Props {
   uri: string;
   fileName: string;
+  fileType?: string;
 }
 
-export default function DocViewerWrapper({ uri, fileName }: Props) {
+export default function DocViewerWrapper({ uri, fileName, fileType }: Props) {
   const docs = [
-    { uri, fileName }
+    { uri, fileName, fileType }
   ];
 
   return (
