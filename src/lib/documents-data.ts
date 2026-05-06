@@ -111,9 +111,55 @@ export const DOCUMENTS: GDocsDocument[] = [
   <li><strong>Compliance</strong> — EIA, Code of Conduct, and regulatory documents.</li>
   <li><strong>HR</strong> — Employment contracts and staff policies.</li>
 </ul>
-
 <hr/>
 <p><em>All validated documents carry cryptographic integrity markers and are archived for audit purposes.</em></p>`,
+    comments: [],
+  },
+  {
+    id: 'doc-cg-framework',
+    title: 'Corporate Governance Framework 2026',
+    category: 'corporate-governance',
+    owner: TEAM[0],
+    lastModified: new Date().toISOString(),
+    starred: true,
+    shared: TEAM,
+    signatureStatus: 'none',
+    isPublished: false,
+    content: `<h1>Corporate Governance Framework 2026</h1>
+<h2>1. Introduction</h2>
+<p>This document outlines the overarching corporate governance principles and operational guidelines for Socinga Africa and its subsidiaries.</p>
+<h3>1.1 Purpose</h3>
+<p>To ensure transparency, accountability, and ethical conduct across all operations, including mining, insurance, and creative divisions.</p>
+<h2>2. Board of Directors</h2>
+<ul>
+  <li><strong>Composition:</strong> The board shall consist of executive and non-executive directors.</li>
+  <li><strong>Meetings:</strong> To be held quarterly, with extraordinary meetings called as required.</li>
+</ul>
+<h2>3. Risk Management</h2>
+<p>A comprehensive risk matrix shall be maintained by the CFO and reviewed by the audit committee bi-annually.</p>`,
+    comments: [],
+  },
+  {
+    id: 'doc-cg-board-eval',
+    title: 'Annual Board Evaluation Report',
+    category: 'corporate-governance',
+    owner: TEAM[0],
+    lastModified: new Date().toISOString(),
+    starred: false,
+    shared: TEAM,
+    signatureStatus: 'none',
+    isPublished: false,
+    content: `<h1>Annual Board Evaluation Report</h1>
+<h2>Executive Summary</h2>
+<p>This report presents the findings of the annual performance evaluation of the Socinga Africa Board of Directors.</p>
+<h2>Methodology</h2>
+<p>Evaluations were conducted via structured questionnaires and individual interviews with all board members.</p>
+<h2>Key Findings</h2>
+<ul>
+  <li>Strategic alignment is strong across all subsidiaries.</li>
+  <li>Communication between the board and executive management has improved significantly.</li>
+  <li>Area for improvement: increased focus on long-term sustainability metrics in the mining sector.</li>
+</ul>`,
     comments: [],
   },
 ];

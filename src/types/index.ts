@@ -149,7 +149,7 @@ export interface GDocsDocument {
   id: string
   title: string
   content: string
-  category: 'policy' | 'legal' | 'minutes' | 'strategy' | 'finance' | 'geological' | 'nda' | 'corporate'
+  category: 'policy' | 'legal' | 'minutes' | 'strategy' | 'finance' | 'geological' | 'nda' | 'corporate' | 'corporate-governance'
   owner: SharedUser
   lastModified: string
   starred: boolean

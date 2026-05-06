@@ -89,6 +89,7 @@ const navigation: NavGroup[] = [
       { label: 'Calendar', href: '/dashboard/workspace/calendar', icon: <CalendarDots size={20} weight="duotone" /> },
       { label: 'CFO', href: '/dashboard/workspace/cfo', icon: <CurrencyCircleDollar size={20} weight="duotone" /> },
       { label: 'Board Chair', href: '/dashboard/workspace/board-chair', icon: <Crown size={20} weight="duotone" /> },
+      { label: 'Head of CG', href: '/dashboard/workspace/head-of-cg', icon: <ShieldCheck size={20} weight="duotone" /> },
       { label: 'Research & Development', href: '/dashboard/research-development', icon: <Microscope size={20} weight="duotone" /> },
       { label: 'Tools Hub', href: '/dashboard/tools', icon: <Wrench size={20} weight="duotone" /> },
       { label: 'My Work', href: '/dashboard/workspace/my-work', icon: <CheckCircle size={20} weight="duotone" /> },

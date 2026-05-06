@@ -149,7 +149,7 @@ export default function BoardChairPage() {
         </div>
 
         <input ref={fileInputRef} type="file" hidden
-          accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp"
+          accept=".pdf,.html,.htm,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.svg,.bmp,.tiff,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.txt"
           onChange={e => { const f = e.target.files?.[0]; if (f) { if (f.size > 100 * 1024 * 1024) { alert('File exceeds the 100 MB limit.'); return; } handleUpload(f); } e.target.value = '' }}
         />
 

@@ -115,7 +115,16 @@ export default function CFODocViewerPage() {
 
       {/* Viewer */}
       <div style={{ flex: 1, background: '#E8EAED', overflow: 'hidden' }}>
-        <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} fileType="pdf" />
+        {doc.fileName.toLowerCase().endsWith('.pdf') ? (
+          <iframe 
+            src={`${secureUrl}#toolbar=1&navpanes=0&scrollbar=1&zoom=100`} 
+            className="w-full h-full border-none bg-slate-900"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title={doc.title}
+          />
+        ) : (
+          <DocViewerWrapper uri={secureUrl} fileName={doc.fileName || doc.title} fileType={doc.fileName.split('.').pop()} />
+        )}
       </div>
     </div>
   )
