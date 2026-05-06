@@ -6,10 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   MagnifyingGlass, UploadSimple, FilePdf, FileHtml, MicrosoftWordLogo,
   MicrosoftPowerpointLogo, Table, Image as ImageIcon, File, LinkSimple,
-  Eye, Clock, ArrowRight, SpinnerGap, X, CheckCircle,
+  Eye, Clock, ArrowRight, SpinnerGap, X, CheckCircle, Trash,
 } from '@phosphor-icons/react'
 import {
-  getKnownReceivedDocs, loadLocalReceivedDocs, saveLocalReceivedDoc,
+  getKnownReceivedDocs, loadLocalReceivedDocs, saveLocalReceivedDoc, deleteLocalReceivedDoc,
   detectFormat, type ReceivedDoc,
 } from '@/lib/received-documents'
 import { getGlobalAssetUrl } from '@/lib/getGlobalAssetUrl'
@@ -45,6 +45,14 @@ export default function ReceivedExternalDocsPage() {
     const q = search.toLowerCase()
     return docs.filter(d => d.title.toLowerCase().includes(q) || d.fileName.toLowerCase().includes(q))
   }, [docs, search])
+
+  const handleDelete = (e: React.MouseEvent, id: string, title: string) => {
+    e.stopPropagation()
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      deleteLocalReceivedDoc(id)
+      setDocs(prev => prev.filter(d => d.id !== id))
+    }
+  }
 
   const handleUpload = async (file: File) => {
     setUploading(true)
@@ -193,8 +201,13 @@ export default function ReceivedExternalDocsPage() {
               <span className="text-text-muted" style={{ fontSize: 11, fontFamily: 'var(--font-mono)' }}>
                 {new Date(doc.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
               </span>
-              <span style={{ textAlign: 'center' }}>
+              <span style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
                 <Eye size={16} className="text-gold" style={{ opacity: 0.6 }} />
+                {doc.source === 'local' && (
+                  <button onClick={(e) => handleDelete(e, doc.id, doc.title)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', color: 'var(--text-muted)' }} title="Delete">
+                    <Trash size={16} style={{ color: '#c5221f', opacity: 0.8 }} />
+                  </button>
+                )}
               </span>
             </motion.div>
           )

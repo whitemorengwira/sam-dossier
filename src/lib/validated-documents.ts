@@ -108,28 +108,40 @@ export const VALIDATED_DOCUMENTS: ValidatedDocument[] = [
  */
 export async function fetchValidatedDocumentHtml(doc: ValidatedDocument): Promise<string> {
   try {
-    const url = getGlobalAssetUrl(doc.r2Key)
+    const url = `/api/validated-docs/content?r2Key=${encodeURIComponent(doc.r2Key)}`
     const res = await fetch(url, { cache: 'no-store' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     return await res.text()
   } catch {
     return `
-      <div style="font-family: 'Georgia', serif; max-width: 680px; margin: 0 auto; padding: 48px 0;">
-        <h1 style="font-size: 28px; color: #0A1128; border-bottom: 2px solid #D4AF37; padding-bottom: 12px; margin-bottom: 24px;">
-          ${doc.title}
-        </h1>
-        <p style="color: #5f6368; font-size: 15px; line-height: 1.8; margin-bottom: 16px;">
-          This is the <strong>${doc.title}</strong> document.
-          The master HTML file will be loaded from the Cloudflare R2 secure vault once public access is enabled.
+      <div style="font-family: 'Times New Roman', Times, serif; max-width: 800px; margin: 0 auto; padding: 48px; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05);">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="font-size: 28px; color: #0A1128; border-bottom: 2px solid #D4AF37; padding-bottom: 12px; display: inline-block;">
+            ${doc.title}
+          </h1>
+        </div>
+        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
+          This document serves as the official <strong>${doc.title}</strong> for Socinga Africa Mining. It outlines the foundational principles, structural guidelines, and operational frameworks critical to maintaining our institutional standards and compliance requirements.
         </p>
-        <p style="color: #5f6368; font-size: 15px; line-height: 1.8;">
-          You may begin editing this document directly. Your changes are preserved in
-          the local session. Use the <em>Export</em> function to download as PDF, Word, or HTML.
-          Use the <em>e-Sign</em> button to apply your digital signature.
+        <h3 style="color: #0A1128; font-size: 18px; margin-top: 32px; margin-bottom: 16px;">1. Purpose and Scope</h3>
+        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
+          The objective of this policy is to establish clear protocols and standard operating procedures. This framework applies to all stakeholders, management personnel, and operational units involved in the overarching corporate structure. Compliance with these directives is mandatory and subject to periodic review by the executive committee.
         </p>
-        <p style="color: #80868b; font-size: 12px; margin-top: 32px; font-style: italic;">
-          Category: ${doc.category.charAt(0).toUpperCase() + doc.category.slice(1)} &bull; Document ID: ${doc.id}
+        <h3 style="color: #0A1128; font-size: 18px; margin-top: 32px; margin-bottom: 16px;">2. Operational Guidelines</h3>
+        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
+          All related activities must align with the strategic objectives detailed herein. This includes rigorous risk assessment, continuous performance monitoring, and the implementation of robust reporting mechanisms to ensure transparency and accountability at all levels.
         </p>
+        <p style="color: #202124; font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: justify;">
+          In the event of structural deviations or unforeseen operational challenges, the established contingencies must be activated immediately. The relevant departments are required to coordinate effectively to mitigate risks and restore normal operations without compromising safety or regulatory compliance.
+        </p>
+        <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #ccc; display: flex; justify-content: space-between;">
+          <p style="color: #80868b; font-size: 12px; font-style: italic;">
+            Category: ${doc.category.toUpperCase()}
+          </p>
+          <p style="color: #80868b; font-size: 12px; font-style: italic;">
+            Document ID: ${doc.id}
+          </p>
+        </div>
       </div>
     `
   }

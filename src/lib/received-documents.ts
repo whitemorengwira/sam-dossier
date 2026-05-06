@@ -48,6 +48,13 @@ export function saveLocalReceivedDoc(doc: ReceivedDoc) {
   localStorage.setItem(LOCAL_KEY, JSON.stringify(existing))
 }
 
+export function deleteLocalReceivedDoc(id: string) {
+  if (typeof window === 'undefined') return
+  const existing = loadLocalReceivedDocs()
+  const next = existing.filter(d => d.id !== id)
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(next))
+}
+
 export function detectFormat(fileName: string): ReceivedDoc['format'] {
   const ext = fileName.split('.').pop()?.toLowerCase() || ''
   if (ext === 'pdf') return 'pdf'
