@@ -193,15 +193,14 @@ export default function ValidatedDocumentEditorPage() {
 
       {/* Editor */}
       <div style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center', padding: '32px 16px' }}>
-        {loading ? (
+        {loading && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 400 }}>
             <SpinnerGap size={36} className="animate-spin" style={{ color: '#D4AF37', marginBottom: 12 }} />
             <p style={{ color: '#80868b', fontSize: 13, fontFamily: 'var(--font-mono)' }}>Fetching document from R2 vault...</p>
           </div>
-        ) : (
-          <div ref={editorRef} contentEditable suppressContentEditableWarning onInput={save}
-            style={{ width: 816, minHeight: 1056, background: '#fff', padding: 96, boxShadow: '0 2px 12px rgba(0,0,0,0.12)', outline: 'none', fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 15, lineHeight: 1.8, color: '#202124' }} />
         )}
+        <div ref={editorRef} contentEditable suppressContentEditableWarning onInput={save}
+          style={{ display: loading ? 'none' : 'block', width: 816, minHeight: 1056, background: '#fff', padding: 96, boxShadow: '0 2px 12px rgba(0,0,0,0.12)', outline: 'none', fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 15, lineHeight: 1.8, color: '#202124' }} />
       </div>
 
       {/* Signature Modal */}

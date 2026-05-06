@@ -32,9 +32,10 @@ interface Props {
   onStar: (id: string) => void; onMenuOpen?: (id: string, e: React.MouseEvent) => void;
   onRename?: (id: string, newTitle: string) => void;
   onDelete?: (id: string) => void;
+  onDownload?: (id: string) => void;
 }
 
-export default function DocumentCard({ doc, mode, onStar, onMenuOpen, onRename, onDelete }: Props) {
+export default function DocumentCard({ doc, mode, onStar, onMenuOpen, onRename, onDelete, onDownload }: Props) {
   const router = useRouter()
   const go = () => router.push(`/dashboard/documents/${doc.id}`)
   const colour = CAT_COLOURS[doc.category] || '#5f6368'
@@ -65,6 +66,7 @@ export default function DocumentCard({ doc, mode, onStar, onMenuOpen, onRename, 
               onDelete(doc.id)
             }
           }}
+          onDownload={() => onDownload && onDownload(doc.id)}
           onOpenNewTab={() => window.open(`/dashboard/documents/${doc.id}`, '_blank')}
           onViewDetails={() => alert(`Details for ${doc.title}:\nOwner: ${doc.owner.name}\nModified: ${formatRelativeDate(doc.lastModified)}`)}
         >
@@ -104,6 +106,7 @@ export default function DocumentCard({ doc, mode, onStar, onMenuOpen, onRename, 
             onDelete(doc.id)
           }
         }}
+        onDownload={() => onDownload && onDownload(doc.id)}
         onOpenNewTab={() => window.open(`/dashboard/documents/${doc.id}`, '_blank')}
         onViewDetails={() => alert(`Details for ${doc.title}:\nOwner: ${doc.owner.name}\nModified: ${formatRelativeDate(doc.lastModified)}`)}
       >

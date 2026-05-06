@@ -17,6 +17,7 @@ interface ContextMenuProps {
   onStar: () => void
   onShare: () => void
   onDelete: () => void
+  onDownload?: () => void
   onOpenNewTab: () => void
   onViewDetails: () => void
   isStarred: boolean
@@ -28,6 +29,7 @@ export default function ContextMenu({
   onStar,
   onShare,
   onDelete,
+  onDownload,
   onOpenNewTab,
   onViewDetails,
   isStarred,
@@ -60,6 +62,13 @@ export default function ContextMenu({
             <Star size={14} weight={isStarred ? 'fill' : 'duotone'} />
             {isStarred ? 'Remove from starred' : 'Add to starred'}
           </DropdownMenu.Item>
+
+          {onDownload && (
+            <DropdownMenu.Item className="context-menu-item" onSelect={onDownload}>
+              <DownloadSimple size={14} weight="duotone" />
+              Download
+            </DropdownMenu.Item>
+          )}
 
           <DropdownMenu.Separator className="context-menu-separator" />
 

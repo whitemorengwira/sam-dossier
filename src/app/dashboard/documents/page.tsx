@@ -7,6 +7,7 @@ import type { GDocsDocument } from '@/types'
 import DocumentCard from '@/components/documents/DocumentCard'
 import TemplateGallery from '@/components/documents/TemplateGallery'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import styles from './page.module.css'
 
 const CATEGORIES = ['ALL','POLICY','LEGAL','MINUTES','STRATEGY','FINANCE','GEOLOGICAL','NDA','CORPORATE']
@@ -40,9 +41,76 @@ export default function DocumentsPage() {
 
   const handleDelete = (id: string) => {
     setDocs(prev => {
+      const docToDelete = prev.find(d => d.id === id)
       const next = prev.filter(d => d.id !== id)
-      saveDocuments(next); return next
+      saveDocuments(next)
+      
+      if (docToDelete) {
+        toast(`Document "${docToDelete.title}" moved to trash`, {
+          action: {
+            label: 'Undo',
+            onClick: () => {
+              setDocs(current => {
+                const restored = [docToDelete, ...current]
+                saveDocuments(restored)
+                return restored
+              })
+              toast.success(`Restored "${docToDelete.title}"`)
+            }
+          }
+        })
+      }
+      return next
     })
+  }
+
+  const handleDownload = (id: string) => {
+    const docToDownload = docs.find(d => d.id === id)
+    if (!docToDownload) return
+    
+    // Strip HTML to provide plain text, avoiding "HTML conversion"
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = docToDownload.content
+    const plainText = tempDiv.textContent || tempDiv.innerText || ''
+    
+    const blob = new Blob([plainText], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    
+    // Keep original extension if present, otherwise default to .txt
+    const filename = docToDownload.title.includes('.') 
+      ? docToDownload.title 
+      : `${docToDownload.title}.txt`
+      
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success(`Downloaded ${filename}`)
+  }
+
+  const handleUpload = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.pdf,.doc,.docx,.txt,.html'
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        const newDoc: GDocsDocument = {
+          id: `doc-${Date.now()}`, title: file.name,
+          content: '<p>Uploaded file placeholder content</p>', category: 'corporate', owner: TEAM[0],
+          lastModified: new Date().toISOString(), starred: false, shared: [TEAM[0]],
+          comments: [], signatureStatus: 'none', isPublished: false,
+        }
+        setDocs(prev => {
+          const next = [newDoc, ...prev]
+          saveDocuments(next)
+          return next
+        })
+        toast.success(`Uploaded ${file.name}`)
+      }
+    }
+    input.click()
   }
 
   const handleCreate = (tplId: string) => {
@@ -116,6 +184,25 @@ export default function DocumentsPage() {
               </button>
             ))}
           </div>
+          <button
+            onClick={handleUpload}
+            style={{
+              marginLeft: '16px',
+              padding: '6px 16px',
+              background: 'var(--gold)',
+              color: 'var(--onyx)',
+              border: 'none',
+              borderRadius: '4px',
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <span style={{ fontSize: '16px' }}>↑</span> Upload Document
+          </button>
         </div>
 
         <div className={styles.controls}>
@@ -169,7 +256,7 @@ export default function DocumentsPage() {
         </div>
       ) : view === 'grid' ? (
         <div className={styles.documentGrid}>
-          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="grid" onStar={toggleStar} onRename={handleRename} onDelete={handleDelete} />)}
+          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="grid" onStar={toggleStar} onRename={handleRename} onDelete={handleDelete} onDownload={handleDownload} />)}
         </div>
       ) : (
         <div className={styles.documentList}>
@@ -177,7 +264,7 @@ export default function DocumentsPage() {
             <div /><div className={styles.listHeaderCell}>Name</div>
             <div className={styles.listHeaderCell}>Owner</div><div className={styles.listHeaderCell}>Last modified</div><div />
           </div>
-          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="list" onStar={toggleStar} onRename={handleRename} onDelete={handleDelete} />)}
+          {filtered.map(d => <DocumentCard key={d.id} doc={d} mode="list" onStar={toggleStar} onRename={handleRename} onDelete={handleDelete} onDownload={handleDownload} />)}
         </div>
       )}
 

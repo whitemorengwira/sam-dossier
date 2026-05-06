@@ -5,6 +5,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import Topbar from '@/components/layout/Topbar'
 import InlineEditProvider from '@/components/InlineEditProvider'
 import { cn } from '@/lib/utils'
+import { Toaster } from 'sonner'
 
 export default function DashboardLayout({
   children,
@@ -16,6 +17,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-onyx">
+      <Toaster position="bottom-right" richColors theme="dark" />
       {/* Inline edit engine */}
       <InlineEditProvider />
 
