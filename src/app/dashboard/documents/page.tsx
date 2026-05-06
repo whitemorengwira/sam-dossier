@@ -8,6 +8,7 @@ import DocumentCard from '@/components/documents/DocumentCard'
 import TemplateGallery from '@/components/documents/TemplateGallery'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { getDeletedDocIds } from '@/lib/deleted-docs'
 import styles from './page.module.css'
 
 const CATEGORIES = ['ALL','POLICY','LEGAL','MINUTES','STRATEGY','FINANCE','GEOLOGICAL','NDA','CORPORATE']
@@ -23,7 +24,11 @@ export default function DocumentsPage() {
   const [showSort, setShowSort] = useState(false)
   const [showOwner, setShowOwner] = useState(false)
 
-  useEffect(() => { setDocs(loadDocuments()) }, [])
+  useEffect(() => { 
+    const docs = loadDocuments()
+    const deletedIds = getDeletedDocIds()
+    setDocs(docs.filter(d => !deletedIds.includes(d.id)))
+  }, [])
 
   const toggleStar = (id: string) => {
     setDocs(prev => {

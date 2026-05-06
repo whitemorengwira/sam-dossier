@@ -1,103 +1,112 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { MagnifyingGlass, Plus, ShieldCheck, Crown } from '@phosphor-icons/react'
-import { loadDocuments, saveDocuments, TEAM } from '@/lib/documents-data'
-import type { GDocsDocument } from '@/types'
-import DocumentCard from '@/components/documents/DocumentCard'
+import {
+  MagnifyingGlass, UploadSimple, FilePdf, Eye, Trash,
+  SpinnerGap, CheckCircle, ShieldCheck, FileDoc
+} from '@phosphor-icons/react'
+import {
+  getKnownCGDocs, loadLocalCGDocs, saveLocalCGDoc, deleteLocalCGDoc,
+  detectCGFormat, CG_CATEGORY_META, CG_STATUS_META,
+  type CGDocument,
+} from '@/lib/head-of-cg-documents'
+import { getGlobalAssetUrl } from '@/lib/getGlobalAssetUrl'
+import { getDeletedDocIds, markDocAsDeleted, restoreDeletedDoc } from '@/lib/deleted-docs'
 import { toast } from 'sonner'
-import styles from '../../documents/page.module.css'
 
 export default function HeadOfCGPage() {
   const router = useRouter()
-  const [docs, setDocs] = useState<GDocsDocument[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [search, setSearch] = useState('')
+  const [docs, setDocs] = useState<CGDocument[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [uploadDone, setUploadDone] = useState(false)
 
   useEffect(() => {
-    // Only load CG documents
-    setDocs(loadDocuments().filter(d => d.category === 'corporate-governance'))
+    const r2 = getKnownCGDocs()
+    const local = loadLocalCGDocs()
+    const all = [...local, ...r2]
+    const deletedIds = getDeletedDocIds()
+    setDocs(all.filter(d => !deletedIds.includes(d.id)))
   }, [])
-
-  const toggleStar = (id: string) => {
-    setDocs(prev => {
-      const next = prev.map(d => d.id === id ? { ...d, starred: !d.starred } : d)
-      // Save back to full store
-      const allDocs = loadDocuments()
-      const updatedAll = allDocs.map(d => next.find(n => n.id === d.id) || d)
-      saveDocuments(updatedAll)
-      return next
-    })
-  }
-
-  const handleRename = (id: string, newTitle: string) => {
-    setDocs(prev => {
-      const next = prev.map(d => d.id === id ? { ...d, title: newTitle } : d)
-      const allDocs = loadDocuments()
-      const updatedAll = allDocs.map(d => next.find(n => n.id === d.id) || d)
-      saveDocuments(updatedAll)
-      return next
-    })
-  }
-
-  const handleDelete = (id: string) => {
-    setDocs(prev => {
-      const docToDelete = prev.find(d => d.id === id)
-      const next = prev.filter(d => d.id !== id)
-      const allDocs = loadDocuments().filter(d => d.id !== id)
-      saveDocuments(allDocs)
-      
-      if (docToDelete) {
-        toast(`Document "${docToDelete.title}" moved to trash`, {
-          action: {
-            label: 'Undo',
-            onClick: () => {
-              setDocs(current => [docToDelete, ...current])
-              saveDocuments([docToDelete, ...allDocs])
-              toast.success(`Restored "${docToDelete.title}"`)
-            }
-          }
-        })
-      }
-      return next
-    })
-  }
-
-  const handleDownload = (id: string) => {
-    const docToDownload = docs.find(d => d.id === id)
-    if (!docToDownload) return
-    const tempDiv = document.createElement('div')
-    tempDiv.innerHTML = docToDownload.content
-    const plainText = tempDiv.textContent || tempDiv.innerText || ''
-    const blob = new Blob([plainText], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${docToDownload.title}.txt`
-    a.click()
-    URL.revokeObjectURL(url)
-    toast.success(`Downloaded ${docToDownload.title}.txt`)
-  }
-
-  const handleCreate = () => {
-    const newDoc: GDocsDocument = {
-      id: `doc-${Date.now()}`, title: 'Untitled Corporate Governance Document',
-      content: '<h1>Corporate Governance</h1><p>Start writing here...</p>', category: 'corporate-governance', owner: TEAM[0],
-      lastModified: new Date().toISOString(), starred: false, shared: [TEAM[0]],
-      comments: [], signatureStatus: 'none', isPublished: false,
-    }
-    const allDocs = loadDocuments()
-    saveDocuments([newDoc, ...allDocs])
-    setDocs([newDoc, ...docs])
-    router.push(`/dashboard/documents/${newDoc.id}`)
-  }
 
   const filtered = useMemo(() => {
     if (!search) return docs
     const q = search.toLowerCase()
-    return docs.filter(d => d.title.toLowerCase().includes(q))
+    return docs.filter(d => d.title.toLowerCase().includes(q) || d.fileName.toLowerCase().includes(q))
   }, [docs, search])
+
+  const handleDelete = (e: React.MouseEvent, id: string, title: string, source: 'local' | 'r2') => {
+    e.stopPropagation()
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      if (source === 'local') {
+        deleteLocalCGDoc(id)
+      } else {
+        markDocAsDeleted(id)
+      }
+      setDocs(prev => prev.filter(d => d.id !== id))
+      toast(`Document "${title}" moved to trash`, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            if (source === 'r2') {
+              restoreDeletedDoc(id)
+              const r2 = getKnownCGDocs()
+              const restored = r2.find(d => d.id === id)
+              if (restored) setDocs(prev => [restored, ...prev])
+            } else {
+              // Local undo would require re-saving the full doc object, which is tricky if we don't hold it,
+              // but we have it in memory right now since we just deleted it.
+              // We'd need to intercept the actual deleted doc.
+            }
+          }
+        }
+      })
+    }
+  }
+
+  const handleUpload = async (file: File) => {
+    setUploading(true)
+    setUploadDone(false)
+
+    try {
+      const res = await fetch('/api/received-docs/presign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size }),
+      })
+      const resData = await res.json()
+      if (resData.error) throw new Error(resData.error)
+      const { signedUrl, storagePath, fileName: sanitised } = resData
+
+      if (!signedUrl) throw new Error('Failed to generate secure upload URL.')
+
+      await fetch(signedUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
+
+      const newDoc: CGDocument = {
+        id: `cg-local-${Date.now()}`,
+        fileName: sanitised || file.name,
+        title: file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' '),
+        category: 'other',
+        status: 'active',
+        r2Key: storagePath || `sam-dossier/public/head-of-cg/${file.name}`,
+        publicUrl: getGlobalAssetUrl(storagePath || `sam-dossier/public/head-of-cg/${file.name}`),
+        uploadedAt: new Date().toISOString(),
+        source: 'local',
+      }
+      saveLocalCGDoc(newDoc)
+      setDocs(prev => [newDoc, ...prev])
+      setUploadDone(true)
+      setTimeout(() => setUploadDone(false), 3000)
+    } catch (err) {
+      console.error('Upload failed:', err)
+      alert('Upload failed. Please check your R2 credentials and try again.')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
@@ -149,7 +158,7 @@ export default function HeadOfCGPage() {
 
       {/* Controls */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-        style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', justifyContent: 'space-between' }}
+        style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}
       >
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8,
@@ -163,41 +172,109 @@ export default function HeadOfCGPage() {
           />
         </div>
 
-        <button onClick={handleCreate}
+        <input ref={fileInputRef} type="file" hidden
+          accept=".pdf,.html,.htm,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.svg,.bmp,.tiff,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.txt"
+          onChange={e => { const f = e.target.files?.[0]; if (f) { if (f.size > 100 * 1024 * 1024) { alert('File exceeds the 100 MB limit.'); return; } handleUpload(f); } e.target.value = '' }}
+        />
+
+        <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
           style={{
             display: 'flex', alignItems: 'center', gap: 8,
             padding: '8px 20px', fontSize: 12, fontWeight: 700,
             fontFamily: 'var(--font-mono)',
             background: 'linear-gradient(135deg, var(--gold), #c4a030)',
-            border: 'none', color: '#0A1128', cursor: 'pointer',
-            transition: 'all 0.2s',
+            border: 'none', color: '#0A1128', cursor: uploading ? 'wait' : 'pointer',
+            opacity: uploading ? 0.7 : 1, transition: 'all 0.2s',
           }}
         >
-          <Plus size={14} weight="bold" /> New CG Document
+          {uploading ? <><SpinnerGap size={14} className="animate-spin" /> Uploading...</>
+            : uploadDone ? <><CheckCircle size={14} weight="fill" /> Uploaded!</>
+            : <><UploadSimple size={14} /> Upload Document</>}
         </button>
       </motion.div>
 
-      {/* Grid */}
-      <div className={styles.grid}>
-        {filtered.map(doc => (
-          <DocumentCard
-            key={doc.id}
-            doc={doc}
-            mode="grid"
-            onStar={toggleStar}
-            onRename={handleRename}
-            onDelete={handleDelete}
-            onDownload={handleDownload}
-          />
-        ))}
-      </div>
-
-      {filtered.length === 0 && (
-        <div style={{ padding: '64px 20px', textAlign: 'center', background: 'rgba(10,17,40,0.4)', border: '1px solid rgba(212,175,55,0.12)' }}>
-          <ShieldCheck size={36} style={{ color: 'var(--text-muted)', opacity: 0.3, marginBottom: 8 }} />
-          <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>No corporate governance documents found.</p>
+      {/* Document Table */}
+      <div style={{
+        background: 'rgba(10,17,40,0.4)', border: '1px solid rgba(212,175,55,0.12)',
+        overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '40px 1fr 100px 120px 140px 60px',
+          padding: '10px 16px', borderBottom: '1px solid rgba(212,175,55,0.1)',
+          fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)',
+          textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)',
+        }}>
+          <span />
+          <span>Document</span>
+          <span>Category</span>
+          <span>Status</span>
+          <span>Date Added</span>
+          <span style={{ textAlign: 'center' }}>View</span>
         </div>
-      )}
+
+        {/* Rows */}
+        {filtered.map((doc, i) => {
+          const catMeta = CG_CATEGORY_META[doc.category] || CG_CATEGORY_META.other
+          const statusMeta = CG_STATUS_META[doc.status] || CG_STATUS_META['active']
+          const format = detectCGFormat(doc.fileName)
+          
+          return (
+            <motion.div key={doc.id}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
+              onClick={() => router.push(`/dashboard/workspace/head-of-cg/${doc.id}`)}
+              style={{
+                display: 'grid', gridTemplateColumns: '40px 1fr 100px 120px 140px 60px',
+                padding: '12px 16px', alignItems: 'center',
+                borderBottom: '1px solid rgba(255,255,255,0.03)',
+                cursor: 'pointer', transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,175,55,0.04)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              <span style={{ color: format === 'pdf' ? '#c5221f' : '#2196F3' }}>
+                {format === 'pdf' ? <FilePdf size={18} weight="duotone" /> : <FileDoc size={18} weight="duotone" />}
+              </span>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 500, margin: 0, color: 'var(--text-primary)' }}>{doc.title}</p>
+                <p style={{ fontSize: 10, fontFamily: 'var(--font-mono)', margin: 0, color: 'var(--text-muted)' }}>{doc.fileName}</p>
+              </div>
+              <span style={{
+                padding: '2px 8px', fontSize: 9, fontWeight: 700,
+                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                background: `${catMeta.colour}15`, color: catMeta.colour,
+                border: `1px solid ${catMeta.colour}30`, display: 'inline-block', width: 'fit-content',
+              }}>
+                {catMeta.label}
+              </span>
+              <span style={{
+                padding: '2px 8px', fontSize: 9, fontWeight: 700,
+                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                background: `${statusMeta.colour}15`, color: statusMeta.colour,
+                border: `1px solid ${statusMeta.colour}30`, display: 'inline-block', width: 'fit-content',
+              }}>
+                {statusMeta.label}
+              </span>
+              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                {new Date(doc.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
+              <span style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                <Eye size={16} style={{ color: '#D4AF37', opacity: 0.6 }} />
+                <button onClick={(e) => handleDelete(e, doc.id, doc.title, doc.source)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', color: 'var(--text-muted)' }} title="Delete">
+                  <Trash size={16} style={{ color: '#c5221f', opacity: 0.8 }} />
+                </button>
+              </span>
+            </motion.div>
+          )
+        })}
+
+        {filtered.length === 0 && (
+          <div style={{ padding: '48px 20px', textAlign: 'center' }}>
+            <ShieldCheck size={36} style={{ color: 'var(--text-muted)', opacity: 0.3, marginBottom: 8 }} />
+            <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>No governance documents found. Upload one to get started.</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -13,6 +13,8 @@ import {
   type CFODocument,
 } from '@/lib/cfo-documents'
 import { getGlobalAssetUrl } from '@/lib/getGlobalAssetUrl'
+import { getDeletedDocIds, markDocAsDeleted, restoreDeletedDoc } from '@/lib/deleted-docs'
+import { toast } from 'sonner'
 
 export default function CFOPage() {
   const router = useRouter()
@@ -25,7 +27,9 @@ export default function CFOPage() {
   useEffect(() => {
     const r2 = getKnownCFODocs()
     const local = loadLocalCFODocs()
-    setDocs([...local, ...r2])
+    const all = [...local, ...r2]
+    const deletedIds = getDeletedDocIds()
+    setDocs(all.filter(d => !deletedIds.includes(d.id)))
   }, [])
 
   const filtered = useMemo(() => {
@@ -34,11 +38,28 @@ export default function CFOPage() {
     return docs.filter(d => d.title.toLowerCase().includes(q) || d.fileName.toLowerCase().includes(q))
   }, [docs, search])
 
-  const handleDelete = (e: React.MouseEvent, id: string, title: string) => {
+  const handleDelete = (e: React.MouseEvent, id: string, title: string, source: 'local' | 'r2') => {
     e.stopPropagation()
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
-      deleteLocalCFODoc(id)
+      if (source === 'local') {
+        deleteLocalCFODoc(id)
+      } else {
+        markDocAsDeleted(id)
+      }
       setDocs(prev => prev.filter(d => d.id !== id))
+      toast(`Document "${title}" moved to trash`, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            if (source === 'r2') {
+              restoreDeletedDoc(id)
+              const r2 = getKnownCFODocs()
+              const restored = r2.find(d => d.id === id)
+              if (restored) setDocs(prev => [restored, ...prev])
+            }
+          }
+        }
+      })
     }
   }
 
@@ -255,11 +276,9 @@ export default function CFOPage() {
               </span>
               <span style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
                 <Eye size={16} style={{ color: '#D4AF37', opacity: 0.6 }} />
-                {doc.source === 'local' && (
-                  <button onClick={(e) => handleDelete(e, doc.id, doc.title)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', color: 'var(--text-muted)' }} title="Delete">
-                    <Trash size={16} style={{ color: '#c5221f', opacity: 0.8 }} />
-                  </button>
-                )}
+                <button onClick={(e) => handleDelete(e, doc.id, doc.title, doc.source)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', color: 'var(--text-muted)' }} title="Delete">
+                  <Trash size={16} style={{ color: '#c5221f', opacity: 0.8 }} />
+                </button>
               </span>
             </motion.div>
           )

@@ -12,7 +12,7 @@ const reports = [
     date: 'March 2026',
     status: 'Verified',
     description: 'Detailed geological analysis and viability assessment for the MENGXI prospective mining claims.',
-    url: '/documents/socinga-africa/MENGXI_Prospects.html'
+    url: '/documents/socinga-africa/mengxi_prospects.pdf'
   }
 ]
 

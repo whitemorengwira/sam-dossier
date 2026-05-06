@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
-  ArrowLeft, DownloadSimple, FilePdf, CaretRight, FileText
+  ArrowLeft, DownloadSimple, FilePdf, FileDoc, CaretRight
 } from '@phosphor-icons/react'
 import dynamic from 'next/dynamic'
 import {
-  getKnownCFODocs, loadLocalCFODocs,
-  CFO_CATEGORY_META, CFO_STATUS_META, detectFormat,
-  type CFODocument,
-} from '@/lib/cfo-documents'
+  getKnownCGDocs, loadLocalCGDocs,
+  CG_CATEGORY_META, CG_STATUS_META, detectCGFormat,
+  type CGDocument,
+} from '@/lib/head-of-cg-documents'
 import { getDeletedDocIds } from '@/lib/deleted-docs'
 
 const DocViewerWrapper = dynamic(() => import('@/components/documents/DocViewerWrapper'), {
@@ -23,20 +23,21 @@ const DocViewerWrapper = dynamic(() => import('@/components/documents/DocViewerW
   ),
 })
 
-export default function CFODocViewerPage() {
+export default function HeadOfCGDocViewerPage() {
   const params = useParams()
   const router = useRouter()
-  const [doc, setDoc] = useState<CFODocument | null>(null)
-  const [upNextDocs, setUpNextDocs] = useState<CFODocument[]>([])
+  const [doc, setDoc] = useState<CGDocument | null>(null)
+  const [upNextDocs, setUpNextDocs] = useState<CGDocument[]>([])
 
   useEffect(() => {
-    const all = [...loadLocalCFODocs(), ...getKnownCFODocs()]
+    const all = [...loadLocalCGDocs(), ...getKnownCGDocs()]
     const deletedIds = getDeletedDocIds()
     const activeDocs = all.filter(d => !deletedIds.includes(d.id))
-
+    
     const found = activeDocs.find(d => d.id === params.id)
     if (found) {
       setDoc(found)
+      // Pick next documents (exclude current, take up to 3)
       const others = activeDocs.filter(d => d.id !== params.id).slice(0, 3)
       setUpNextDocs(others)
     }
@@ -50,8 +51,9 @@ export default function CFODocViewerPage() {
     )
   }
 
-  const catMeta = CFO_CATEGORY_META[doc.category] || CFO_CATEGORY_META.other
-  const statusMeta = CFO_STATUS_META[doc.status] || CFO_STATUS_META['pending-approval']
+  const catMeta = CG_CATEGORY_META[doc.category] || CG_CATEGORY_META.other
+  const statusMeta = CG_STATUS_META[doc.status] || CG_STATUS_META['active']
+  const format = detectCGFormat(doc.fileName)
 
   // Secure presigned URL via API route
   const secureUrl = `/api/received-docs/view?r2Key=${encodeURIComponent(doc.r2Key)}`
@@ -66,10 +68,11 @@ export default function CFODocViewerPage() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '10px 20px',
           background: 'rgba(10,17,40,0.8)', borderBottom: '1px solid rgba(212,175,55,0.15)',
+          position: 'sticky', top: 0, zIndex: 10
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => router.push('/dashboard/workspace/cfo')}
+          <button onClick={() => router.push('/dashboard/workspace/head-of-cg')}
             style={{
               background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)',
               color: 'var(--gold)', padding: '6px 8px', cursor: 'pointer',
@@ -78,7 +81,9 @@ export default function CFODocViewerPage() {
           >
             <ArrowLeft size={16} />
           </button>
-          <span style={{ color: '#c5221f', display: 'flex', alignItems: 'center' }}><FilePdf size={18} weight="duotone" /></span>
+          <span style={{ color: format === 'pdf' ? '#c5221f' : '#2196F3', display: 'flex', alignItems: 'center' }}>
+            {format === 'pdf' ? <FilePdf size={18} weight="duotone" /> : <FileDoc size={18} weight="duotone" />}
+          </span>
           <div>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
               {doc.title}
@@ -122,7 +127,7 @@ export default function CFODocViewerPage() {
         </div>
       </motion.div>
 
-      {/* Viewer */}
+      {/* Viewer - set height to a good percentage to allow scrolling to next docs */}
       <div style={{ minHeight: '75vh', background: '#E8EAED', overflow: 'hidden' }}>
         {doc.fileName.toLowerCase().endsWith('.pdf') ? (
           <iframe 
@@ -147,11 +152,11 @@ export default function CFODocViewerPage() {
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
             {upNextDocs.map(nextDoc => {
-              const nextFormat = detectFormat(nextDoc.fileName)
+              const nextFormat = detectCGFormat(nextDoc.fileName)
               return (
                 <div 
                   key={nextDoc.id}
-                  onClick={() => router.push(`/dashboard/workspace/cfo/${nextDoc.id}`)}
+                  onClick={() => router.push(`/dashboard/workspace/head-of-cg/${nextDoc.id}`)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 16,
                     padding: '16px', background: 'rgba(255,255,255,0.03)',
@@ -173,7 +178,7 @@ export default function CFODocViewerPage() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: nextFormat === 'pdf' ? '#c5221f' : '#2196F3'
                   }}>
-                    {nextFormat === 'pdf' ? <FilePdf size={24} weight="duotone" /> : <FileText size={24} weight="duotone" />}
+                    {nextFormat === 'pdf' ? <FilePdf size={24} weight="duotone" /> : <FileDoc size={24} weight="duotone" />}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h4 style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

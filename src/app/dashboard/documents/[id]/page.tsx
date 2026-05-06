@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap, ShieldCheck, Circle } from '@phosphor-icons/react'
+import { ArrowLeft, Star, ChatCircle, PenNib, Clock, Rocket, ShareNetwork, CheckCircle, Sparkle, CloudCheck, SpinnerGap, ShieldCheck, Circle, CaretRight, FileText } from '@phosphor-icons/react'
 import EditorToolbar from '@/components/documents/EditorToolbar'
 import MenuBar from '@/components/documents/MenuBar'
 import Ruler from '@/components/documents/Ruler'
@@ -17,6 +17,7 @@ import WatermarkModal from '@/components/documents/modals/WatermarkModal'
 import DocumentDetailsModal from '@/components/documents/modals/DocumentDetailsModal'
 import OutlinePanel from '@/components/documents/panels/OutlinePanel'
 import { loadDocuments, saveDocuments, loadVersions, saveVersion, saveFinalisedDocument, TEAM } from '@/lib/documents-data'
+import { getDeletedDocIds } from '@/lib/deleted-docs'
 import { usePresence, formatLastSeen } from '@/hooks/usePresence'
 import type { GDocsDocument, SharedUser } from '@/types'
 import type { DocVersion } from '@/lib/documents-data'
@@ -44,6 +45,7 @@ export default function DocumentEditorPage() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [isPublished, setIsPublished] = useState(false)
   const [signStatus, setSignStatus] = useState<'none'|'pending'|'signed'>('none')
+  const [upNextDocs, setUpNextDocs] = useState<GDocsDocument[]>([])
 
   /* ── New state for Phase 1 features ──── */
   const [saveState, setSaveState] = useState<'idle'|'saving'|'saved'>('idle')
@@ -78,12 +80,17 @@ export default function DocumentEditorPage() {
   // Load document
   useEffect(() => {
     const docs = loadDocuments()
-    const found = docs.find(d => d.id === params.id)
+    const deletedIds = getDeletedDocIds()
+    const activeDocs = docs.filter(d => !deletedIds.includes(d.id))
+    const found = activeDocs.find(d => d.id === params.id)
     if (!found) return
     setDoc(found); setTitle(found.title); setStarred(found.starred)
     setIsPublished(found.isPublished || false)
     setSignStatus(found.signatureStatus || 'none')
     setVersions(loadVersions(found.id))
+
+    const others = activeDocs.filter(d => d.id !== params.id).slice(0, 3)
+    setUpNextDocs(others)
   }, [params.id])
 
   useEffect(() => {
@@ -500,6 +507,58 @@ export default function DocumentEditorPage() {
                   <button onClick={() => setIsSigning(false)} style={{ padding: '8px 16px', background: '#f1f3f4', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#5f6368' }}>Cancel</button>
                   <button onClick={applySignature} style={{ padding: '8px 16px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}>Apply Signature</button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Up Next Section ──── */}
+          {upNextDocs.length > 0 && (
+            <div style={{ padding: '32px 24px', background: '#0A1128', borderTop: '1px solid rgba(212,175,55,0.15)', marginTop: 'auto' }}>
+              <h3 style={{ 
+                fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, 
+                color: '#D4AF37', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: 8 
+              }}>
+                Up Next
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+                {upNextDocs.map(nextDoc => (
+                  <div 
+                    key={nextDoc.id}
+                    onClick={() => router.push(`/dashboard/documents/${nextDoc.id}`)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 16,
+                      padding: '16px', background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8,
+                      cursor: 'pointer', transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'rgba(212,175,55,0.08)';
+                      e.currentTarget.style.borderColor = 'rgba(212,175,55,0.2)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    }}
+                  >
+                    <div style={{ 
+                      width: 40, height: 40, borderRadius: 6, 
+                      background: 'rgba(10,17,40,0.8)', border: '1px solid rgba(255,255,255,0.1)',
+                      display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center',
+                      color: '#D4AF37'
+                    }}>
+                      <FileText size={24} weight="duotone" />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h4 style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {nextDoc.title}
+                      </h4>
+                      <p style={{ margin: '4px 0 0 0', fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                        {nextDoc.category}
+                      </p>
+                    </div>
+                    <CaretRight size={16} style={{ color: 'var(--text-muted)' }} />
+                  </div>
+                ))}
               </div>
             </div>
           )}
