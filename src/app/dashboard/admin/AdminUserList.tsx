@@ -250,21 +250,47 @@ export default function AdminUserList({ users }: { users: User[] }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {activeUsers.map(user => (
-                  <tr key={user.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="py-4 px-4 text-white">{user.email}</td>
-                    <td className="py-4 px-4 text-gold uppercase tracking-wider text-xs">{user.user_metadata?.role || 'user'}</td>
-                    <td className="py-4 px-4 text-right">
-                      <button 
-                        onClick={() => handleReject(user.id)}
-                        disabled={loadingId === user.id}
-                        className="text-xs text-slate-500 hover:text-danger transition-colors uppercase tracking-widest disabled:opacity-50"
-                      >
-                        {loadingId === user.id ? '...' : 'Revoke'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {activeUsers.map(user => {
+                  const currentRole = user.user_metadata?.role || 'viewer'
+                  const selectedRole = roles[user.id]
+                  const hasChanged = selectedRole !== undefined && selectedRole !== currentRole
+                  return (
+                    <tr key={user.id} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="py-4 px-4 text-white">{user.email}</td>
+                      <td className="py-4 px-4">
+                        <select
+                          className="bg-onyx border border-white/20 text-white text-sm rounded focus:ring-gold focus:border-gold px-2 py-1 outline-none"
+                          value={selectedRole ?? currentRole}
+                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          disabled={loadingId === user.id}
+                        >
+                          <option value="investor">Investor</option>
+                          <option value="team">Team Member</option>
+                          <option value="viewer">Viewer</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </td>
+                      <td className="py-4 px-4 text-right space-x-3">
+                        {hasChanged && (
+                          <button
+                            onClick={() => handleApprove(user.id)}
+                            disabled={loadingId === user.id}
+                            className="text-xs bg-gold hover:bg-gold-light text-onyx font-bold py-1.5 px-4 rounded transition-colors uppercase tracking-widest disabled:opacity-50"
+                          >
+                            {loadingId === user.id ? 'Saving...' : 'Save'}
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => handleReject(user.id)}
+                          disabled={loadingId === user.id}
+                          className="text-xs text-slate-500 hover:text-danger transition-colors uppercase tracking-widest disabled:opacity-50"
+                        >
+                          {loadingId === user.id ? '...' : 'Revoke'}
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
