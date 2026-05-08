@@ -130,7 +130,7 @@ export const TEMPLATES: DocTemplate[] = [
 ];
 
 /* ── Persistence ────────────────────────────────────────────────────────── */
-const STORAGE_KEY = 'sam-dossier-docs-v3';
+const STORAGE_KEY = 'sam-dossier-docs-v4';
 const VERSIONS_KEY = 'sam-dossier-versions';
 
 export function loadDocuments(): GDocsDocument[] {
