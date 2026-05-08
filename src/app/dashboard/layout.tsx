@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Sidebar from '@/components/layout/Sidebar'
 import Topbar from '@/components/layout/Topbar'
 import InlineEditProvider from '@/components/InlineEditProvider'
@@ -63,6 +64,12 @@ export default function DashboardLayout({
     checkAuth()
   }, [router])
 
+  const pathname = usePathname()
+  // Auto-close mobile sidebar on navigation
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [pathname])
+
   if (userStatus === 'loading') {
     return <div className="min-h-screen bg-onyx flex items-center justify-center text-gold font-mono">Loading Workspace...</div>
   }
@@ -107,7 +114,10 @@ export default function DashboardLayout({
       <InlineEditProvider />
 
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar
+        mobileOpen={mobileMenuOpen}
+        onCloseMobile={() => setMobileMenuOpen(false)}
+      />
 
       {/* Topbar */}
       <Topbar
@@ -119,10 +129,11 @@ export default function DashboardLayout({
       <main
         className={cn(
           'pt-16 min-h-screen transition-all duration-300',
-          sidebarCollapsed ? 'ml-[60px]' : 'ml-[260px]'
+          'ml-0',
+          sidebarCollapsed ? 'lg:ml-[60px]' : 'lg:ml-[260px]'
         )}
       >
-        <div className="p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>

@@ -248,6 +248,26 @@ export default function DocumentEditorPage() {
     ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke()
   }
 
+  const startDrawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
+    setIsDrawing(true)
+    const touch = e.touches[0]
+    const c = signCanvasRef.current; if (!c) return
+    const ctx = c.getContext('2d'); if (!ctx) return
+    const r = c.getBoundingClientRect()
+    ctx.beginPath(); ctx.moveTo(touch.clientX - r.left, touch.clientY - r.top)
+  }
+
+  const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
+    if (!isDrawing) return
+    const touch = e.touches[0]
+    const c = signCanvasRef.current; if (!c) return
+    const ctx = c.getContext('2d'); if (!ctx) return
+    const r = c.getBoundingClientRect()
+    ctx.lineTo(touch.clientX - r.left, touch.clientY - r.top); ctx.stroke()
+  }
+
   const endDraw = () => setIsDrawing(false)
 
   const applySignature = () => {
@@ -478,19 +498,20 @@ export default function DocumentEditorPage() {
 
           {/* ── Signature Pad ──── */}
           {isSigning && (
-            <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ background: '#fff', padding: 32, borderRadius: 12, width: 500, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
-                <h3 style={{ marginBottom: 16, color: '#202124', fontFamily: 'Google Sans, sans-serif' }}>Sign this document</h3>
-                <p style={{ fontSize: 13, color: '#5f6368', marginBottom: 16 }}>Draw your signature below.</p>
+            <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+              <div style={{ background: '#fff', padding: 24, borderRadius: 12, width: '100%', maxWidth: 500, boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
+                <h3 style={{ marginBottom: 12, color: '#202124', fontFamily: 'Google Sans, sans-serif', fontSize: 18 }}>Sign this document</h3>
+                <p style={{ fontSize: 13, color: '#5f6368', marginBottom: 16 }}>Draw your signature below using your finger or mouse.</p>
                 <canvas
                   ref={signCanvasRef} className={styles.signatureCanvas}
-                  style={{ width: '100%', height: 140, border: '1px solid #dadce0', borderRadius: 8, cursor: 'crosshair', background: '#fafafa' }}
+                  style={{ width: '100%', height: 180, border: '2px dashed #dadce0', borderRadius: 8, cursor: 'crosshair', background: '#fafafa', touchAction: 'none' }}
                   onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
+                  onTouchStart={startDrawTouch} onTouchMove={drawTouch} onTouchEnd={endDraw}
                 />
-                <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end' }}>
-                  <button onClick={clearSignature} style={{ padding: '8px 16px', background: '#f1f3f4', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#5f6368' }}>Clear</button>
-                  <button onClick={() => setIsSigning(false)} style={{ padding: '8px 16px', background: '#f1f3f4', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#5f6368' }}>Cancel</button>
-                  <button onClick={applySignature} style={{ padding: '8px 16px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}>Apply Signature</button>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                  <button onClick={clearSignature} style={{ padding: '10px 20px', background: '#f1f3f4', border: 'none', borderRadius: 6, cursor: 'pointer', color: '#5f6368', fontSize: 14 }}>Clear</button>
+                  <button onClick={() => setIsSigning(false)} style={{ padding: '10px 20px', background: '#f1f3f4', border: 'none', borderRadius: 6, cursor: 'pointer', color: '#5f6368', fontSize: 14 }}>Cancel</button>
+                  <button onClick={applySignature} style={{ padding: '10px 20px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>Apply Signature</button>
                 </div>
               </div>
             </div>

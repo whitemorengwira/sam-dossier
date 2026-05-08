@@ -72,7 +72,8 @@ export default function Topbar({ sidebarCollapsed, onToggleMobile }: TopbarProps
         'fixed top-0 right-0 z-30 h-16 flex items-center justify-between px-6',
         'bg-navy/80 backdrop-blur-xl border-b border-gold/15',
         'transition-all duration-300',
-        sidebarCollapsed ? 'left-[60px]' : 'left-[260px]'
+        'left-0',
+        sidebarCollapsed ? 'lg:left-[60px]' : 'lg:left-[260px]'
       )}
     >
       {/* Left side */}

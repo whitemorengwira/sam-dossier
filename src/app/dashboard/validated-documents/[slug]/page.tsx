@@ -72,7 +72,7 @@ export default async function ValidatedDocumentPage({
             gap: 16,
           }}
         >
-          <div style={{ flex: 1, minWidth: 300 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <h1
               style={{
                 fontFamily: "'Playfair Display', Georgia, serif",

@@ -1,7 +1,7 @@
 // src/components/signing/SignaturePad.tsx
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 interface SignaturePadProps {
   onSave?: (signatureDataUrl: string) => void;
@@ -10,27 +10,35 @@ interface SignaturePadProps {
 
 export function SignaturePad({ onSave, onClear }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
-  useEffect(() => {
+  const initCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
-    // Scale for retina displays
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
     // Set proper canvas dimensions based on CSS size
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * 2;
-    canvas.height = rect.height * 2;
-    ctx.scale(2, 2);
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
     
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2.5;
   }, []);
+
+  useEffect(() => {
+    initCanvas();
+    // Re-init on resize for responsive behavior
+    window.addEventListener('resize', initCanvas);
+    return () => window.removeEventListener('resize', initCanvas);
+  }, [initCanvas]);
 
   const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
@@ -97,11 +105,11 @@ export function SignaturePad({ onSave, onClear }: SignaturePadProps) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white">
+    <div className="flex flex-col items-center gap-4 w-full" ref={containerRef}>
+      <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white w-full">
         <canvas
           ref={canvasRef}
-          style={{ width: 400, height: 200, touchAction: 'none' }}
+          style={{ width: '100%', height: 200, touchAction: 'none' }}
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
@@ -113,16 +121,16 @@ export function SignaturePad({ onSave, onClear }: SignaturePadProps) {
         />
       </div>
       
-      <div className="flex gap-4">
+      <div className="flex gap-4 w-full justify-center flex-wrap">
         <button 
           onClick={handleClear}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+          className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 min-w-[80px]"
         >
           Clear
         </button>
         <button 
           onClick={handleSave}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 min-w-[140px]"
         >
           Save Signature
         </button>

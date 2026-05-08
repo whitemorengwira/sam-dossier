@@ -37,6 +37,7 @@ import {
   Microscope,
   ArrowSquareOut,
   Crown,
+  X,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useState, useEffect, useCallback } from 'react'
@@ -76,7 +77,6 @@ const navigation: NavGroup[] = [
       { label: 'Geological Report', href: '/dashboard/dossier/geological-report', icon: <Mountains size={20} weight="duotone" /> },
       { label: 'Legal Structure', href: '/dashboard/dossier/legal-structure', icon: <Scales size={20} weight="duotone" /> },
       { label: 'Risk Matrix', href: '/dashboard/dossier/risk-matrix', icon: <Warning size={20} weight="duotone" /> },
-      { label: 'Chikonga Mine (PDF)', href: '/dashboard/dossier/chikonga-pdf', icon: <FilePdf size={20} weight="duotone" /> },
       { label: 'Exit Strategy', href: '/dashboard/dossier/exit-strategy', icon: <SignOutIcon size={20} weight="duotone" /> },
     ],
   },
@@ -145,7 +145,12 @@ const navigation: NavGroup[] = [
   },
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export default function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -188,11 +193,25 @@ export default function Sidebar() {
   }, [])
 
   return (
+    <>
+    {/* Mobile backdrop */}
+    <div
+      className={cn(
+        'fixed inset-0 z-30 bg-black/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden',
+        mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      )}
+      onClick={onCloseMobile}
+    />
     <aside
       className={cn(
         'fixed left-0 top-0 z-40 h-screen flex flex-col transition-all duration-300 ease-in-out',
         'bg-navy border-r border-gold/25',
-        collapsed ? 'w-[60px]' : 'w-[260px]'
+        // Mobile: 280px, slide in/out
+        'w-[280px]',
+        mobileOpen ? 'translate-x-0' : '-translate-x-full',
+        // Desktop: normal collapse, always visible
+        collapsed ? 'lg:w-[60px]' : 'lg:w-[260px]',
+        'lg:translate-x-0'
       )}
     >
       {/* ── Logo ─────────────────────────────────────────────────────── */}
@@ -213,6 +232,14 @@ export default function Sidebar() {
           </div>
         )}
       </Link>
+
+      {/* Mobile close button */}
+      <button
+        className="lg:hidden absolute top-4 right-3 z-50 w-8 h-8 flex items-center justify-center text-text-muted hover:text-gold transition-colors"
+        onClick={onCloseMobile}
+      >
+        <X size={20} weight="bold" />
+      </button>
 
       {/* ── Navigation ───────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6 scrollbar-thin">
@@ -240,7 +267,7 @@ export default function Sidebar() {
               {group.items.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
-                  <li key={item.href}>
+                  <li key={item.href} onClick={() => onCloseMobile?.()}>
                     {item.external ? (
                       <a
                         href={item.href}
@@ -323,5 +350,6 @@ export default function Sidebar() {
         )}
       </div>
     </aside>
+    </>
   )
 }
