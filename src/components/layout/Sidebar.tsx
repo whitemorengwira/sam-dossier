@@ -71,13 +71,11 @@ const navigation: NavGroup[] = [
     title: 'Investment Dossier',
     items: [
       { label: 'Executive Summary', href: '/dashboard/dossier/executive-summary', icon: <FileText size={20} weight="duotone" /> },
-      { label: 'Chikonga Mine Profile', href: '/dashboard/dossier/chikonga-profile', icon: <Hammer size={20} weight="duotone" /> },
       { label: 'Investment Case', href: '/dashboard/dossier/investment-case', icon: <ChartLine size={20} weight="duotone" /> },
       { label: 'Financial Model', href: '/dashboard/dossier/financial-model', icon: <CurrencyCircleDollar size={20} weight="duotone" /> },
       { label: 'Geological Report', href: '/dashboard/dossier/geological-report', icon: <Mountains size={20} weight="duotone" /> },
       { label: 'Legal Structure', href: '/dashboard/dossier/legal-structure', icon: <Scales size={20} weight="duotone" /> },
       { label: 'Risk Matrix', href: '/dashboard/dossier/risk-matrix', icon: <Warning size={20} weight="duotone" /> },
-      { label: 'Exit Strategy', href: '/dashboard/dossier/exit-strategy', icon: <SignOutIcon size={20} weight="duotone" /> },
     ],
   },
   {

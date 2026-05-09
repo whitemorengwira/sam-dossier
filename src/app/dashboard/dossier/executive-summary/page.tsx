@@ -8,8 +8,6 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { FileText, FilePdf } from '@phosphor-icons/react'
 
 const PAGE_SLUG = 'executive-summary'
 
@@ -31,6 +29,33 @@ const FALLBACK_BLOCKS: BlockData[] = [
     type: "TextBlock",
     props: {
       text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>The Opportunity</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is a subsidiary of Hilltouch Investments...</p>"
+    }
+  },
+  {
+    id: "profile-summary",
+    type: "TextBlock",
+    props: {
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Executive Summary</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is a subsidiary of Hilltouch Investments, an indigenous gold mining entity that is wholly owned by its Directors Mr Lufeyi Shato & Mrs Joyce Kujenga. Established in 2005, it has grown in leaps and bounds from humble beginnings to become Manicaland's 3rd largest producer of the yellow mineral.</p><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is located 20km off Mutare CBD along the Mutare-Harare highway. The 45 hectare property is comprised of four 10 hectare registered claims. Improved gold grades averaged 15g/t, 18g/t to 25g/t in 2019, 2020 and 2021 respectively.</p>"
+    }
+  },
+  {
+    id: "profile-geology",
+    type: "TextBlock",
+    props: {
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Introduction & Geology</h2><p class='text-text-secondary leading-relaxed mb-4'>Geologically the Chikonga mine lies in the Northern part of Mutare and Odzi greenstone belt, which is divided into two arms, the Odzi limb, extending WNE from Odzi centre and the Mutare limb, trending East. Historically underground operations were developed to 2nd level and have been de-watered and channel sampled.</p><p class='text-text-secondary leading-relaxed mb-4'>Mineralized reefs/shear zones occur as siliceous mica schist and silicified andesite typically hosting bands of fine grained grey and black quartz with disseminated pyrrhotite, pyrite, arsenopyrite, chalcopyrite and gold.</p>"
+    }
+  },
+  {
+    id: "profile-table",
+    type: "RichTable",
+    props: {
+      data: [
+        ["Asset / Metric", "Description", "Details"],
+        ["Location", "Mutasa District", "40 km NE of Mutare city"],
+        ["Property Size", "45 Hectares", "Four 10 hectare registered claims"],
+        ["Gold Grade Averages", "2019 - 2021", "15g/t, 18g/t, up to 25g/t"],
+        ["Production Standard", "Cyanidation & Leaching", "Running elution plant producing >1kg gold/month"]
+      ]
     }
   }
 ]
@@ -85,44 +110,33 @@ export default function ExecutiveSummaryPage() {
   }
 
   return (
-    <Tabs orientation="vertical" defaultValue="summary" className="w-full flex flex-col md:flex-row gap-6 min-h-[85vh] pb-10">
-      <div className="w-full md:w-64 shrink-0">
-        <TabsList className="flex flex-col h-auto w-full bg-onyx-light border border-gold/20 p-2 items-stretch gap-2">
-          <TabsTrigger value="summary" className="data-[state=active]:bg-gold data-[state=active]:text-onyx justify-start px-4 py-3 h-auto rounded">
-            <span className="flex items-center gap-3 font-mono font-bold text-sm"><FileText size={20} /> Executive Summary</span>
-          </TabsTrigger>
-          <TabsTrigger value="pdf" className="data-[state=active]:bg-gold data-[state=active]:text-onyx justify-start px-4 py-3 h-auto text-left rounded">
-            <span className="flex items-center gap-3 font-mono font-bold text-sm"><FilePdf size={20} className="shrink-0" /> Chikonga Mine Profile</span>
-          </TabsTrigger>
-        </TabsList>
+    <div className="space-y-4 max-w-4xl pb-32">
+      {editingMode && (
+        <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />
+      )}
+      
+      <CmsProvider>
+        {blocks.map(block => (
+          <BlockRenderer key={block.id} block={block} />
+        ))}
+      </CmsProvider>
+
+      {/* Chikonga Mine Profile PDF */}
+      <div className="mt-8 border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
+        <div className="px-5 py-3 bg-onyx-light border-b border-gold/15">
+          <h3 className="text-gold font-display font-bold text-sm tracking-wide">Chikonga Mine Profile — Full Document</h3>
+        </div>
+        <iframe 
+          src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100" 
+          className="w-full border-none"
+          style={{ height: 'calc(100vh - 200px)', minHeight: '700px' }}
+          title="Chikonga Mine Profile PDF"
+        />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <TabsContent value="summary" className="mt-0 h-full">
-          <div className="space-y-4 max-w-4xl pb-32">
-            {editingMode && (
-              <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />
-            )}
-            
-            <CmsProvider>
-              {blocks.map(block => (
-                <BlockRenderer key={block.id} block={block} />
-              ))}
-            </CmsProvider>
-
-            <PropertyPanel />
-            <BlockPickerModal />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="pdf" className="mt-0 h-[calc(100vh-150px)] min-h-[800px] border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-          <iframe 
-            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100" 
-            className="w-full h-full border-none"
-            title="Chikonga Mine Profile PDF"
-          />
-        </TabsContent>
-      </div>
-    </Tabs>
+      <PropertyPanel />
+      <BlockPickerModal />
+    </div>
   )
 }
+
