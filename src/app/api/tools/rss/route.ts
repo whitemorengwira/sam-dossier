@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({ items, region });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Failed to fetch RSS for region`, error);
     return NextResponse.json({ error: 'Failed to load RSS feed', items: [] }, { status: 500 });
   }

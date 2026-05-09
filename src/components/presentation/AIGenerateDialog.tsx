@@ -6,7 +6,7 @@ import { useState } from 'react';
 interface AIGenerateDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onGenerate: (slides: any[]) => void;
+  onGenerate: (slides: unknown[]) => void;
 }
 
 export function AIGenerateDialog({ isOpen, onClose, onGenerate }: AIGenerateDialogProps) {
@@ -41,8 +41,8 @@ export function AIGenerateDialog({ isOpen, onClose, onGenerate }: AIGenerateDial
 
       onGenerate(data.slides);
       onClose();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setIsGenerating(false);
     }

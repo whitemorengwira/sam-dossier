@@ -85,7 +85,6 @@ export default function AIAssistantPage() {
 
       recognitionRef.current = recognition
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const speakText = useCallback((text: string) => {

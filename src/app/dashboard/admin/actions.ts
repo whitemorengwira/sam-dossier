@@ -31,9 +31,9 @@ export async function approveUser(userId: string, role: string) {
 
     revalidatePath('/dashboard/admin')
     return { success: true }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in approveUser action:', err)
-    return { success: false, error: err.message || 'Unknown error' }
+    return { success: false, error: (err instanceof Error ? err.message : String(err)) || 'Unknown error' }
   }
 }
 
@@ -62,9 +62,9 @@ export async function deleteUser(userId: string) {
 
     revalidatePath('/dashboard/admin')
     return { success: true }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in deleteUser action:', err)
-    return { success: false, error: err.message || 'Unknown error' }
+    return { success: false, error: (err instanceof Error ? err.message : String(err)) || 'Unknown error' }
   }
 }
 
@@ -100,8 +100,8 @@ export async function createUser(email: string, password: string, role: string) 
 
     revalidatePath('/dashboard/admin')
     return { success: true }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in createUser action:', err)
-    return { success: false, error: err.message || 'Unknown error' }
+    return { success: false, error: (err instanceof Error ? err.message : String(err)) || 'Unknown error' }
   }
 }

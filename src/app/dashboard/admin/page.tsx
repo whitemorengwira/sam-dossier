@@ -20,8 +20,8 @@ export default async function AdminPage() {
       } else {
         users = data.users
       }
-    } catch (e: any) {
-      errorMsg = e.message || 'Error fetching users.'
+    } catch (e: unknown) {
+      errorMsg = (e instanceof Error ? e.message : String(e)) || 'Error fetching users.'
     }
   }
 

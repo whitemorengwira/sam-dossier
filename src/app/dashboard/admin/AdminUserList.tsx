@@ -10,7 +10,7 @@ type User = {
   user_metadata: {
     role?: string
     is_approved?: boolean
-    [key: string]: any
+    [key: string]: unknown
   }
 }
 
@@ -43,8 +43,8 @@ export default function AdminUserList({ users }: { users: User[] }) {
       const res = await approveUser(userId, selectedRole)
       if (!res.success) throw new Error(res.error)
       setSuccessMsg('User approved successfully.')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoadingId(null)
     }
@@ -59,8 +59,8 @@ export default function AdminUserList({ users }: { users: User[] }) {
       const res = await deleteUser(userId)
       if (!res.success) throw new Error(res.error)
       setSuccessMsg('User removed successfully.')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoadingId(null)
     }
@@ -87,8 +87,8 @@ export default function AdminUserList({ users }: { users: User[] }) {
       setNewPassword('')
       setNewRole('investor')
       setShowAddForm(false)
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setAddLoading(false)
     }

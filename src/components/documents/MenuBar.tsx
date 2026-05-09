@@ -249,10 +249,10 @@ export default function MenuBar(props: MenuBarProps) {
     { label: 'Translate document', action: () => { const text = props.editorRef?.current?.innerText || ''; window.open(`https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(text.slice(0, 5000))}`, '_blank') } },
     { label: '', separator: true },
     { label: 'Voice typing', shortcut: 'Ctrl+Shift+S', action: () => {
-      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+      const SR = (window as unknown as Record<string, unknown>).SpeechRecognition || (window as unknown as Record<string, unknown>).webkitSpeechRecognition
       if (!SR) { alert('Voice typing is not supported in this browser. Try Chrome.'); return }
-      const rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = 'en-US'
-      rec.onresult = (e: any) => { for (let i = e.resultIndex; i < e.results.length; i++) { if (e.results[i].isFinal) { execCmd('insertText', e.results[i][0].transcript + ' ') } } }
+      const rec = new (SR as any)(); rec.continuous = true; rec.interimResults = true; rec.lang = 'en-US'
+      rec.onresult = (e: SpeechRecognitionEvent) => { for (let i = e.resultIndex; i < e.results.length; i++) { if (e.results[i].isFinal) { execCmd('insertText', e.results[i][0].transcript + ' ') } } }
       rec.onerror = () => alert('Voice typing stopped.')
       rec.start(); alert('🎤 Voice typing active — speak now. Click OK when done.'); rec.stop()
     }},

@@ -1,5 +1,5 @@
-const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3');
-const dotenv = require('dotenv');
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 const client = new S3Client({

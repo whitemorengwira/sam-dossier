@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
     }
     
     return NextResponse.redirect(signedUrl);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Presign GET error:', err);
-    return NextResponse.json({ error: err.message || 'Failed to generate presigned GET URL.' }, { status: 500 });
+    return NextResponse.json({ error: (err instanceof Error ? err.message : String(err)) || 'Failed to generate presigned GET URL.' }, { status: 500 });
   }
 }

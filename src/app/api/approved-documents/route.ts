@@ -76,10 +76,10 @@ export async function GET() {
       })
 
     return NextResponse.json({ documents })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('R2 ListObjects error:', err)
     return NextResponse.json(
-      { documents: [], error: err.message || 'Failed to list R2 objects.' },
+      { documents: [], error: (err instanceof Error ? err.message : String(err)) || 'Failed to list R2 objects.' },
       { status: 500 }
     )
   }

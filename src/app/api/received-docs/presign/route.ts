@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
     const signedUrl = await getSignedUrl(r2Client, command, { expiresIn: 900 });
 
     return NextResponse.json({ signedUrl, storagePath, fileName: sanitised });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Presign error:', err);
-    return NextResponse.json({ error: err.message || 'Failed to generate presigned URL.' }, { status: 500 });
+    return NextResponse.json({ error: (err instanceof Error ? err.message : String(err)) || 'Failed to generate presigned URL.' }, { status: 500 });
   }
 }

@@ -22,7 +22,7 @@ export const NexusPageBreak = Node.create({
 
   addCommands() {
     return {
-      insertPageBreak: () => ({ commands }: { commands: any }) => {
+      insertPageBreak: () => ({ commands }: { commands: Record<string, Function> }) => {
         return commands.insertContent({ type: this.name });
       },
     };
