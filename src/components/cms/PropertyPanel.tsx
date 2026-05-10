@@ -51,7 +51,7 @@ export function PropertyPanel() {
                 <div className="flex gap-2">
                   <input 
                     type="text" 
-                    value={value} 
+                    value={value as any}
                     onChange={e => handleChange(key, e.target.value)}
                     className="flex-1 bg-onyx border border-gold/20 text-white text-xs px-2 py-1 font-mono"
                   />
@@ -77,7 +77,7 @@ export function PropertyPanel() {
               <div key={key} className="space-y-2">
                 <label className="text-xs font-mono text-text-muted uppercase tracking-wider">{key} (HTML)</label>
                 <textarea
-                  value={value}
+                  value={value as any}
                   onChange={e => handleChange(key, e.target.value)}
                   className="w-full bg-onyx border border-gold/20 text-white text-sm p-3 min-h-[120px] resize-y focus:outline-none focus:border-gold/60"
                 />
@@ -91,7 +91,7 @@ export function PropertyPanel() {
                 <label className="text-xs font-mono text-text-muted uppercase tracking-wider">Image URL</label>
                 <input
                   type="text"
-                  value={value}
+                  value={value as any}
                   onChange={e => handleChange(key, e.target.value)}
                   className="w-full bg-onyx border border-gold/20 text-white text-xs px-3 py-2"
                   placeholder="https://..."
@@ -113,7 +113,7 @@ export function PropertyPanel() {
                 <input
                   type="range"
                   min="0" max="1" step="0.05"
-                  value={value}
+                  value={value as any}
                   onChange={e => handleChange(key, parseFloat(e.target.value))}
                   className="w-full accent-gold"
                 />
@@ -128,7 +128,7 @@ export function PropertyPanel() {
               <label className="text-xs font-mono text-text-muted uppercase tracking-wider">{key}</label>
               <input
                 type="text"
-                value={value}
+                value={value as any}
                 onChange={e => handleChange(key, e.target.value)}
                 className="w-full bg-onyx border border-gold/20 text-white text-sm px-3 py-2"
               />

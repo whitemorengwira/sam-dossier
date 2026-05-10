@@ -13,7 +13,7 @@ export type BlockType =
 export interface BlockData {
   id: string
   type: BlockType
-  props: Record<string, any>
+  props: Record<string, unknown>
 }
 
 interface CmsState {
@@ -25,7 +25,7 @@ interface CmsState {
   // Actions
   setBlocks: (blocks: BlockData[]) => void
   addBlock: (block: BlockData, index?: number) => void
-  updateBlock: (id: string, newProps: Record<string, any>) => void
+  updateBlock: (id: string, newProps: Record<string, unknown>) => void
   removeBlock: (id: string) => void
   reorderBlocks: (fromIndex: number, toIndex: number) => void
   duplicateBlock: (id: string) => void

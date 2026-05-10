@@ -81,7 +81,7 @@ export function BlockPickerModal() {
   )
 }
 
-function getDefaultProps(type: BlockType): Record<string, any> {
+function getDefaultProps(type: BlockType): Record<string, unknown> {
   switch (type) {
     case 'TextBlock': return { text: '<h2>New Heading</h2><p>Start typing your content here...</p>' }
     case 'StatCard': return { label: 'New Metric', value: '0.00', trend: '+0%', bgColour: '#0A1128', borderColour: 'rgba(212,175,55,0.2)' }

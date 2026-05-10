@@ -85,8 +85,8 @@ export async function logCmsAction(
   pageSlug: string,
   actionType: string,
   targetBlockId: string | null,
-  beforeValue: any,
-  afterValue: any
+  beforeValue: unknown,
+  afterValue: unknown
 ) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

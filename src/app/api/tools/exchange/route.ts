@@ -20,7 +20,7 @@ export async function GET() {
     }
     
     return NextResponse.json({ rate: zarRate });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to fetch exchange rate:', error);
     return NextResponse.json({ error: 'Failed to load exchange rate' }, { status: 500 });
   }
