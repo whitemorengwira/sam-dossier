@@ -14,7 +14,11 @@ interface UserInfo {
   email: string
   initials: string
   displayName: string
+  canEdit: boolean
 }
+
+const ADMIN_EMAILS = ['hello@nwhite.systems']
+const EDITOR_ROLES = ['admin', 'team']
 
 export default function Topbar({ sidebarCollapsed, onToggleMobile }: TopbarProps) {
   const router = useRouter()
@@ -36,12 +40,16 @@ export default function Topbar({ sidebarCollapsed, onToggleMobile }: TopbarProps
             ? (parts[0][0] + parts[1][0]).toUpperCase()
             : authUser.email.slice(0, 2).toUpperCase()
           const displayName = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ')
-          setUser({ email: authUser.email, initials, displayName })
+          const meta = authUser.user_metadata || {}
+          const canEdit =
+            ADMIN_EMAILS.includes(authUser.email) ||
+            EDITOR_ROLES.includes(meta.role || '')
+          setUser({ email: authUser.email, initials, displayName, canEdit })
         } else {
-          setUser({ email: 'admin@socinga.africa', initials: 'SA', displayName: 'Admin' })
+          setUser({ email: 'admin@socinga.africa', initials: 'SA', displayName: 'Admin', canEdit: true })
         }
       } catch {
-        setUser({ email: 'admin@socinga.africa', initials: 'SA', displayName: 'Admin' })
+        setUser({ email: 'admin@socinga.africa', initials: 'SA', displayName: 'Admin', canEdit: true })
       }
     }
     fetchUser()
@@ -95,20 +103,22 @@ export default function Topbar({ sidebarCollapsed, onToggleMobile }: TopbarProps
 
       {/* Right side */}
       <div className="flex items-center gap-3">
-        {/* Edit Mode Toggle */}
-        <button
-          onClick={toggleEditMode}
-          className={cn(
-            'flex items-center gap-2 px-3 py-1.5 border text-xs font-mono transition-all',
-            editMode
-              ? 'bg-gold/20 border-gold/60 text-gold'
-              : 'bg-transparent border-gold/20 text-text-muted hover:text-gold hover:border-gold/40'
-          )}
-          title={editMode ? 'Exit edit mode' : 'Enter edit mode — edit any text on the page'}
-        >
-          <PencilSimple size={14} weight={editMode ? 'fill' : 'regular'} />
-          {editMode ? 'Editing' : 'Edit'}
-        </button>
+        {/* Edit Mode Toggle — only shown to admins/team members */}
+        {user?.canEdit && (
+          <button
+            onClick={toggleEditMode}
+            className={cn(
+              'flex items-center gap-2 px-3 py-1.5 border text-xs font-mono transition-all',
+              editMode
+                ? 'bg-gold/20 border-gold/60 text-gold'
+                : 'bg-transparent border-gold/20 text-text-muted hover:text-gold hover:border-gold/40'
+            )}
+            title={editMode ? 'Exit edit mode' : 'Enter edit mode — edit any text on the page'}
+          >
+            <PencilSimple size={14} weight={editMode ? 'fill' : 'regular'} />
+            {editMode ? 'Editing' : 'Edit'}
+          </button>
+        )}
 
         {/* Live gold price */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gold/[0.06] border border-gold/20">

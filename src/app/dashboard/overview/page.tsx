@@ -8,6 +8,7 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { toast } from 'sonner'
 
 const PAGE_SLUG = 'overview'
 
@@ -23,7 +24,7 @@ const FALLBACK_BLOCKS: BlockData[] = [
     id: "stats",
     type: "TextBlock",
     props: {
-      text: "<div class='grid grid-cols-3 gap-4 mt-8'><div class='text-center'><p class='text-3xl font-mono font-bold text-gold'>5 KG</p><p class='text-text-muted text-xs uppercase tracking-widest mt-1'>Current Output</p></div><div class='text-center'><p class='text-3xl font-mono font-bold text-gold'>15+ KG</p><p class='text-text-muted text-xs uppercase tracking-widest mt-1'>Target Output</p></div><div class='text-center'><p class='text-3xl font-mono font-bold text-gold'>R500M</p><p class='text-text-muted text-xs uppercase tracking-widest mt-1'>Required Investment</p></div></div>"
+      text: "<div class='grid grid-cols-3 gap-4 mt-8'><div class='text-center'><p class='text-3xl font-mono font-bold text-gold'>5 KG</p><p class='text-text-muted text-xs uppercase tracking-widest mt-1'>Current Output</p></div><div class='text-center'><p class='text-3xl font-mono font-bold text-gold'>15+ KG</p><p class='text-text-muted text-xs uppercase tracking-widest mt-1'>Target Output</p></div><div class='text-center'><p class='text-3xl font-mono font-bold text-gold'>R250M</p><p class='text-text-muted text-xs uppercase tracking-widest mt-1'>Required Investment</p></div></div>"
     }
   },
   {
@@ -96,9 +97,9 @@ export default function OverviewPage() {
   }, [setBlocks])
 
   const handleSave = async () => {
-    const label = prompt('Enter an optional label for this version:') || undefined
-    await savePageVersion(PAGE_SLUG, blocks, label)
+    await savePageVersion(PAGE_SLUG, blocks)
     clearHistory()
+    toast.success('Page saved successfully')
   }
 
   const handleDiscard = () => {

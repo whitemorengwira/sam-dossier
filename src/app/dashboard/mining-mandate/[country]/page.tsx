@@ -1,5 +1,6 @@
 'use client'
 
+import { toast } from 'sonner'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { getLatestPageVersion, savePageVersion } from '@/lib/actions/cmsActions'
@@ -124,9 +125,9 @@ export default function MiningMandatePage() {
   }, [slug, country, setBlocks])
 
   const handleSave = async () => {
-    const label = prompt('Enter an optional label for this version:') || undefined
-    await savePageVersion(PAGE_SLUG, blocks, label)
+    await savePageVersion(PAGE_SLUG, blocks)
     clearHistory()
+    toast.success('Page saved successfully')
   }
 
   const handleDiscard = () => {

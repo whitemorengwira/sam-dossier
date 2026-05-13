@@ -1,5 +1,6 @@
 'use client'
 
+import { toast } from 'sonner'
 import React, { useEffect, useState } from 'react'
 import { getLatestPageVersion, savePageVersion } from '@/lib/actions/cmsActions'
 import { useCmsStore, BlockData } from '@/lib/store/useCmsStore'
@@ -94,9 +95,9 @@ export default function ExecutiveSummaryPage() {
   }, [setBlocks])
 
   const handleSave = async () => {
-    const label = prompt('Enter an optional label for this version (e.g. "Updated team section"):') || undefined
-    await savePageVersion(PAGE_SLUG, blocks, label)
+    await savePageVersion(PAGE_SLUG, blocks)
     clearHistory()
+    toast.success('Page saved successfully')
   }
 
   const handleDiscard = () => {

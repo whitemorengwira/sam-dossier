@@ -67,7 +67,11 @@ export function VersionHistoryPanel({ pageSlug, onClose }: VersionHistoryPanelPr
                 </button>
               </div>
               <p className="text-[10px] text-text-muted font-mono">{new Date(v.saved_at).toLocaleString()}</p>
-              <p className="text-xs text-text-secondary mt-1">{v.saved_by}</p>
+              <p className="text-xs text-text-secondary mt-1">
+                {v.saved_by_display_name ? (
+                  <span><strong>{v.saved_by_display_name}</strong> <span className="text-text-muted">({v.saved_by})</span></span>
+                ) : v.saved_by}
+              </p>
               {v.label && <p className="text-xs text-gold/70 mt-1 italic">"{v.label}"</p>}
             </div>
           ))
