@@ -12,6 +12,85 @@ import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
 
 const PAGE_SLUG = 'executive-summary'
 
+const DOCUMENTS = [
+  {
+    id: 'chikonga-profile',
+    label: 'Chikonga Mine Profile',
+    subtitle: '27-page technical report',
+    icon: '⛏',
+    url: 'https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf',
+  },
+  {
+    id: 'hilltouch-letter',
+    label: 'Hilltouch Invitation Letter',
+    subtitle: 'Socinga Mining — verified',
+    icon: '✉',
+    url: 'https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/HILLTOUCH%20INVITATION%20LETTER%20SOCINGA%20MINING.pdf',
+  },
+]
+
+function DocumentViewer() {
+  const [activeId, setActiveId] = React.useState(DOCUMENTS[0].id)
+  const active = DOCUMENTS.find(d => d.id === activeId)!
+
+  return (
+    <div className="mt-10 border border-gold/20 rounded-xl overflow-hidden shadow-2xl bg-[#0d1117]">
+      {/* Tab bar */}
+      <div className="flex items-stretch border-b border-gold/15 bg-[#0a0e14]">
+        {DOCUMENTS.map((doc) => {
+          const isActive = doc.id === activeId
+          return (
+            <button
+              key={doc.id}
+              onClick={() => setActiveId(doc.id)}
+              className={`flex items-center gap-3 px-6 py-4 text-left transition-all duration-200 border-r border-gold/10 last:border-r-0 flex-1 group ${
+                isActive
+                  ? 'bg-[#0d1117] border-b-2 border-b-gold'
+                  : 'hover:bg-white/5'
+              }`}
+              style={{ marginBottom: isActive ? '-1px' : '0' }}
+            >
+              <span className="text-xl leading-none">{doc.icon}</span>
+              <div className="min-w-0">
+                <p className={`font-display font-semibold text-sm truncate ${isActive ? 'text-gold' : 'text-text-secondary group-hover:text-white'}`}>
+                  {doc.label}
+                </p>
+                <p className="text-xs text-text-muted mt-0.5 truncate">{doc.subtitle}</p>
+              </div>
+              {isActive && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+              )}
+            </button>
+          )
+        })}
+        {/* Download link */}
+        <a
+          href={active.url}
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-5 py-4 text-xs text-text-muted hover:text-gold transition-colors border-l border-gold/10 shrink-0"
+          title="Download PDF"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+          </svg>
+          <span className="hidden sm:inline">Download</span>
+        </a>
+      </div>
+
+      {/* PDF frame */}
+      <iframe
+        key={active.id}
+        src={`${active.url}#toolbar=1&navpanes=0&scrollbar=1&zoom=page-fit`}
+        className="w-full border-none block"
+        style={{ height: 'calc(100vh - 180px)', minHeight: '750px' }}
+        title={active.label}
+      />
+    </div>
+  )
+}
+
 const FALLBACK_BLOCKS: BlockData[] = [
   {
     id: "hero-1",
@@ -122,34 +201,8 @@ export default function ExecutiveSummaryPage() {
         ))}
       </CmsProvider>
 
-      {/* PDF Documents Row */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Chikonga Mine Profile PDF */}
-        <div className="border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-          <div className="px-5 py-3 bg-onyx-light border-b border-gold/15">
-            <h3 className="text-gold font-display font-bold text-sm tracking-wide">Chikonga Mine Profile — Full Document</h3>
-          </div>
-          <iframe
-            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100"
-            className="w-full border-none"
-            style={{ height: 'calc(100vh - 200px)', minHeight: '700px' }}
-            title="Chikonga Mine Profile PDF"
-          />
-        </div>
-
-        {/* Hilltouch Invitation Letter PDF */}
-        <div className="border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-          <div className="px-5 py-3 bg-onyx-light border-b border-gold/15">
-            <h3 className="text-gold font-display font-bold text-sm tracking-wide">Hilltouch Invitation Letter — Socinga Mining</h3>
-          </div>
-          <iframe
-            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/HILLTOUCH%20INVITATION%20LETTER%20SOCINGA%20MINING.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100"
-            className="w-full border-none"
-            style={{ height: 'calc(100vh - 200px)', minHeight: '700px' }}
-            title="Hilltouch Invitation Letter Socinga Mining PDF"
-          />
-        </div>
-      </div>
+      {/* Document Viewer */}
+      <DocumentViewer />
 
       <PropertyPanel />
       <BlockPickerModal />
