@@ -44,6 +44,15 @@ import { useState, useEffect, useCallback } from 'react'
 
 const SIDEBAR_EDITS_KEY = 'sam-dossier-sidebar-edits'
 
+const ADMIN_TEAM_ONLY_HREFS = new Set([
+  '/dashboard/validated-documents',
+  '/dashboard/workspace/cfo',
+  '/dashboard/workspace/board-chair',
+  '/dashboard/workspace/head-of-cg',
+])
+
+const PRIVILEGED_ROLES = ['admin', 'team']
+
 interface NavItem {
   label: string
   href: string
@@ -146,9 +155,10 @@ const navigation: NavGroup[] = [
 interface SidebarProps {
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
+  userRole?: string;
 }
 
-export default function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
+export default function Sidebar({ mobileOpen = false, onCloseMobile, userRole = '' }: SidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -241,7 +251,14 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarPr
 
       {/* ── Navigation ───────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6 scrollbar-thin">
-        {navigation.map((group) => (
+        {navigation.map((group) => {
+          const visibleItems = group.items.filter(
+            (item) =>
+              !ADMIN_TEAM_ONLY_HREFS.has(item.href) ||
+              PRIVILEGED_ROLES.includes(userRole)
+          )
+          if (visibleItems.length === 0) return null
+          return (
           <div key={group.title}>
             {!collapsed && (
               <h6
@@ -262,7 +279,7 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarPr
               </h6>
             )}
             <ul className="space-y-0.5">
-              {group.items.map((item) => {
+              {visibleItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <li key={item.href} onClick={() => onCloseMobile?.()}>
@@ -313,7 +330,8 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarPr
               })}
             </ul>
           </div>
-        ))}
+          )
+        })}
       </nav>
 
       {/* ── Collapse Toggle ──────────────────────────────────────────── */}

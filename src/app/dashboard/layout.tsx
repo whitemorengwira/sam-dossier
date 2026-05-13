@@ -117,6 +117,7 @@ export default function DashboardLayout({
       <Sidebar
         mobileOpen={mobileMenuOpen}
         onCloseMobile={() => setMobileMenuOpen(false)}
+        userRole={userRole}
       />
 
       {/* Topbar */}

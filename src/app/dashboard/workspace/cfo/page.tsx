@@ -16,6 +16,8 @@ import { getGlobalAssetUrl } from '@/lib/getGlobalAssetUrl'
 import { getDeletedDocIds, markDocAsDeleted, restoreDeletedDoc } from '@/lib/deleted-docs'
 import { toast } from 'sonner'
 
+const PRIVILEGED_ROLES = ['admin', 'team']
+
 export default function CFOPage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -23,14 +25,38 @@ export default function CFOPage() {
   const [docs, setDocs] = useState<CFODocument[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadDone, setUploadDone] = useState(false)
+  const [authorized, setAuthorized] = useState<boolean | null>(null)
 
   useEffect(() => {
+    async function checkRole() {
+      try {
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        const role = user?.user_metadata?.role || ''
+        const email = user?.email || ''
+        if (PRIVILEGED_ROLES.includes(role) || email === 'hello@nwhite.systems') {
+          setAuthorized(true)
+        } else {
+          setAuthorized(false)
+          router.replace('/dashboard/overview')
+        }
+      } catch {
+        setAuthorized(false)
+        router.replace('/dashboard/overview')
+      }
+    }
+    checkRole()
+  }, [router])
+
+  useEffect(() => {
+    if (authorized !== true) return
     const r2 = getKnownCFODocs()
     const local = loadLocalCFODocs()
     const all = [...local, ...r2]
     const deletedIds = getDeletedDocIds()
     setDocs(all.filter(d => !deletedIds.includes(d.id)))
-  }, [])
+  }, [authorized])
 
   const filtered = useMemo(() => {
     if (!search) return docs
@@ -106,6 +132,8 @@ export default function CFOPage() {
 
   const pendingCount = docs.filter(d => d.status === 'pending-approval').length
   const approvedCount = docs.filter(d => d.status === 'approved').length
+
+  if (authorized === null) return null
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>

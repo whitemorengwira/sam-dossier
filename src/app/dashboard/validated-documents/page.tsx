@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 import {
   VALIDATED_DOCUMENTS_REGISTRY,
   CATEGORY_META,
@@ -6,10 +7,22 @@ import {
 } from '@/lib/validated-documents/registry';
 import type { SigningRole } from '@/lib/validated-documents/registry';
 import { ValidatedDocumentsGrid } from './ValidatedDocumentsGrid';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-export default function ValidatedDocumentsPage() {
+const PRIVILEGED_ROLES = ['admin', 'team'];
+const ADMIN_EMAILS = ['hello@nwhite.systems'];
+
+export default async function ValidatedDocumentsPage() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  const role = session?.user?.user_metadata?.role || '';
+  const email = session?.user?.email || '';
+  if (!PRIVILEGED_ROLES.includes(role) && !ADMIN_EMAILS.includes(email)) {
+    redirect('/dashboard/overview');
+  }
+
   const docs = VALIDATED_DOCUMENTS_REGISTRY.map((doc) => ({
     slug: doc.slug,
     title: doc.title,
