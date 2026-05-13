@@ -3,6 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import {
+  FileText,
+  TrendingUp,
+  CircleDollarSign,
+  Mountain,
+  Scale,
+  AlertTriangle,
+  Calendar,
+  Settings,
+  Factory,
+  BarChart3,
+  LayoutDashboard,
+  CheckSquare,
+  FileStack,
+  Gamepad2,
+} from "lucide-react";
 import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import styles from "./layout.module.css";
 
@@ -10,35 +26,35 @@ const NAV_ITEMS = [
   {
     group: "Investment Dossier",
     items: [
-      { label: "Executive Summary", href: "/executive-summary", icon: "📋" },
-      { label: "Investment Case", href: "/investment-case", icon: "📈" },
-      { label: "Financial Model", href: "/financial-model", icon: "💰" },
-      { label: "Geological Report", href: "/geological-report", icon: "🔬" },
-      { label: "Legal Structure", href: "/legal-structure", icon: "⚖️" },
-      { label: "Risk Matrix", href: "/risk-matrix", icon: "⚠️" },
+      { label: "Executive Summary", href: "/executive-summary", icon: FileText },
+      { label: "Investment Case", href: "/investment-case", icon: TrendingUp },
+      { label: "Financial Model", href: "/financial-model", icon: CircleDollarSign },
+      { label: "Geological Report", href: "/geological-report", icon: Mountain },
+      { label: "Legal Structure", href: "/legal-structure", icon: Scale },
+      { label: "Risk Matrix", href: "/risk-matrix", icon: AlertTriangle },
     ],
   },
   {
     group: "Phases",
     items: [
-      { label: "Pre-Production", href: "/phases/pre-production", icon: "🗓️" },
-      { label: "Production", href: "/phases/production", icon: "⚙️" },
-      { label: "Post-Production", href: "/phases/post-production", icon: "🏭" },
-      { label: "Marketing", href: "/phases/marketing", icon: "📊" },
+      { label: "Pre-Production", href: "/phases/pre-production", icon: Calendar },
+      { label: "Production", href: "/phases/production", icon: Settings },
+      { label: "Post-Production", href: "/phases/post-production", icon: Factory },
+      { label: "Marketing", href: "/phases/marketing", icon: BarChart3 },
     ],
   },
   {
     group: "Workspace",
     items: [
-      { label: "Dashboard", href: "/workspace/dashboard", icon: "📈" },
-      { label: "Tasks", href: "/workspace/tasks", icon: "✅" },
-      { label: "Documents", href: "/workspace/documents", icon: "📄" },
+      { label: "Dashboard", href: "/workspace/dashboard", icon: LayoutDashboard },
+      { label: "Tasks", href: "/workspace/tasks", icon: CheckSquare },
+      { label: "Documents", href: "/workspace/documents", icon: FileStack },
     ],
   },
   {
     group: "Simulation",
     items: [
-      { label: "Mine Simulator", href: "/simulation/mine-simulator", icon: "🎮" },
+      { label: "Mine Simulator", href: "/simulation/mine-simulator", icon: Gamepad2 },
     ],
   },
 ];
@@ -89,19 +105,24 @@ export default function DossierLayout({
           {NAV_ITEMS.map((group) => (
             <div key={group.group} className={styles.navGroup}>
               <div className={styles.navGroupLabel}>{group.group}</div>
-              {group.items.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`${styles.navItem} ${
-                    pathname === item.href ? styles.navItemActive : ""
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <span className={styles.navIcon}>{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`${styles.navItem} ${
+                      pathname === item.href ? styles.navItemActive : ""
+                    }`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <span className={styles.navIcon}>
+                      <Icon size={16} strokeWidth={1.5} />
+                    </span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
           ))}
         </nav>

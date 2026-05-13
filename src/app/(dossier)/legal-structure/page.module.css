@@ -1,444 +1,204 @@
 /* ============================================================================
-   Legal Structure — Cinematic Page Styles
+   Legal Structure Page Styles — Mirrors Executive Summary design system
    ============================================================================ */
 
 .page {
-  min-height: 100vh;
-  background: var(--onyx);
+  padding: var(--space-12) var(--space-8);
+  max-width: 1100px;
 }
 
-/* ── Hero ─────────────────────────────────────────────────────────────────── */
-.heroWrapper {
-  position: relative;
-  height: 60vh;
-  min-height: 420px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-}
-
-.heroBg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 80% 30%, rgba(59,130,246,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 80% at 10% 70%, rgba(212,175,55,0.06) 0%, transparent 55%),
-    linear-gradient(135deg, #070a14 0%, #0a1128 60%, #070a14 100%);
-}
-
-.heroOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(7,10,20,0.97) 0%, rgba(7,10,20,0.3) 60%, transparent 100%);
-}
-
-.heroScrim {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background: linear-gradient(to bottom, transparent, var(--onyx));
-}
-
-.heroContent {
-  position: relative;
-  z-index: 2;
-  padding: 4rem 3rem;
-  max-width: 860px;
-}
-
-.heroContent h1 {
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  margin: 1rem 0;
-  line-height: 1.08;
-  color: var(--text-primary);
-}
-
-.lead {
-  font-size: clamp(0.92rem, 1.8vw, 1.1rem);
-  color: var(--text-secondary);
-  line-height: 1.85;
-  max-width: 640px;
-  margin-top: 1rem;
+.pageHeader {
+  margin-bottom: var(--space-12);
 }
 
 .badge {
   display: inline-block;
-  padding: 0.25rem 1rem;
-  background: rgba(212,175,55,0.12);
-  border: 1px solid rgba(212,175,55,0.35);
-  border-radius: 999px;
-  font-size: 0.7rem;
+  padding: var(--space-1) var(--space-4);
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--gold);
+  color: var(--gold-400);
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-4);
+}
+
+.pageHeader h1 {
+  font-size: var(--fs-4xl);
+  margin-bottom: 0;
 }
 
 .textGold {
-  background: linear-gradient(135deg, var(--gold) 0%, #f0d060 100%);
+  background: var(--gold-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ── Section Labels & Utilities ───────────────────────────────────────────── */
-.sectionLabel {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--gold);
-  margin-bottom: 0.75rem;
-}
-
-.goldBar {
-  width: 60px;
+.divider {
+  width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, var(--gold), #f0d060);
-  margin: 1.25rem 0 1.75rem;
-  border-radius: 2px;
+  background: var(--gold-gradient);
+  border: none;
+  margin: var(--space-6) 0;
 }
 
-/* ── Split Section ────────────────────────────────────────────────────────── */
-.splitSection {
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--white-70);
+  line-height: 1.8;
+  max-width: 800px;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.section {
+  margin-bottom: var(--space-12);
+}
+
+.section h2 {
+  font-size: var(--fs-2xl);
+}
+
+.section p {
+  font-size: var(--fs-base);
+  color: var(--white-70);
+  line-height: 1.8;
+  max-width: 800px;
+  margin-bottom: var(--space-4);
+}
+
+/* ── Two Column ───────────────────────────────────────────────────────────── */
+.twoCol {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 70vh;
-  align-items: center;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--space-8);
 }
 
-.sectionDark {
-  background: #060910;
+/* ── Info Cards ───────────────────────────────────────────────────────────── */
+.infoCard {
+  padding: var(--space-5);
+  background: var(--black-700);
+  border: 1px solid var(--white-05);
+  border-radius: var(--radius-md);
 }
 
-.sectionMid {
-  background: linear-gradient(180deg, #0a1128 0%, #060910 100%);
+.infoCard h4 {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--gold-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-3);
 }
 
-.textHalf {
-  padding: 5rem 4rem;
-}
-
-.textHalf h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  color: var(--text-primary);
-  line-height: 1.1;
-}
-
-.textHalf p {
-  font-size: 0.9rem;
-  line-height: 1.9;
-  color: var(--text-secondary);
-  max-width: 60ch;
-  margin-bottom: 1rem;
-}
-
-.vizHalf {
-  padding: 4rem 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 500px;
-  background: rgba(255,255,255,0.015);
-  border-left: 1px solid rgba(212,175,55,0.08);
-}
-
-/* ── SPV Diagram ──────────────────────────────────────────────────────────── */
-.spvDiagram {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
+.table {
   width: 100%;
-  max-width: 360px;
+  border-collapse: collapse;
 }
 
-.spvNode {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(212,175,55,0.2);
-  border-radius: 12px;
-  padding: 1.25rem 2rem;
-  text-align: center;
-  width: 100%;
+.table td {
+  padding: var(--space-2) 0;
+  font-size: var(--fs-sm);
+  border-bottom: 1px solid var(--white-05);
 }
 
-.spvNodeGold {
-  background: rgba(212,175,55,0.08);
-  border-color: rgba(212,175,55,0.5);
+.table td:first-child {
+  color: var(--smoke);
+  width: 45%;
 }
 
-.spvNodeTitle {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  color: var(--text-primary);
+.table td:last-child {
+  color: var(--white);
   font-weight: 600;
+  text-align: right;
 }
 
-.spvNodeGold .spvNodeTitle {
-  color: var(--gold);
-}
-
-.spvNodeSub {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-}
-
-.spvConnector {
-  width: 2px;
-  height: 36px;
-  background: linear-gradient(to bottom, rgba(212,175,55,0.3), rgba(212,175,55,0.6));
-  margin: 0 auto;
-}
-
-.spvBranches {
+/* ── Pillars ──────────────────────────────────────────────────────────────── */
+.pillars {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  width: 100%;
-  margin-top: 1.5rem;
-  position: relative;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
 }
 
-.spvBranches::before {
-  content: '';
-  position: absolute;
-  top: -1.5rem;
-  left: 16%;
-  right: 16%;
-  height: 1.5rem;
-  border-left: 2px solid rgba(212,175,55,0.3);
-  border-right: 2px solid rgba(212,175,55,0.3);
-  border-top: 2px solid rgba(212,175,55,0.3);
-  border-radius: 4px 4px 0 0;
+.pillar {
+  padding: var(--space-6);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-normal) var(--ease-out);
 }
 
-.spvBranch {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.pillar:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-gold);
 }
 
-.spvLeaf {
-  background: rgba(212,175,55,0.05);
-  border: 1px solid rgba(212,175,55,0.15);
-  border-radius: 8px;
-  padding: 0.6rem 0.5rem;
-  font-size: 0.7rem;
-  text-align: center;
-  color: var(--text-secondary);
-  width: 100%;
+.pillarIcon {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-3);
 }
 
-/* ── Full Section ─────────────────────────────────────────────────────────── */
-.fullSection {
-  padding: 5rem 4rem;
-  background: var(--onyx);
+.pillar h4 {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  color: var(--gold-400);
 }
 
-.fullSection h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  color: var(--text-primary);
-  line-height: 1.1;
-}
-
-.introPara {
-  font-size: 0.95rem;
-  line-height: 1.9;
-  color: var(--text-secondary);
-  max-width: 80ch;
-  margin-bottom: 3rem;
-}
-
-/* ── PSA Share Cards ──────────────────────────────────────────────────────── */
-.splitCards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  max-width: 700px;
-}
-
-.shareCard {
-  background: rgba(212,175,55,0.05);
-  border: 1px solid rgba(212,175,55,0.2);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-}
-
-.sharePercent {
-  font-family: var(--font-display);
-  font-size: 4rem;
-  font-weight: 900;
-  color: var(--gold);
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-
-.sharePercentAlt {
-  color: var(--text-secondary);
-}
-
-.shareTitle {
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-}
-
-.shareDesc {
-  font-size: 0.82rem;
+.pillar p {
+  font-size: var(--fs-sm);
+  color: var(--smoke);
   line-height: 1.7;
-  color: var(--text-secondary);
 }
 
-/* ── Compliance Grid ──────────────────────────────────────────────────────── */
-.complianceGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-  width: 100%;
-  max-width: 440px;
+/* ── Confirmation Card ────────────────────────────────────────────────────── */
+.confirmationCard {
+  padding: var(--space-6);
+  background: rgba(34, 197, 94, 0.04);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: var(--radius-lg);
 }
 
-.complianceItem {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(212,175,55,0.12);
-  border-radius: 12px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: border-color 0.3s;
-}
-
-.complianceItem:hover {
-  border-color: rgba(212,175,55,0.35);
-}
-
-.complianceIcon {
-  font-size: 1.8rem;
-  margin-bottom: 0.6rem;
-}
-
-.complianceLabel {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--gold);
-  margin-bottom: 0.35rem;
-}
-
-.complianceDesc {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-/* ── Legal Confirmation Box ───────────────────────────────────────────────── */
-.legalBox {
-  background: rgba(34,197,94,0.04);
-  border: 1px solid rgba(34,197,94,0.25);
-  border-radius: 16px;
-  padding: 2.5rem;
-  max-width: 900px;
-  margin-top: 1.5rem;
-}
-
-.legalBoxHeader {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.legalBadge {
+.confirmBadge {
   display: inline-block;
-  padding: 0.25rem 0.85rem;
-  background: rgba(34,197,94,0.12);
-  border: 1px solid rgba(34,197,94,0.35);
-  border-radius: 999px;
-  font-size: 0.7rem;
+  padding: var(--space-1) var(--space-4);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: #4ade80;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+  margin-bottom: var(--space-4);
 }
 
-.legalRef {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.legalBox p {
-  font-size: 0.9rem;
-  line-height: 1.9;
-  color: var(--text-secondary);
+.confirmationCard p {
   max-width: unset;
-  margin-bottom: 1.5rem;
-}
-
-.legalStatus {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.82rem;
-  color: #4ade80;
-  font-weight: 600;
-}
-
-.legalStatusDot {
-  width: 8px;
-  height: 8px;
-  background: #4ade80;
-  border-radius: 50%;
-  animation: blink 2s ease-in-out infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-/* ── Scroll Reveal ────────────────────────────────────────────────────────── */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .splitSection {
+@media (max-width: 1024px) {
+  .pillars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .twoCol {
     grid-template-columns: 1fr;
   }
+}
 
-  .vizHalf {
-    border-left: none;
-    border-top: 1px solid rgba(212,175,55,0.08);
-    min-height: auto;
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-8) var(--space-4);
   }
 
-  .textHalf {
-    padding: 3rem 2rem;
-  }
-
-  .fullSection {
-    padding: 3rem 2rem;
-  }
-
-  .splitCards {
-    grid-template-columns: 1fr;
-  }
-
-  .spvBranches {
+  .pillars {
     grid-template-columns: 1fr;
   }
 }
