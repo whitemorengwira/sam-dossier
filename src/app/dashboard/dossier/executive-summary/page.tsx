@@ -122,17 +122,33 @@ export default function ExecutiveSummaryPage() {
         ))}
       </CmsProvider>
 
-      {/* Chikonga Mine Profile PDF */}
-      <div className="mt-8 border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-        <div className="px-5 py-3 bg-onyx-light border-b border-gold/15">
-          <h3 className="text-gold font-display font-bold text-sm tracking-wide">Chikonga Mine Profile — Full Document</h3>
+      {/* PDF Documents Row */}
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Chikonga Mine Profile PDF */}
+        <div className="border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
+          <div className="px-5 py-3 bg-onyx-light border-b border-gold/15">
+            <h3 className="text-gold font-display font-bold text-sm tracking-wide">Chikonga Mine Profile — Full Document</h3>
+          </div>
+          <iframe
+            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100"
+            className="w-full border-none"
+            style={{ height: 'calc(100vh - 200px)', minHeight: '700px' }}
+            title="Chikonga Mine Profile PDF"
+          />
         </div>
-        <iframe 
-          src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/Chikonga%20Mine%20Profile.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100" 
-          className="w-full border-none"
-          style={{ height: 'calc(100vh - 200px)', minHeight: '700px' }}
-          title="Chikonga Mine Profile PDF"
-        />
+
+        {/* Hilltouch Invitation Letter PDF */}
+        <div className="border border-gold/20 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
+          <div className="px-5 py-3 bg-onyx-light border-b border-gold/15">
+            <h3 className="text-gold font-display font-bold text-sm tracking-wide">Hilltouch Invitation Letter — Socinga Mining</h3>
+          </div>
+          <iframe
+            src="https://pub-dd1f1b0a9ff04fa6bb66b9fa33f8f4aa.r2.dev/sam-dossier/public/received-verified-documents/HILLTOUCH%20INVITATION%20LETTER%20SOCINGA%20MINING.pdf#toolbar=1&navpanes=0&scrollbar=1&zoom=100"
+            className="w-full border-none"
+            style={{ height: 'calc(100vh - 200px)', minHeight: '700px' }}
+            title="Hilltouch Invitation Letter Socinga Mining PDF"
+          />
+        </div>
       </div>
 
       <PropertyPanel />
