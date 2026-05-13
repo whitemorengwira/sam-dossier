@@ -1,0 +1,448 @@
+/* ============================================================================
+   Investment Case — Cinematic Page Styles
+   ============================================================================ */
+
+.page {
+  min-height: 100vh;
+  background: var(--onyx);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.heroWrapper {
+  position: relative;
+  height: 70vh;
+  min-height: 500px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.heroBg {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(212,175,55,0.12) 0%, transparent 60%),
+    linear-gradient(135deg, #0a0a0a 0%, #0a1128 40%, #121212 100%);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(212,175,55,0.12) 0%, transparent 60%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(212,175,55,0.025) 40px,
+      rgba(212,175,55,0.025) 41px
+    ),
+    linear-gradient(135deg, #0a0a0a 0%, #0a1128 40%, #121212 100%);
+  will-change: transform;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.3) 60%, transparent 100%),
+    linear-gradient(to right, rgba(10,10,10,0.6) 0%, transparent 60%);
+}
+
+.heroScrim {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--onyx));
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: var(--space-16, 4rem) var(--space-12, 3rem);
+  max-width: 900px;
+}
+
+.heroContent h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  margin: var(--space-4, 1rem) 0;
+  color: var(--text-primary);
+  line-height: 1.05;
+}
+
+.lead {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 680px;
+  margin-top: var(--space-4, 1rem);
+}
+
+/* ── Badge ────────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 1rem;
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.35);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.textGold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light, #f0d060) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 60vh;
+  align-items: center;
+}
+
+.sectionDark {
+  background: var(--onyx);
+}
+
+.sectionMid {
+  background: linear-gradient(180deg, #0a1128 0%, #0a0a0a 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 3rem;
+}
+
+.sectionFull {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 5rem 4rem;
+  background: #0a0a0a;
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.goldBar {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light, #f0d060));
+  margin: 1.25rem 0 1.75rem;
+  border-radius: 2px;
+}
+
+/* ── Text block ───────────────────────────────────────────────────────────── */
+.textBlock {
+  padding: 5rem 4rem;
+}
+
+.textBlock h2 {
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.textBlock p {
+  color: var(--text-secondary);
+  line-height: 1.9;
+  font-size: 1rem;
+  max-width: 56ch;
+}
+
+.fullWidthText {
+  text-align: center;
+  max-width: 800px;
+  margin-bottom: 3rem;
+}
+
+.fullWidthText h2 {
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+}
+
+.fullWidthText .goldBar {
+  margin: 1.25rem auto 1.75rem;
+}
+
+.fullWidthText p {
+  margin: 0 auto;
+  text-align: left;
+  max-width: 68ch;
+}
+
+/* ── Visual Panel ─────────────────────────────────────────────────────────── */
+.visualPanel {
+  height: 100%;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(10,17,40,0.8) 0%, rgba(10,10,10,0.9) 100%);
+  border-left: 1px solid rgba(212,175,55,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Bar Chart Viz ────────────────────────────────────────────────────────── */
+.dataViz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+}
+
+.vizLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 2rem;
+}
+
+.barChart {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-end;
+  height: 200px;
+}
+
+.barGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.barWrap {
+  width: 60px;
+  height: 180px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.barFill {
+  width: 100%;
+  background: rgba(212,175,55,0.3);
+  border-radius: 4px 4px 0 0;
+  transition: height 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.barFillGold {
+  background: linear-gradient(180deg, var(--gold-light, #f0d060) 0%, var(--gold) 100%);
+}
+
+.barLabel {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.vizCaption {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 180px;
+}
+
+/* ── Abstract Orb Viz ─────────────────────────────────────────────────────── */
+.abstractViz {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  animation: orbPulse 4s ease-in-out infinite;
+}
+
+.orb:nth-child(1) {
+  width: 200px;
+  height: 200px;
+  top: 50px;
+  left: 50px;
+  background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+  border: 1px solid rgba(212,175,55,0.2);
+}
+
+.orbGold {
+  width: 120px !important;
+  height: 120px !important;
+  top: 90px !important;
+  left: 90px !important;
+  background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%) !important;
+  border: 1px solid rgba(212,175,55,0.5) !important;
+  animation-delay: 1s !important;
+}
+
+.orbSmall {
+  width: 60px !important;
+  height: 60px !important;
+  top: 120px !important;
+  left: 120px !important;
+  background: radial-gradient(circle, rgba(240,208,96,0.4) 0%, rgba(212,175,55,0.1) 100%) !important;
+  border: none !important;
+  animation-delay: 2s !important;
+}
+
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ── Metrics Row ──────────────────────────────────────────────────────────── */
+.metricsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.metricCard {
+  background: rgba(212,175,55,0.05);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.metricCard:hover {
+  border-color: rgba(212,175,55,0.5);
+  background: rgba(212,175,55,0.08);
+}
+
+.metricValue {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1.1;
+}
+
+.metricSub {
+  font-size: 0.8rem;
+  color: var(--gold-light, #f0d060);
+  margin: 0.35rem 0;
+  opacity: 0.7;
+}
+
+.metricLabel {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+}
+
+/* ── Pillars Grid ─────────────────────────────────────────────────────────── */
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.pillarCard {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.pillarCard:hover {
+  border-color: rgba(212,175,55,0.4);
+  transform: translateY(-4px);
+}
+
+.pillarNumber {
+  font-family: var(--font-mono);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: rgba(212,175,55,0.12);
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+
+.pillarCard h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.pillarDivider {
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+  margin-bottom: 1.25rem;
+  border-radius: 2px;
+}
+
+.pillarCard p {
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  max-width: unset;
+}
+
+/* ── Scroll Reveal ────────────────────────────────────────────────────────── */
+.revealBlock {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.revealBlock.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .section {
+    grid-template-columns: 1fr;
+  }
+
+  .visualPanel {
+    min-height: 300px;
+  }
+
+  .metricsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pillarsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .textBlock {
+    padding: 3rem 2rem;
+  }
+
+  .sectionFull {
+    padding: 3rem 2rem;
+  }
+}

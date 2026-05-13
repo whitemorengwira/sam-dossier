@@ -1,174 +1,513 @@
 /* ============================================================================
-   Financial Model Styles
+   Financial Model — Cinematic Page Styles
    ============================================================================ */
 
 .page {
-  padding: var(--space-8);
+  min-height: 100vh;
+  background: var(--onyx);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.heroWrapper {
+  position: relative;
+  height: 65vh;
+  min-height: 460px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 120% 80% at 20% 60%, rgba(212,175,55,0.06) 0%, transparent 55%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(212,175,55,0.02) 80px,
+      rgba(212,175,55,0.02) 81px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 80px,
+      rgba(212,175,55,0.02) 80px,
+      rgba(212,175,55,0.02) 81px
+    ),
+    linear-gradient(160deg, #0a0a0a 0%, #0a1128 50%, #0a0a0a 100%);
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10,10,10,0.97) 0%,
+    rgba(10,10,10,0.4) 55%,
+    transparent 100%
+  );
+}
+
+.heroScrim {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, var(--onyx));
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: 4rem 3rem;
+  max-width: 900px;
+}
+
+.heroContent h1 {
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  margin: 1rem 0;
+  line-height: 1.05;
+  color: var(--text-primary);
+}
+
+.lead {
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  color: var(--text-secondary);
+  line-height: 1.85;
+  max-width: 660px;
+  margin-top: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 1rem;
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.35);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.textGold {
+  background: linear-gradient(135deg, var(--gold) 0%, #f0d060 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.section {
+  padding: 5rem 4rem;
+}
+
+.sectionDark {
+  background: #070707;
+}
+
+.sectionMid {
+  background: linear-gradient(180deg, #0a1128 0%, #0a0a0a 100%);
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.goldBar {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), #f0d060);
+  margin: 1.25rem 0 1.75rem;
+  border-radius: 2px;
+}
+
+.fullWidth {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.pageHeader {
-  margin-bottom: var(--space-12);
+.fullWidth > p {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  max-width: 72ch;
+  margin-bottom: 3rem;
 }
 
-.pageHeader h1 {
-  font-size: var(--fs-4xl);
-  margin-top: var(--space-4);
-  margin-bottom: var(--space-4);
+.fullWidth h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  color: var(--text-primary);
+  line-height: 1.1;
 }
 
-.lead {
-  font-size: var(--fs-lg);
-  color: var(--white-70);
-  line-height: 1.7;
-  max-width: 800px;
+/* ── Text Block ───────────────────────────────────────────────────────────── */
+.textBlock {
+  max-width: 580px;
 }
 
-.section {
-  margin-bottom: var(--space-12);
+.textBlock h2 {
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  color: var(--text-primary);
+  line-height: 1.1;
 }
 
-.section h2 {
-  font-size: var(--fs-2xl);
-  margin-bottom: var(--space-2);
+.textBlock p {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  max-width: 60ch;
+  margin-top: 0.5rem;
 }
 
-/* ── Waterfall Grid ───────────────────────────────────────────────────────── */
-.waterfallGrid {
+/* ── Waterfall Panel ──────────────────────────────────────────────────────── */
+.section:first-of-type {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  background: var(--onyx);
 }
 
-.waterfallCard {
-  background: var(--black-700);
-  border: 1px solid var(--white-05);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
+.waterfallPanel {
   display: flex;
   flex-direction: column;
+  gap: 0;
   position: relative;
-  overflow: hidden;
-  transition: all var(--duration-normal);
 }
 
-.waterfallCard::before {
+.waterfallItem {
+  position: relative;
+  background: rgba(212,175,55,0.04);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.waterfallPriority {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  white-space: nowrap;
+  padding-top: 0.15rem;
+  min-width: 80px;
+}
+
+.waterfallBody {
+  flex: 1;
+}
+
+.waterfallTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+  font-family: var(--font-heading);
+}
+
+.waterfallDesc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.waterfallArrow {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  color: rgba(212,175,55,0.4);
+  z-index: 1;
+  line-height: 1;
+}
+
+/* ── Timeline Grid ────────────────────────────────────────────────────────── */
+.timelineGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+.timelineCard {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.timelineCard::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  right: 0;
   height: 3px;
-  background: var(--gold-gradient);
-  opacity: 0.5;
-  transition: opacity var(--duration-fast);
+  background: linear-gradient(90deg, var(--gold), transparent);
 }
 
-.waterfallCard:hover {
-  transform: translateY(-4px);
-  border-color: rgba(212, 175, 55, 0.3);
-  box-shadow: var(--shadow-md);
-}
-
-.waterfallCard:hover::before {
-  opacity: 1;
-}
-
-.trancheHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-4);
-}
-
-.trancheValue {
-  font-family: var(--font-display);
-  font-size: var(--fs-xl);
-  font-weight: 800;
-  color: var(--gold-400);
-}
-
-.waterfallCard h4 {
-  font-size: var(--fs-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--space-4);
-  color: var(--white);
-}
-
-.trancheList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-6) 0;
-  flex-grow: 1;
-}
-
-.trancheList li {
-  position: relative;
-  padding-left: var(--space-4);
-  font-size: var(--fs-sm);
-  color: var(--smoke);
-  margin-bottom: var(--space-2);
-  line-height: 1.4;
-}
-
-.trancheList li::before {
-  content: '→';
-  position: absolute;
-  left: 0;
-  color: var(--gold-600);
-}
-
-.trancheAmount {
-  font-family: var(--font-display);
-  font-size: var(--fs-lg);
+.timelineYear {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--white);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--white-05);
-  margin-top: auto;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+}
+
+.timelineCard h4 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.timelineCard p {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: unset;
+  margin-bottom: 1.25rem;
+}
+
+.timelineHighlight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.timelineHighlight span:first-child {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.timelineHighlightSub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── ROI Calculator Wrapper ───────────────────────────────────────────────── */
+.calcWrapper {
+  margin-top: 2rem;
+}
+
+/* ── Assumptions Grid ─────────────────────────────────────────────────────── */
+.assumptionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+.assumptionCard {
+  background: rgba(212,175,55,0.05);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+
+.assumptionLabel {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.assumptionUsd {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.assumptionZar {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+
+/* ── Table Sections ───────────────────────────────────────────────────────── */
+.tableSection {
+  margin-bottom: 3rem;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.yearBadge {
+  display: inline-block;
+  padding: 0.25rem 0.85rem;
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.35);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #60a5fa;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.yearBadgeGold {
+  background: rgba(212,175,55,0.12);
+  border-color: rgba(212,175,55,0.35);
+  color: var(--gold);
+}
+
+.tableTitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.tableResponsive {
+  overflow-x: auto;
+}
+
+.roiTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.roiTable th {
+  background: rgba(212,175,55,0.08);
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(212,175,55,0.2);
+}
+
+.roiTable td {
+  padding: 0.8rem 1rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.roiTable td:first-child {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.deductionRow td {
+  color: rgba(239,68,68,0.8) !important;
+}
+
+.deductionRow td:first-child {
+  color: var(--text-secondary) !important;
+}
+
+.netRow td {
+  background: rgba(255,255,255,0.03);
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  border-top: 1px solid rgba(212,175,55,0.2);
+}
+
+.balanceRow td {
+  background: rgba(59,130,246,0.06);
+  color: #93c5fd !important;
+  border-top: 1px solid rgba(59,130,246,0.2);
+}
+
+.investorRow td {
+  background: rgba(212,175,55,0.06);
+  color: var(--gold) !important;
+}
+
+.highlight {
+  color: var(--gold) !important;
+  font-weight: 800 !important;
 }
 
 /* ── Controls Grid ────────────────────────────────────────────────────────── */
 .controlsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-  margin-top: var(--space-6);
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-.controlsGrid h4 {
-  font-family: var(--font-body);
-  font-size: var(--fs-md);
-  color: var(--gold-400);
-  margin-bottom: var(--space-3);
+.controlCard {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 14px;
+  padding: 2rem;
 }
 
-.controlsGrid p {
-  font-size: var(--fs-sm);
-  color: var(--smoke);
-  line-height: 1.7;
-  margin: 0;
+.controlCard h4 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.controlCard p {
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  max-width: unset;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 1200px) {
-  .waterfallGrid {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 1024px) {
+  .section:first-of-type {
+    grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 768px) {
-  .page {
-    padding: var(--space-6) var(--space-4);
+  .timelineGrid {
+    grid-template-columns: 1fr;
   }
-  
+
+  .assumptionsGrid {
+    grid-template-columns: 1fr;
+  }
+
   .controlsGrid {
     grid-template-columns: 1fr;
   }
-  
-  .waterfallGrid {
-    grid-template-columns: 1fr;
+
+  .section {
+    padding: 3rem 2rem;
   }
 }

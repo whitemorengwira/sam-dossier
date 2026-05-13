@@ -283,6 +283,41 @@ export default function ExecutiveSummary() {
         </div>
       </section>
 
+      {/* ── Approved Dossier Copy: Executive Summary ──────────────────── */}
+      <section className={styles.section} style={{ background: "rgba(212,175,55,0.03)", border: "1px solid rgba(212,175,55,0.12)", borderRadius: "16px", padding: "3rem 3rem" }}>
+        <h2>Macroeconomic Context &amp; Investment Mandate</h2>
+        <hr className={styles.divider} />
+        <p style={{ fontSize: "1rem", lineHeight: "1.95", color: "var(--text-secondary)", maxWidth: "78ch", marginBottom: "1.5rem" }}>
+          The global macroeconomic environment in 2026 continues to demonstrate unprecedented
+          volatility, establishing precious metals as the ultimate hedge against fiat currency
+          depreciation and geopolitical instability. Within this context, the Zimbabwean mining
+          sector represents a unique frontier for institutional capital, offering world-class
+          geological endowments coupled with a stringent but navigable statutory framework. This
+          document has been engineered to strictly adhere to 2026 international best practices for
+          mining feasibility studies, incorporating independent technical reviews, comprehensive
+          lifecycle assessments, and advanced digital integration.
+        </p>
+        <p style={{ fontSize: "1rem", lineHeight: "1.95", color: "var(--text-secondary)", maxWidth: "78ch", marginBottom: "1.5rem" }}>
+          Socinga Africa Mining is executing a strategic corporate collaboration with Hilltouch
+          Investments (Private) Limited, the indigenous owners and operators of the Chikonga Mine.
+          The fundamental objective of this commercial partnership is to secure and deploy a
+          targeted capital injection of ZAR 250,000,000 (USD 13,513,513). This capital is mandated
+          to transition the asset from its current rudimentary, artisanal-scale output of 5
+          kilogrammes (kg) per month to a stabilised, industrial-scale production target of 15
+          kilogrammes (kg) per month.
+        </p>
+        <p style={{ fontSize: "1rem", lineHeight: "1.95", color: "var(--text-secondary)", maxWidth: "78ch" }}>
+          To achieve this, the deployment of funds will facilitate aggressive underground shaft
+          development to the 400-metre inclined depth, designated as level 3, alongside the
+          commissioning of a high-throughput, 500 tonnes per day (tpd) Carbon-in-Leach (CIL)
+          processing facility. The investment is structured through a legally segregated Special
+          Purpose Vehicle (SPV), ensuring absolute ring-fencing of institutional funds. This
+          framework offers the incoming institutional partner a 60 per cent (60%) share of the net
+          distributable free cash flow, protected by a 20 per cent (20%) per annum simple interest
+          yield on the deployed capital, and enforced through a rigid capital repayment waterfall.
+        </p>
+      </section>
+
       {/* ── Next Steps ─────────────────────────────────────────────── */}
       <section className={styles.section}>
         <h2>Immediate Next Steps</h2>

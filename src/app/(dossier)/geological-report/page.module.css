@@ -200,6 +200,364 @@
   font-size: var(--fs-sm);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEW CINEMATIC SECTIONS — Approved Dossier Copy
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.heroWrapper {
+  position: relative;
+  height: 55vh;
+  min-height: 380px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 40%, rgba(212,175,55,0.08) 0%, transparent 55%),
+    repeating-linear-gradient(
+      30deg,
+      transparent,
+      transparent 60px,
+      rgba(212,175,55,0.015) 60px,
+      rgba(212,175,55,0.015) 61px
+    ),
+    linear-gradient(160deg, #050505 0%, #0a0c10 50%, #050505 100%);
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(5,5,5,0.97) 0%, rgba(5,5,5,0.3) 60%, transparent 100%);
+}
+
+.heroScrim {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #050505);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: 3.5rem 3rem;
+  max-width: 860px;
+}
+
+.heroContent h1 {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  margin: 0.75rem 0;
+  line-height: 1.08;
+  color: var(--text-primary);
+}
+
+.heroLead {
+  font-size: clamp(0.92rem, 1.8vw, 1.1rem) !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.8 !important;
+  max-width: 620px;
+  margin-top: 0.75rem;
+}
+
+.heroBadge {
+  display: inline-block;
+  padding: 0.25rem 1rem;
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.35);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.textGold {
+  background: linear-gradient(135deg, var(--gold) 0%, #f0d060 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Cinematic Split Sections ─────────────────────────────────────────────── */
+.cinematicSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 60vh;
+  align-items: center;
+  background: #060810;
+}
+
+.cinematicSectionDark {
+  background: #030305;
+}
+
+.cinematicSectionReverse {
+  direction: rtl;
+}
+
+.cinematicSectionReverse > * {
+  direction: ltr;
+}
+
+.textHalf {
+  padding: 5rem 4rem;
+}
+
+.textHalf h2 {
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.textHalf p {
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  max-width: 58ch;
+  margin-bottom: 1rem;
+}
+
+.vizHalf {
+  padding: 4rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  background: rgba(255,255,255,0.01);
+  border-left: 1px solid rgba(212,175,55,0.07);
+  position: relative;
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.goldBar {
+  width: 55px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), #f0d060);
+  margin: 1.25rem 0 1.75rem;
+  border-radius: 2px;
+}
+
+/* ── Geological Cross-Section Viz ─────────────────────────────────────────── */
+.geoViz {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  max-width: 380px;
+  height: 380px;
+  position: relative;
+}
+
+.geoStratum {
+  flex: 1;
+  border: 1px solid;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  transition: opacity 0.3s;
+}
+
+.geoStratum span {
+  font-size: 0.72rem;
+  color: rgba(245,240,232,0.7);
+  font-family: var(--font-mono);
+  max-width: unset;
+}
+
+.geoDepthLabel {
+  position: absolute;
+  right: -3rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 0.68rem;
+  color: rgba(212,175,55,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+/* ── Grade Bar Chart ──────────────────────────────────────────────────────── */
+.gradeChart {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gradeChartTitle {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.gradeRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gradeYear {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  min-width: 60px;
+}
+
+.gradeBar {
+  flex: 1;
+  height: 28px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,175,55,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gradeBarFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.5s ease;
+}
+
+.gradeValue {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 55px;
+  text-align: right;
+}
+
+.gradeNote {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(212,175,55,0.1);
+}
+
+/* ── Full Section ─────────────────────────────────────────────────────────── */
+.fullSection {
+  background: var(--onyx);
+  padding: 5rem 4rem;
+}
+
+.fullSectionInner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fullSectionInner h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.fullSectionLead {
+  font-size: 0.95rem !important;
+  line-height: 1.9 !important;
+  color: var(--text-secondary) !important;
+  max-width: 72ch;
+  margin-bottom: 3rem;
+}
+
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.techCard {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.techCard:hover {
+  border-color: rgba(212,175,55,0.4);
+  transform: translateY(-4px);
+}
+
+.techIcon {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.techCard h4 {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+  line-height: 1.3;
+}
+
+.techCard p {
+  font-size: 0.82rem !important;
+  line-height: 1.7 !important;
+  color: var(--text-secondary) !important;
+  max-width: unset;
+  margin: 0;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .cinematicSection {
+    grid-template-columns: 1fr;
+  }
+
+  .cinematicSectionReverse {
+    direction: ltr;
+  }
+
+  .vizHalf {
+    border-left: none;
+    border-top: 1px solid rgba(212,175,55,0.07);
+    min-height: auto;
+  }
+
+  .techGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .textHalf {
+    padding: 3rem 2rem;
+  }
+
+  .fullSection {
+    padding: 3rem 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .techGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .contentGrid {

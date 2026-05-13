@@ -8,14 +8,14 @@ import styles from "./layout.module.css";
 
 const NAV_ITEMS = [
   {
-    group: "Dossier",
+    group: "Investment Dossier",
     items: [
       { label: "Executive Summary", href: "/executive-summary", icon: "📋" },
-      { label: "Chikonga Mine", href: "/chikonga-mine", icon: "⛏️" },
-      { label: "Geological Report", href: "/geological-report", icon: "🔬" },
+      { label: "Investment Case", href: "/investment-case", icon: "📈" },
       { label: "Financial Model", href: "/financial-model", icon: "💰" },
-      { label: "Team", href: "/team", icon: "👤" },
-      { label: "Regulatory", href: "/regulatory", icon: "⚖️" },
+      { label: "Geological Report", href: "/geological-report", icon: "🔬" },
+      { label: "Legal Structure", href: "/legal-structure", icon: "⚖️" },
+      { label: "Risk Matrix", href: "/risk-matrix", icon: "⚠️" },
     ],
   },
   {
