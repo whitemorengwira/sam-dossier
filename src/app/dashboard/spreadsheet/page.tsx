@@ -17,14 +17,14 @@ import {
   type SpreadsheetRecord,
 } from '@/lib/actions/spreadsheetActions';
 
-// ─── Grid Config ──────────────────────────────────────────────────────────────
+// ─── Grid Config — Google Sheets exact values ───────────────────────────────
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
-const MIN_COL_W = 46;
-const DEFAULT_COL_W = 100;
-const ROW_NUM_W = 46;
-const ROW_H = 25;
-const HEADER_H = 25;
+const MIN_COL_W = 30;
+const DEFAULT_COL_W = 100;   // §3.1 — default cell width: 100px
+const ROW_NUM_W = 46;        // §3.3 — row gutter width: 46px
+const ROW_H = 21;            // §3.1 — line-height 21px = row height
+const HEADER_H = 24;         // §3.2 — column header bar height: 24px
 
 function colLabel(i: number): string {
   let s = '';
@@ -634,10 +634,35 @@ export default function SpreadsheetPage() {
           />
         </div>
 
-        {/* ─── Grid ─── */}
-        <div ref={gridRef} className="flex-1 overflow-auto bg-white relative select-none" style={{ cursor: resizingCol.current ? 'col-resize' : undefined }}>
-          <div className="inline-block min-w-full">
-            <table className="border-collapse" style={{ tableLayout: 'fixed' }} cellPadding={0} cellSpacing={0}>
+        {/* ─── Grid — Google Sheets exact rendering (§3) ─── */}
+        <div
+          ref={gridRef}
+          className="flex-1 overflow-auto relative select-none"
+          style={{
+            background: '#ffffff',
+            cursor: resizingCol.current ? 'col-resize' : undefined,
+          }}
+        >
+          {/* Scoped scrollbar styles matching Google Sheets §3.8 */}
+          <style>{`
+            .gs-grid::-webkit-scrollbar { width: 14px; height: 14px; }
+            .gs-grid::-webkit-scrollbar-track { background: #f8f9fa; }
+            .gs-grid::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 7px; border: 3px solid #f8f9fa; }
+            .gs-grid::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+            .gs-grid::-webkit-scrollbar-corner { background: #f8f9fa; }
+          `}</style>
+          <div className="gs-grid overflow-auto absolute inset-0">
+            <table
+              className="border-collapse"
+              style={{
+                tableLayout: 'fixed',
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '13.333px',  /* §3.1 — 10pt */
+                color: '#202124',
+              }}
+              cellPadding={0}
+              cellSpacing={0}
+            >
               <colgroup>
                 <col style={{ width: ROW_NUM_W }} />
                 {Array.from({ length: numCols }, (_, i) => (
@@ -645,24 +670,79 @@ export default function SpreadsheetPage() {
                 ))}
               </colgroup>
 
-              {/* Column Headers */}
-              <thead className="sticky top-0 z-10">
+              {/* §3.2 — Column header bar */}
+              <thead style={{ position: 'sticky', top: 0, zIndex: 2 }}>
                 <tr>
-                  <th className="bg-[#f8f9fa] border-b border-r border-[#e8e8e8] sticky left-0 z-20" style={{ height: HEADER_H, width: ROW_NUM_W }} />
+                  {/* §3.7 — Top-left corner cell z-index: 3 */}
+                  <th
+                    style={{
+                      height: HEADER_H,
+                      width: ROW_NUM_W,
+                      position: 'sticky',
+                      left: 0,
+                      zIndex: 3,
+                      background: '#f8f9fa',
+                      borderBottom: '1px solid #c0c0c0',
+                      borderRight: '1px solid #c0c0c0',
+                    }}
+                  />
                   {Array.from({ length: numCols }, (_, ci) => {
                     const isActiveCol = activeCol === ci;
                     return (
                       <th
                         key={ci}
-                        className={`text-[11px] font-normal border-b border-r border-[#e8e8e8] relative select-none ${
-                          isActiveCol ? 'bg-[#d3e3fd] text-[#1a73e8] font-medium' : 'bg-[#f8f9fa] text-[#5f6368]'
-                        }`}
-                        style={{ height: HEADER_H, lineHeight: `${HEADER_H}px` }}
+                        style={{
+                          height: HEADER_H,
+                          lineHeight: `${HEADER_H}px`,
+                          textAlign: 'center',
+                          verticalAlign: 'middle',
+                          fontFamily: 'Arial, sans-serif',
+                          fontSize: '11px',
+                          fontWeight: isActiveCol ? 500 : 400,
+                          color: isActiveCol ? '#1967d2' : '#5f6368',
+                          background: isActiveCol ? '#d3e3fd' : '#f8f9fa',
+                          borderBottom: '1px solid #c0c0c0',
+                          borderRight: '1px solid #e0e0e0',
+                          position: 'relative',
+                          userSelect: 'none',
+                          cursor: 'default',
+                          padding: 0,
+                        }}
+                        onMouseEnter={e => { if (!isActiveCol) (e.currentTarget as HTMLElement).style.background = '#f1f3f4'; }}
+                        onMouseLeave={e => { if (!isActiveCol) (e.currentTarget as HTMLElement).style.background = '#f8f9fa'; }}
                       >
                         {colLabel(ci)}
+                        {/* §3.4 — Chevron-down on active column (always visible) or on hover */}
+                        <svg
+                          width="8" height="5" viewBox="0 0 8 5"
+                          fill={isActiveCol ? '#1967d2' : '#5f6368'}
+                          style={{
+                            position: 'absolute',
+                            right: 6,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            opacity: isActiveCol ? 1 : 0,
+                            transition: 'opacity 0.1s',
+                            pointerEvents: 'none',
+                          }}
+                          className="col-chevron"
+                        >
+                          <path d="M0 0l4 5 4-5z" />
+                        </svg>
+                        {/* Column resize handle */}
                         <div
-                          className="absolute right-0 top-0 bottom-0 w-[3px] cursor-col-resize hover:bg-[#1a73e8] z-10"
+                          style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: 3,
+                            cursor: 'col-resize',
+                            zIndex: 1,
+                          }}
                           onMouseDown={e => onResizeStart(ci, e)}
+                          onMouseOver={e => (e.currentTarget.style.background = '#1a73e8')}
+                          onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                         />
                       </th>
                     );
@@ -675,14 +755,34 @@ export default function SpreadsheetPage() {
                   const isActiveRow = activeRow === ri;
                   return (
                     <tr key={ri}>
+                      {/* §3.3 — Row gutter */}
                       <td
-                        className={`text-[11px] font-normal text-center border-b border-r border-[#e8e8e8] sticky left-0 z-[5] select-none align-middle ${
-                          isActiveRow ? 'bg-[#d3e3fd] text-[#1a73e8]' : 'bg-[#f8f9fa] text-[#5f6368]'
-                        }`}
-                        style={{ height: ROW_H, width: ROW_NUM_W, lineHeight: `${ROW_H}px` }}
+                        style={{
+                          height: ROW_H,
+                          width: ROW_NUM_W,
+                          position: 'sticky',
+                          left: 0,
+                          zIndex: 2,
+                          background: isActiveRow ? '#d3e3fd' : '#f8f9fa',
+                          color: isActiveRow ? '#1967d2' : '#5f6368',
+                          fontWeight: isActiveRow ? 500 : 400,
+                          fontFamily: 'Arial, sans-serif',
+                          fontSize: '13.333px',
+                          textAlign: 'right',
+                          paddingRight: 4,
+                          lineHeight: `${ROW_H}px`,
+                          verticalAlign: 'middle',
+                          borderBottom: '1px solid #e0e0e0',
+                          borderRight: '1px solid #c0c0c0',
+                          userSelect: 'none',
+                          cursor: 'default',
+                        }}
+                        onMouseEnter={e => { if (!isActiveRow) (e.currentTarget as HTMLElement).style.background = '#f1f3f4'; }}
+                        onMouseLeave={e => { if (!isActiveRow) (e.currentTarget as HTMLElement).style.background = isActiveRow ? '#d3e3fd' : '#f8f9fa'; }}
                       >
                         {ri + 1}
                       </td>
+                      {/* §3.1 — Cell body */}
                       {Array.from({ length: numCols }, (_, ci) => {
                         const cellId = `${colLabel(ci)}${ri + 1}`;
                         const isActive = activeCell === cellId;
@@ -693,8 +793,17 @@ export default function SpreadsheetPage() {
                         return (
                           <td
                             key={ci}
-                            className={`border-b border-r border-[#e8e8e8] relative p-0 overflow-visible align-middle`}
-                            style={{ height: ROW_H }}
+                            style={{
+                              height: ROW_H,
+                              background: '#ffffff',
+                              borderBottom: '1px solid #e0e0e0',
+                              borderRight: '1px solid #e0e0e0',
+                              padding: '2px 3px',
+                              position: 'relative',
+                              overflow: 'visible',
+                              cursor: 'cell',
+                              verticalAlign: 'middle',
+                            }}
                             onClick={() => handleCellClick(cellId)}
                             onDoubleClick={() => startEdit(cellId)}
                           >
@@ -706,21 +815,55 @@ export default function SpreadsheetPage() {
                                 onChange={e => setFormulaValue(e.target.value)}
                                 onKeyDown={e => e.stopPropagation()}
                                 autoFocus
-                                className="absolute inset-[-1px] px-2 text-[13px] outline-none border-2 border-[#1a73e8] bg-white z-10 shadow-[0_1px_3px_rgba(0,0,0,0.12)]"
-                                style={{ width: 'calc(100% + 2px)', height: 'calc(100% + 2px)' }}
+                                style={{
+                                  position: 'absolute',
+                                  inset: -1,
+                                  width: 'calc(100% + 2px)',
+                                  height: 'calc(100% + 2px)',
+                                  padding: '2px 3px',
+                                  fontFamily: 'Arial, sans-serif',
+                                  fontSize: '13.333px',
+                                  color: '#202124',
+                                  border: '2px solid #1a73e8',
+                                  outline: 'none',
+                                  background: '#ffffff',
+                                  zIndex: 10,
+                                  boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                                }}
                               />
                             ) : (
                               <>
+                                {/* §3.5 — Selected cell */}
                                 {isActive && (
                                   <>
-                                    <div className="absolute inset-[-1px] border-2 border-[#1a73e8] pointer-events-none z-[1]" />
-                                    <div className="absolute right-[-4px] bottom-[-4px] w-[7px] h-[7px] bg-[#1a73e8] border border-white cursor-crosshair z-[2]" />
+                                    <div style={{
+                                      position: 'absolute',
+                                      inset: -1,
+                                      border: '2px solid #1a73e8',
+                                      pointerEvents: 'none',
+                                      zIndex: 1,
+                                    }} />
+                                    {/* §3.5 — Fill handle */}
+                                    <div style={{
+                                      position: 'absolute',
+                                      right: -4,
+                                      bottom: -4,
+                                      width: 7,
+                                      height: 7,
+                                      background: '#1a73e8',
+                                      border: '1px solid #ffffff',
+                                      cursor: 'crosshair',
+                                      zIndex: 2,
+                                    }} />
                                   </>
                                 )}
-                                <div
-                                  className={`px-2 truncate text-[13px] ${isNumber ? 'text-right' : 'text-left'}`}
-                                  style={{ lineHeight: `${ROW_H}px` }}
-                                >
+                                <div style={{
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'clip',
+                                  lineHeight: `${ROW_H}px`,
+                                  textAlign: isNumber ? 'right' : 'left',
+                                }}>
                                   {cellValue}
                                 </div>
                               </>
