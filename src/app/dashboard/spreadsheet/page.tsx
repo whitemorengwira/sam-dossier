@@ -20,11 +20,11 @@ import {
 // ─── Grid Config ──────────────────────────────────────────────────────────────
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
-const MIN_COL_W = 50;
-const DEFAULT_COL_W = 130;
-const ROW_NUM_W = 46;
-const ROW_H = 75;
-const HEADER_H = 26;
+const MIN_COL_W = 20;
+const DEFAULT_COL_W = 100;
+const ROW_NUM_W = 35;
+const ROW_H = 23;
+const HEADER_H = 23;
 
 function colLabel(i: number): string {
   let s = '';
@@ -718,7 +718,7 @@ export default function SpreadsheetPage() {
                                   </>
                                 )}
                                 <div
-                                  className={`px-1.5 truncate text-[13px] ${isNumber ? 'text-right' : 'text-left'}`}
+                                  className={`px-1 truncate text-[12px] ${isNumber ? 'text-right' : 'text-left'}`}
                                   style={{ lineHeight: `${ROW_H}px` }}
                                 >
                                   {cellValue}
