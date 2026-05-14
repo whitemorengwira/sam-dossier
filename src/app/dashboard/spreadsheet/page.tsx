@@ -20,11 +20,11 @@ import {
 // ─── Grid Config ──────────────────────────────────────────────────────────────
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
-const MIN_COL_W = 46;
-const DEFAULT_COL_W = 100;
+const MIN_COL_W = 50;
+const DEFAULT_COL_W = 130;
 const ROW_NUM_W = 46;
-const ROW_H = 21;
-const HEADER_H = 21;
+const ROW_H = 75;
+const HEADER_H = 26;
 
 function colLabel(i: number): string {
   let s = '';
@@ -648,13 +648,13 @@ export default function SpreadsheetPage() {
               {/* Column Headers */}
               <thead className="sticky top-0 z-10">
                 <tr>
-                  <th className="bg-[#f8f9fa] border-b border-r border-[#e1e1e1] sticky left-0 z-20" style={{ height: HEADER_H, width: ROW_NUM_W }} />
+                  <th className="bg-[#f8f9fa] border-b border-r border-[#e8e8e8] sticky left-0 z-20" style={{ height: HEADER_H, width: ROW_NUM_W }} />
                   {Array.from({ length: numCols }, (_, ci) => {
                     const isActiveCol = activeCol === ci;
                     return (
                       <th
                         key={ci}
-                        className={`text-[11px] font-normal border-b border-r border-[#e1e1e1] relative select-none ${
+                        className={`text-[11px] font-normal border-b border-r border-[#e8e8e8] relative select-none ${
                           isActiveCol ? 'bg-[#d3e3fd] text-[#1a73e8]' : 'bg-[#f8f9fa] text-[#5f6368]'
                         }`}
                         style={{ height: HEADER_H }}
@@ -676,7 +676,7 @@ export default function SpreadsheetPage() {
                   return (
                     <tr key={ri}>
                       <td
-                        className={`text-[11px] font-normal text-center border-b border-r border-[#e1e1e1] sticky left-0 z-[5] select-none ${
+                        className={`text-[11px] font-normal text-center border-b border-r border-[#e8e8e8] sticky left-0 z-[5] select-none ${
                           isActiveRow ? 'bg-[#d3e3fd] text-[#1a73e8]' : 'bg-[#f8f9fa] text-[#5f6368]'
                         }`}
                         style={{ height: ROW_H, width: ROW_NUM_W }}
@@ -693,7 +693,7 @@ export default function SpreadsheetPage() {
                         return (
                           <td
                             key={ci}
-                            className={`border-b border-r border-[#e1e1e1] relative p-0 overflow-visible`}
+                            className={`border-b border-r border-[#e8e8e8] relative p-0 overflow-visible`}
                             style={{ height: ROW_H }}
                             onClick={() => handleCellClick(cellId)}
                             onDoubleClick={() => startEdit(cellId)}
