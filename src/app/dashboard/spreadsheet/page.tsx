@@ -408,7 +408,7 @@ export default function SpreadsheetPage() {
   const { col: activeCol, row: activeRow } = parseCellRef(activeCell);
 
   return (
-    <div className="flex h-screen bg-white text-[#202124] text-[13px]" style={{ fontFamily: "'Google Sans', Roboto, Arial, sans-serif" }}>
+    <div className="flex bg-white text-[#202124] text-[13px] rounded-lg overflow-hidden shadow-sm border border-[#dadce0]" style={{ fontFamily: "'Google Sans', Roboto, Arial, sans-serif", height: 'calc(100vh - 120px)' }}>
 
       {/* ─── Saved Documents Sidebar ─── */}
       <div className={`shrink-0 border-r border-[#dadce0] bg-[#f8f9fa] transition-all duration-300 overflow-hidden ${showSidebar ? 'w-[280px]' : 'w-0'}`}>
