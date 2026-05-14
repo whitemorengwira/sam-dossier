@@ -20,11 +20,11 @@ import {
 // ─── Grid Config ──────────────────────────────────────────────────────────────
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
-const MIN_COL_W = 20;
-const DEFAULT_COL_W = 100;
-const ROW_NUM_W = 35;
-const ROW_H = 23;
-const HEADER_H = 23;
+const MIN_COL_W = 50;
+const DEFAULT_COL_W = 128;
+const ROW_NUM_W = 40;
+const ROW_H = 78;
+const HEADER_H = 38;
 
 function colLabel(i: number): string {
   let s = '';
@@ -654,12 +654,15 @@ export default function SpreadsheetPage() {
                     return (
                       <th
                         key={ci}
-                        className={`text-[11px] font-normal border-b border-r border-[#e8e8e8] relative select-none ${
-                          isActiveCol ? 'bg-[#d3e3fd] text-[#1a73e8]' : 'bg-[#f8f9fa] text-[#5f6368]'
+                        className={`text-[13px] font-normal border-b border-r border-[#e8e8e8] relative select-none group/col ${
+                          isActiveCol ? 'bg-[#d3e3fd] text-[#1a73e8] font-medium' : 'bg-[#f8f9fa] text-[#5f6368]'
                         }`}
                         style={{ height: HEADER_H }}
                       >
-                        {colLabel(ci)}
+                        <span className="flex items-center justify-center gap-1">
+                          {colLabel(ci)}
+                          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor" className="opacity-0 group-hover/col:opacity-60 transition-opacity"><path d="M0 0l5 6 5-6z" /></svg>
+                        </span>
                         <div
                           className="absolute right-0 top-0 bottom-0 w-[3px] cursor-col-resize hover:bg-[#1a73e8] z-10"
                           onMouseDown={e => onResizeStart(ci, e)}
@@ -718,7 +721,7 @@ export default function SpreadsheetPage() {
                                   </>
                                 )}
                                 <div
-                                  className={`px-1 truncate text-[12px] ${isNumber ? 'text-right' : 'text-left'}`}
+                                  className={`px-2 truncate text-[13px] ${isNumber ? 'text-right' : 'text-left'}`}
                                   style={{ lineHeight: `${ROW_H}px` }}
                                 >
                                   {cellValue}
