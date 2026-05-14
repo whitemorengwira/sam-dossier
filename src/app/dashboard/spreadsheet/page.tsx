@@ -654,15 +654,12 @@ export default function SpreadsheetPage() {
                     return (
                       <th
                         key={ci}
-                        className={`text-[13px] font-normal border-b border-r border-[#e8e8e8] relative select-none group/col ${
+                        className={`text-[11px] font-normal border-b border-r border-[#e8e8e8] relative select-none ${
                           isActiveCol ? 'bg-[#d3e3fd] text-[#1a73e8] font-medium' : 'bg-[#f8f9fa] text-[#5f6368]'
                         }`}
-                        style={{ height: HEADER_H }}
+                        style={{ height: HEADER_H, lineHeight: `${HEADER_H}px` }}
                       >
-                        <span className="flex items-center justify-center gap-1">
-                          {colLabel(ci)}
-                          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor" className="opacity-0 group-hover/col:opacity-60 transition-opacity"><path d="M0 0l5 6 5-6z" /></svg>
-                        </span>
+                        {colLabel(ci)}
                         <div
                           className="absolute right-0 top-0 bottom-0 w-[3px] cursor-col-resize hover:bg-[#1a73e8] z-10"
                           onMouseDown={e => onResizeStart(ci, e)}
