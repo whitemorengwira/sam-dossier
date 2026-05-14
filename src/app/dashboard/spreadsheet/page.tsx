@@ -21,10 +21,10 @@ import {
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
 const MIN_COL_W = 46;
-const DEFAULT_COL_W = 120;
+const DEFAULT_COL_W = 128;
 const ROW_NUM_W = 46;
-const ROW_H = 30;
-const HEADER_H = 30;
+const ROW_H = 77;
+const HEADER_H = 38;
 
 function colLabel(i: number): string {
   let s = '';
