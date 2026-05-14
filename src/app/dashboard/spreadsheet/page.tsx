@@ -20,11 +20,11 @@ import {
 // ─── Grid Config ──────────────────────────────────────────────────────────────
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
-const MIN_COL_W = 46;
-const DEFAULT_COL_W = 120;
-const ROW_NUM_W = 46;
-const ROW_H = 30;
-const HEADER_H = 28;
+const MIN_COL_W = 60;
+const DEFAULT_COL_W = 180;
+const ROW_NUM_W = 50;
+const ROW_H = 36;
+const HEADER_H = 32;
 
 function colLabel(i: number): string {
   let s = '';
