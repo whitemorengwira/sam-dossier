@@ -9,17 +9,13 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { CinematicHero } from '@/components/dossier/CinematicHero'
+import { ScrollReveal } from '@/components/dossier/ScrollReveal'
+import { VisualBreak } from '@/components/dossier/VisualBreak'
 
 const PAGE_SLUG = 'geological-report'
 
 const FALLBACK_BLOCKS: BlockData[] = [
-  {
-    id: "hero",
-    type: "TextBlock",
-    props: {
-      text: "<span class='badge badge-gold'>Investment Dossier</span><span class='badge badge-info ml-2'>Technical Data</span><h1 class='text-gold font-display font-black mb-3 text-4xl mt-4'>Geological <span class='text-gold'>Report</span></h1><p class='text-text-secondary text-lg font-heading italic max-w-2xl'>The fundamental viability of any mining expansion is inextricably linked to the quality, scale, and proven consistency of the underlying geological resource. The Chikonga Mine profile presents a compelling empirical case for aggressive capital deployment, supported by decades of historical production and recent high-yield assay verification.</p>"
-    }
-  },
   {
     id: "div-1",
     type: "Divider",
@@ -179,9 +175,21 @@ export default function GeologicalReportPage() {
 
   return (
     <div className="space-y-4 max-w-6xl pb-32">
+      <CinematicHero
+        theme="geological"
+        badge="Geological Report"
+        badgeVariant="badge badge-info"
+        title={<>Geological <span className="text-gold">Report</span></>}
+        subtitle="The fundamental viability of any mining expansion is inextricably linked to the quality, scale, and proven consistency of the underlying geological resource. The Chikonga Mine profile presents a compelling empirical case for aggressive capital deployment, supported by decades of historical production and recent high-yield assay verification."
+      />
+
       {editingMode && <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />}
       <CmsProvider>
-        {blocks.map(block => <BlockRenderer key={block.id} block={block} />)}
+        {blocks.map((block, i) => (
+          <ScrollReveal key={block.id} delay={i * 70}>
+            <BlockRenderer block={block} />
+          </ScrollReveal>
+        ))}
       </CmsProvider>
       <PropertyPanel />
       <BlockPickerModal />

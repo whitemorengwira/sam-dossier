@@ -9,17 +9,13 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { CinematicHero } from '@/components/dossier/CinematicHero'
+import { ScrollReveal } from '@/components/dossier/ScrollReveal'
+import { VisualBreak } from '@/components/dossier/VisualBreak'
 
 const PAGE_SLUG = 'risk-matrix'
 
 const FALLBACK_BLOCKS: BlockData[] = [
-  {
-    id: "hero",
-    type: "TextBlock",
-    props: {
-      text: "<span class='badge badge-gold'>Investment Dossier</span><span class='badge badge-warning ml-2'>Risk Matrix</span><h1 class='text-gold font-display font-black mb-3 text-4xl mt-4'>Risk Management &amp; <span class='text-gold'>Mitigation Framework</span></h1><p class='text-text-secondary text-lg font-heading italic max-w-2xl'>The deployment of multi-million-dollar capital requires an uncompromising approach to risk management. Socinga Africa Mining ensures that the 12 Forge (Private) Limited Special Purpose Vehicle (SPV) operates within the strictest parameters of physical, operational, and macroeconomic security, fully incorporating high-end international methodologies.</p>"
-    }
-  },
   {
     id: "div-1",
     type: "Divider",
@@ -129,9 +125,21 @@ export default function RiskMatrixPage() {
 
   return (
     <div className="space-y-4 max-w-6xl pb-32">
+      <CinematicHero
+        theme="risk"
+        badge="Risk Matrix"
+        badgeVariant="badge badge-warning"
+        title={<>Risk Management &amp; <span className="text-gold">Mitigation Framework</span></>}
+        subtitle="The deployment of multi-million-dollar capital requires an uncompromising approach to risk management. Socinga Africa Mining ensures that the 12 Forge (Private) Limited Special Purpose Vehicle (SPV) operates within the strictest parameters of physical, operational, and macroeconomic security, fully incorporating high-end international methodologies."
+      />
+
       {editingMode && <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />}
       <CmsProvider>
-        {blocks.map(block => <BlockRenderer key={block.id} block={block} />)}
+        {blocks.map((block, i) => (
+          <ScrollReveal key={block.id} delay={i * 70}>
+            <BlockRenderer block={block} />
+          </ScrollReveal>
+        ))}
       </CmsProvider>
       <PropertyPanel />
       <BlockPickerModal />

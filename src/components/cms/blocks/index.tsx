@@ -74,9 +74,20 @@ export function Divider({ style, colour }: any) {
   )
 }
 
-export function RichTable({ data }: any) {
-  if (!data || !Array.isArray(data)) return null
-  const [headers, ...rows] = data
+export function RichTable({ data, columns, rows: rowsProp }: any) {
+  // Support both formats: legacy `data` array-of-arrays, or `columns` + `rows`
+  let headers: string[] = []
+  let bodyRows: string[][] = []
+
+  if (columns && rowsProp) {
+    headers = columns
+    bodyRows = rowsProp
+  } else if (data && Array.isArray(data)) {
+    ;[headers, ...bodyRows] = data
+  } else {
+    return null
+  }
+
   return (
     <div className="overflow-x-auto border border-gold/20">
       <table className="w-full text-left text-sm">
@@ -86,7 +97,7 @@ export function RichTable({ data }: any) {
           </tr>
         </thead>
         <tbody className="text-text-secondary">
-          {rows.map((row: string[], i: number) => (
+          {bodyRows.map((row: string[], i: number) => (
             <tr key={i} className="border-b border-gold/10 hover:bg-gold/5">
               {row.map((cell: string, j: number) => <td key={j} className="p-3">{cell}</td>)}
             </tr>

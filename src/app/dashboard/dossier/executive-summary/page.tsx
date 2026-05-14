@@ -10,6 +10,9 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { CinematicHero } from '@/components/dossier/CinematicHero'
+import { ScrollReveal } from '@/components/dossier/ScrollReveal'
+import { VisualBreak } from '@/components/dossier/VisualBreak'
 import { createClient } from '@/lib/supabase/client'
 
 const PAGE_SLUG = 'executive-summary'
@@ -374,51 +377,26 @@ function UploadPanel({ onDocAdded }: { onDocAdded: (doc: DossierDoc) => void }) 
 
 const FALLBACK_BLOCKS: BlockData[] = [
   {
-    id: "hero-1",
+    id: "exec-macro",
     type: "TextBlock",
     props: {
-      text: "<span class='badge badge-gold mb-4 inline-block'>Investment Dossier</span><h1 class='text-gold font-display font-black mb-3 text-4xl'>Executive Summary</h1><p class='text-text-secondary text-lg font-heading italic max-w-2xl'>Chikonga Mine, Mutare, Manicaland Province, Zimbabwe - A ZAR 500 Million Transformation Opportunity</p>"
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Macroeconomic Context</h2><p class='text-text-secondary leading-relaxed mb-4'>The global macroeconomic environment in 2026 continues to demonstrate unprecedented volatility, establishing precious metals as the ultimate hedge against fiat currency depreciation and geopolitical instability. Within this context, the Zimbabwean mining sector represents a unique frontier for institutional capital, offering world-class geological endowments coupled with a stringent but navigable statutory framework. This document has been engineered to strictly adhere to 2026 international best practices for mining feasibility studies, incorporating independent technical reviews, comprehensive lifecycle assessments, and advanced digital integration.</p>"
     }
   },
   {
-    id: "div-1",
-    type: "Divider",
-    props: { style: "solid", colour: "rgba(212,175,55,0.25)" }
-  },
-  {
-    id: "opp-1",
+    id: "exec-partnership",
     type: "TextBlock",
     props: {
-      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>The Opportunity</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is a subsidiary of Hilltouch Investments...</p>"
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Strategic Partnership</h2><p class='text-text-secondary leading-relaxed mb-4'>Socinga Africa Mining is executing a strategic corporate collaboration with Hilltouch Investments (Private) Limited, the indigenous owners and operators of the Chikonga Mine. The fundamental objective of this commercial partnership is to secure and deploy a targeted capital injection of ZAR 250,000,000 (USD 13,513,513). This capital is mandated to transition the asset from its current rudimentary, artisanal-scale output of 5 kilogrammes (kg) per month to a stabilised, industrial-scale production target of 15 kilogrammes (kg) per month.</p>"
     }
   },
   {
-    id: "profile-summary",
+    id: "exec-deployment",
     type: "TextBlock",
     props: {
-      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Executive Summary</h2><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is a subsidiary of Hilltouch Investments, an indigenous gold mining entity that is wholly owned by its Directors Mr Lufeyi Shato & Mrs Joyce Kujenga. Established in 2005, it has grown in leaps and bounds from humble beginnings to become Manicaland's 3rd largest producer of the yellow mineral.</p><p class='text-text-secondary leading-relaxed mb-4'>Chikonga Mine is located 20km off Mutare CBD along the Mutare-Harare highway. The 45 hectare property is comprised of four 10 hectare registered claims. Improved gold grades averaged 15g/t, 18g/t to 25g/t in 2019, 2020 and 2021 respectively.</p>"
+      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Capital Deployment</h2><p class='text-text-secondary leading-relaxed mb-4'>To achieve this, the deployment of funds will facilitate aggressive underground shaft development to the 400-metre inclined depth, designated as level 3, alongside the commissioning of a high-throughput, 500 tonnes per day (tpd) Carbon-in-Leach (CIL) processing facility. The investment is structured through a legally segregated Special Purpose Vehicle (SPV), ensuring absolute ring-fencing of institutional funds. This framework offers the incoming institutional partner a 60 per cent (60%) share of the net distributable free cash flow, protected by a 20 per cent (20%) per annum simple interest yield on the deployed capital, and enforced through a rigid capital repayment waterfall.</p>"
     }
   },
-  {
-    id: "profile-geology",
-    type: "TextBlock",
-    props: {
-      text: "<h2 class='text-xl font-display font-bold text-gold mb-4'>Introduction & Geology</h2><p class='text-text-secondary leading-relaxed mb-4'>Geologically the Chikonga mine lies in the Northern part of Mutare and Odzi greenstone belt, which is divided into two arms, the Odzi limb, extending WNE from Odzi centre and the Mutare limb, trending East. Historically underground operations were developed to 2nd level and have been de-watered and channel sampled.</p><p class='text-text-secondary leading-relaxed mb-4'>Mineralized reefs/shear zones occur as siliceous mica schist and silicified andesite typically hosting bands of fine grained grey and black quartz with disseminated pyrrhotite, pyrite, arsenopyrite, chalcopyrite and gold.</p>"
-    }
-  },
-  {
-    id: "profile-table",
-    type: "RichTable",
-    props: {
-      data: [
-        ["Asset / Metric", "Description", "Details"],
-        ["Location", "Mutasa District", "40 km NE of Mutare city"],
-        ["Property Size", "45 Hectares", "Four 10 hectare registered claims"],
-        ["Gold Grade Averages", "2019 - 2021", "15g/t, 18g/t, up to 25g/t"],
-        ["Production Standard", "Cyanidation & Leaching", "Running elution plant producing >1kg gold/month"]
-      ]
-    }
-  }
 ]
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -505,23 +483,38 @@ export default function ExecutiveSummaryPage() {
   }
 
   return (
-    <div className="space-y-4 max-w-4xl pb-32">
+    <div className="space-y-4 max-w-6xl pb-32">
+      <CinematicHero
+        theme="executive"
+        badge="Executive Summary"
+        title={<>Investment Thesis &amp; <span className="text-gold">Capital Structure</span></>}
+        subtitle="Socinga Africa Mining (SAM) presents this institutional-grade investment dossier for the expansion of Chikonga Mine — a proven, producing gold asset in Mutare, Zimbabwe."
+      />
+
       {editingMode && (
         <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />
       )}
 
       <CmsProvider>
-        {blocks.map(block => (
-          <BlockRenderer key={block.id} block={block} />
+        {blocks.map((block, i) => (
+          <ScrollReveal key={block.id} delay={i * 80}>
+            <BlockRenderer block={block} />
+          </ScrollReveal>
         ))}
       </CmsProvider>
 
+      <ScrollReveal>
+        <VisualBreak theme="shaft" caption="Chikonga Mine — Verified Foundation Documents" height="180px" />
+      </ScrollReveal>
+
       {/* Tabbed document viewer */}
-      <DocumentViewer
-        docs={uploadedDocs}
-        canManage={canManage}
-        onRemove={handleDocRemoved}
-      />
+      <ScrollReveal>
+        <DocumentViewer
+          docs={uploadedDocs}
+          canManage={canManage}
+          onRemove={handleDocRemoved}
+        />
+      </ScrollReveal>
 
       {/* Upload panel — only shown to admin/team */}
       {canManage && (

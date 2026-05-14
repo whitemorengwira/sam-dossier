@@ -9,22 +9,13 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { CinematicHero } from '@/components/dossier/CinematicHero'
+import { ScrollReveal } from '@/components/dossier/ScrollReveal'
+import { VisualBreak } from '@/components/dossier/VisualBreak'
 
 const PAGE_SLUG = 'investment-case'
 
 const FALLBACK_BLOCKS: BlockData[] = [
-  {
-    id: "hero",
-    type: "TextBlock",
-    props: {
-      text: "<span class='badge badge-gold'>Investment Dossier</span><span class='badge badge-success ml-2'>Investment Case</span><h1 class='text-gold font-display font-black mb-3 text-4xl mt-4'>Strategic Rationale &amp; <span class='text-gold'>Market Context</span></h1><p class='text-text-secondary text-lg font-heading italic max-w-2xl'>The strategic rationale underpinning this expansion is rooted in the exceptional, proven metrics of the Chikonga Mine and the robust capital governance framework engineered by Socinga Africa Mining.</p>"
-    }
-  },
-  {
-    id: "div-1",
-    type: "Divider",
-    props: { style: "solid", colour: "rgba(212,175,55,0.25)" }
-  },
   {
     id: "metrics-1",
     type: "RichTable",
@@ -150,9 +141,21 @@ export default function InvestmentCasePage() {
 
   return (
     <div className="space-y-4 max-w-6xl pb-32">
+      <CinematicHero
+        theme="investment"
+        badge="Investment Case"
+        badgeVariant="badge badge-success"
+        title={<>Strategic Rationale &amp; <span className="text-gold">Market Context</span></>}
+        subtitle="The strategic rationale underpinning this expansion is rooted in the exceptional, proven metrics of the Chikonga Mine and the robust capital governance framework engineered by Socinga Africa Mining."
+      />
+
       {editingMode && <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />}
       <CmsProvider>
-        {blocks.map(block => <BlockRenderer key={block.id} block={block} />)}
+        {blocks.map((block, i) => (
+          <ScrollReveal key={block.id} delay={i * 80}>
+            <BlockRenderer block={block} />
+          </ScrollReveal>
+        ))}
       </CmsProvider>
       <PropertyPanel />
       <BlockPickerModal />

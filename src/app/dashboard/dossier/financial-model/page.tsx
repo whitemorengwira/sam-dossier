@@ -9,17 +9,13 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { CinematicHero } from '@/components/dossier/CinematicHero'
+import { ScrollReveal } from '@/components/dossier/ScrollReveal'
+import { VisualBreak } from '@/components/dossier/VisualBreak'
 
 const PAGE_SLUG = 'financial-model'
 
 const FALLBACK_BLOCKS: BlockData[] = [
-  {
-    id: "hero",
-    type: "TextBlock",
-    props: {
-      text: "<span class='badge badge-gold'>Investment Dossier</span><span class='badge badge-info ml-2'>Financial Model</span><h1 class='text-gold font-display font-black mb-3 text-4xl mt-4'>Capital Deployment &amp; <span class='text-gold'>ROI Matrix</span></h1><p class='text-text-secondary text-lg font-heading italic max-w-2xl'>The deployment of ZAR 250,000,000 (USD 13,513,513) is governed by a legally binding, mathematically precise Capital Repayment Waterfall. This framework dictates the exact chronological priority in which revenues generated from the 15 kilogrammes (kg) per month output are distributed, ensuring the unconditional protection of the investor&apos;s principal and the systematic execution of the Production-Sharing Agreement (PSA).</p>"
-    }
-  },
   {
     id: "div-1",
     type: "Divider",
@@ -208,9 +204,21 @@ export default function FinancialModelPage() {
 
   return (
     <div className="space-y-4 max-w-6xl pb-32">
+      <CinematicHero
+        theme="financial"
+        badge="Financial Model"
+        badgeVariant="badge badge-info"
+        title={<>Capital Deployment &amp; <span className="text-gold">ROI Matrix</span></>}
+        subtitle="The deployment of ZAR 250,000,000 (USD 13,513,513) is governed by a legally binding, mathematically precise Capital Repayment Waterfall. This framework dictates the exact chronological priority in which revenues generated from the 15 kilogrammes (kg) per month output are distributed, ensuring the unconditional protection of the investor's principal and the systematic execution of the Production-Sharing Agreement (PSA)."
+      />
+
       {editingMode && <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />}
       <CmsProvider>
-        {blocks.map(block => <BlockRenderer key={block.id} block={block} />)}
+        {blocks.map((block, i) => (
+          <ScrollReveal key={block.id} delay={i * 60}>
+            <BlockRenderer block={block} />
+          </ScrollReveal>
+        ))}
       </CmsProvider>
       <PropertyPanel />
       <BlockPickerModal />

@@ -9,17 +9,13 @@ import { CmsToolbar } from '@/components/cms/CmsToolbar'
 import { BlockRenderer } from '@/components/cms/BlockRenderer'
 import { PropertyPanel } from '@/components/cms/PropertyPanel'
 import { BlockPickerModal } from '@/components/cms/BlockPickerModal'
+import { CinematicHero } from '@/components/dossier/CinematicHero'
+import { ScrollReveal } from '@/components/dossier/ScrollReveal'
+import { VisualBreak } from '@/components/dossier/VisualBreak'
 
 const PAGE_SLUG = 'legal-structure'
 
 const FALLBACK_BLOCKS: BlockData[] = [
-  {
-    id: "hero",
-    type: "TextBlock",
-    props: {
-      text: "<span class='badge badge-gold'>Investment Dossier</span><span class='badge badge-info ml-2'>Legal Structure</span><h1 class='text-gold font-display font-black mb-3 text-4xl mt-4'>Corporate Governance &amp; <span class='text-gold'>SPV Architecture</span></h1><p class='text-text-secondary text-lg font-heading italic max-w-2xl'>The deployment of institutional capital into emerging market mining jurisdictions necessitates a flawless architectural framework for corporate governance, risk mitigation, and statutory compliance. Socinga Africa Mining approaches mining capital deployment with actuarial-level fiduciary discipline.</p>"
-    }
-  },
   {
     id: "div-1",
     type: "Divider",
@@ -162,9 +158,21 @@ export default function LegalStructurePage() {
 
   return (
     <div className="space-y-4 max-w-6xl pb-32">
+      <CinematicHero
+        theme="legal"
+        badge="Legal Structure"
+        badgeVariant="badge badge-info"
+        title={<>Corporate Governance &amp; <span className="text-gold">SPV Architecture</span></>}
+        subtitle="The deployment of institutional capital into emerging market mining jurisdictions necessitates a flawless architectural framework for corporate governance, risk mitigation, and statutory compliance. Socinga Africa Mining approaches mining capital deployment with actuarial-level fiduciary discipline."
+      />
+
       {editingMode && <CmsToolbar pageSlug={PAGE_SLUG} onSave={handleSave} onDiscard={handleDiscard} />}
       <CmsProvider>
-        {blocks.map(block => <BlockRenderer key={block.id} block={block} />)}
+        {blocks.map((block, i) => (
+          <ScrollReveal key={block.id} delay={i * 70}>
+            <BlockRenderer block={block} />
+          </ScrollReveal>
+        ))}
       </CmsProvider>
       <PropertyPanel />
       <BlockPickerModal />
