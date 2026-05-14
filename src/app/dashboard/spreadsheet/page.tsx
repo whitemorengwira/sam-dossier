@@ -65,20 +65,8 @@ export default function SpreadsheetPage() {
       if (changed) refreshSheetData();
     });
 
-    // 3. Seed data if room is empty
-    if (Array.from(yGrid.keys()).length === 0) {
-      ydoc.transact(() => {
-        yGrid.set('1,0', 'Total Revenue');
-        yGrid.set('1,1', '1250000');
-        yGrid.set('1,2', '=B2*1.1'); // Note: B2 is actually r:1, c:1 in 0-index. Hyperformula uses B2. Wait, initial was B3. We use standard excel ref.
-        yGrid.set('2,0', 'Equipment');
-        yGrid.set('2,1', '450000');
-        yGrid.set('2,2', '500000');
-        yGrid.set('3,0', 'Net Profit');
-        yGrid.set('3,1', '=B2-B3');
-        yGrid.set('3,2', '=C2-C3');
-      });
-    } else {
+    // 3. Load existing data from peers (no seed data — users start blank)
+    if (Array.from(yGrid.keys()).length > 0) {
       // Load from peers
       Array.from(yGrid.keys()).forEach(key => {
         const [rStr, cStr] = key.split(',');
@@ -125,8 +113,7 @@ export default function SpreadsheetPage() {
           </Link>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-lg">Financial Projections Q3</span>
-              <span className="text-yellow-400">⭐</span>
+              <span className="font-medium text-lg">Untitled Spreadsheet</span>
               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">.xlsx</span>
             </div>
             <div className="flex text-sm text-gray-600 gap-3 mt-1">
@@ -261,20 +248,6 @@ export default function SpreadsheetPage() {
           ))}
         </div>
         
-        {/* Mock Chart Overlay */}
-        <div className="absolute top-24 left-96 w-96 h-64 bg-white border border-gray-300 shadow-lg rounded p-4 z-20 cursor-move">
-          <h3 className="text-sm font-bold text-gray-700 mb-2">Q3 Revenue vs Expenses</h3>
-          <div className="h-48 w-full flex items-end justify-around pb-2 border-b border-l border-gray-400">
-            <div className="w-12 bg-green-500 h-[80%] rounded-t relative group"><div className="hidden group-hover:block absolute -top-6 left-0 bg-black text-white text-xs p-1 rounded">1.25M</div></div>
-            <div className="w-12 bg-red-500 h-[40%] rounded-t relative group"><div className="hidden group-hover:block absolute -top-6 left-0 bg-black text-white text-xs p-1 rounded">600K</div></div>
-            <div className="w-12 bg-green-500 h-[90%] rounded-t relative group"><div className="hidden group-hover:block absolute -top-6 left-0 bg-black text-white text-xs p-1 rounded">1.4M</div></div>
-            <div className="w-12 bg-red-500 h-[45%] rounded-t relative group"><div className="hidden group-hover:block absolute -top-6 left-0 bg-black text-white text-xs p-1 rounded">700K</div></div>
-          </div>
-          <div className="flex justify-around text-xs text-gray-500 mt-2">
-            <span>July</span>
-            <span>August</span>
-          </div>
-        </div>
       </div>
 
       {/* Sheet Tabs */}

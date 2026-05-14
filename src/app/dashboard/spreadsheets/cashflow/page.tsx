@@ -1,43 +1,66 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ChartLineUp, TrendUp, TrendDown } from '@phosphor-icons/react'
+import { ChartLineUp, Plus, Trash } from '@phosphor-icons/react'
+import { useState } from 'react'
 
-const cashflowData = [
-  { month: 'Month 1', phase: 'Pre-Prod', revenue: '-', opex: 'R1,200,000', capex: 'R3,500,000', netCf: '-R4,700,000', cumCf: '-R4,700,000' },
-  { month: 'Month 2', phase: 'Pre-Prod', revenue: '-', opex: 'R800,000', capex: 'R2,000,000', netCf: '-R2,800,000', cumCf: '-R7,500,000' },
-  { month: 'Month 3', phase: 'Pre-Prod', revenue: '-', opex: 'R600,000', capex: 'R1,500,000', netCf: '-R2,100,000', cumCf: '-R9,600,000' },
-  { month: 'Month 4', phase: 'Ramp-Up', revenue: 'R1,500,000', opex: 'R1,800,000', capex: 'R500,000', netCf: '-R800,000', cumCf: '-R10,400,000' },
-  { month: 'Month 5', phase: 'Ramp-Up', revenue: 'R2,800,000', opex: 'R2,200,000', capex: 'R300,000', netCf: 'R300,000', cumCf: '-R10,100,000' },
-  { month: 'Month 6', phase: 'Ramp-Up', revenue: 'R4,200,000', opex: 'R2,800,000', capex: 'R200,000', netCf: 'R1,200,000', cumCf: '-R8,900,000' },
-  { month: 'Month 7', phase: 'Ramp-Up', revenue: 'R5,500,000', opex: 'R3,200,000', capex: 'R150,000', netCf: 'R2,150,000', cumCf: '-R6,750,000' },
-  { month: 'Month 8', phase: 'Ramp-Up', revenue: 'R6,800,000', opex: 'R3,600,000', capex: 'R100,000', netCf: 'R3,100,000', cumCf: '-R3,650,000' },
-  { month: 'Month 9', phase: 'Ramp-Up', revenue: 'R7,500,000', opex: 'R4,000,000', capex: 'R100,000', netCf: 'R3,400,000', cumCf: '-R250,000' },
-  { month: 'Month 10', phase: 'Steady', revenue: 'R8,200,000', opex: 'R4,200,000', capex: '-', netCf: 'R4,000,000', cumCf: 'R3,750,000' },
-  { month: 'Month 11', phase: 'Steady', revenue: 'R9,000,000', opex: 'R4,400,000', capex: '-', netCf: 'R4,600,000', cumCf: 'R8,350,000' },
-  { month: 'Month 12', phase: 'Steady', revenue: 'R9,500,000', opex: 'R4,500,000', capex: '-', netCf: 'R5,000,000', cumCf: 'R13,350,000' },
-]
+interface CashFlowRow {
+  month: string
+  phase: string
+  revenue: string
+  opex: string
+  capex: string
+  netCf: string
+  cumCf: string
+}
+
+const emptyRow = (i: number): CashFlowRow => ({
+  month: `Month ${i + 1}`,
+  phase: '',
+  revenue: '',
+  opex: '',
+  capex: '',
+  netCf: '',
+  cumCf: '',
+})
 
 export default function CashFlowPage() {
+  const [rows, setRows] = useState<CashFlowRow[]>(
+    Array.from({ length: 12 }, (_, i) => emptyRow(i))
+  )
+
+  const updateRow = (i: number, field: keyof CashFlowRow, value: string) => {
+    setRows(prev => prev.map((r, idx) => idx === i ? { ...r, [field]: value } : r))
+  }
+
+  const addRow = () => {
+    setRows(prev => [...prev, emptyRow(prev.length)])
+  }
+
+  const removeRow = (i: number) => {
+    if (rows.length <= 1) return
+    setRows(prev => prev.filter((_, idx) => idx !== i))
+  }
+
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
         <h1 className="text-gold font-display font-black text-2xl mb-1">Cash Flow Model</h1>
-        <p className="text-text-muted text-sm">12-month projection: Pre-production through steady-state</p>
+        <p className="text-text-muted text-sm">Enter your monthly cash flow projections below</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="grid grid-cols-3 gap-4">
         <div className="glass-card p-4 text-center">
           <p className="stat-label mb-1">Breakeven Month</p>
-          <p className="font-mono text-2xl text-gold font-bold">Month 10</p>
+          <p className="font-mono text-2xl text-text-muted">—</p>
         </div>
         <div className="glass-card p-4 text-center">
           <p className="stat-label mb-1">Year 1 Net Cash Flow</p>
-          <p className="font-mono text-2xl text-success font-bold">R13.35M</p>
+          <p className="font-mono text-2xl text-text-muted">—</p>
         </div>
         <div className="glass-card p-4 text-center">
           <p className="stat-label mb-1">Peak CAPEX Month</p>
-          <p className="font-mono text-2xl text-warning font-bold">Month 1</p>
+          <p className="font-mono text-2xl text-text-muted">—</p>
         </div>
       </motion.div>
 
@@ -46,31 +69,50 @@ export default function CashFlowPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gold/20">
-                {['Month', 'Phase', 'Revenue', 'OPEX', 'CAPEX', 'Net CF', 'Cumulative'].map(h => (
+                {['Month', 'Phase', 'Revenue', 'OPEX', 'CAPEX', 'Net CF', 'Cumulative', ''].map(h => (
                   <th key={h} className="text-left py-3 px-3 text-gold font-mono text-[10px] uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {cashflowData.map((row, i) => {
-                const isNeg = row.netCf.startsWith('-')
-                return (
-                  <tr key={row.month} className="border-b border-gold/5 hover:bg-gold/[0.03]">
-                    <td className="py-2.5 px-3 font-mono text-text-primary text-xs font-medium">{row.month}</td>
-                    <td className="py-2.5 px-3"><span className={`badge text-[8px] ${row.phase === 'Pre-Prod' ? 'badge-info' : row.phase === 'Ramp-Up' ? 'badge-warning' : 'badge-success'}`}>{row.phase}</span></td>
-                    <td className="py-2.5 px-3 font-mono text-text-secondary text-xs">{row.revenue}</td>
-                    <td className="py-2.5 px-3 font-mono text-text-muted text-xs">{row.opex}</td>
-                    <td className="py-2.5 px-3 font-mono text-text-muted text-xs">{row.capex}</td>
-                    <td className={`py-2.5 px-3 font-mono text-xs font-medium ${isNeg ? 'text-danger' : 'text-success'}`}>
-                      <span className="flex items-center gap-1">{isNeg ? <TrendDown size={10} /> : <TrendUp size={10} />}{row.netCf}</span>
-                    </td>
-                    <td className={`py-2.5 px-3 font-mono text-xs font-medium ${row.cumCf.startsWith('-') ? 'text-danger/70' : 'text-gold'}`}>{row.cumCf}</td>
-                  </tr>
-                )
-              })}
+              {rows.map((row, i) => (
+                <tr key={i} className="border-b border-gold/5 hover:bg-gold/[0.03]">
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.month} onChange={e => updateRow(i, 'month', e.target.value)} className="bg-transparent border-none outline-none font-mono text-text-primary text-xs font-medium w-20 placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.phase} onChange={e => updateRow(i, 'phase', e.target.value)} placeholder="Phase" className="bg-transparent border-none outline-none text-text-secondary text-xs w-20 placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.revenue} onChange={e => updateRow(i, 'revenue', e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-text-secondary text-xs w-24 placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.opex} onChange={e => updateRow(i, 'opex', e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-text-muted text-xs w-24 placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.capex} onChange={e => updateRow(i, 'capex', e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-text-muted text-xs w-24 placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.netCf} onChange={e => updateRow(i, 'netCf', e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-xs font-medium w-24 text-text-secondary placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.cumCf} onChange={e => updateRow(i, 'cumCf', e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-xs font-medium w-24 text-text-secondary placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-1">
+                    {rows.length > 1 && (
+                      <button onClick={() => removeRow(i)} className="p-0.5 hover:bg-red-500/10 rounded text-text-muted hover:text-red-400 transition-colors">
+                        <Trash size={12} />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
+        <button onClick={addRow} className="flex items-center gap-1.5 px-4 py-2 text-text-muted hover:text-gold text-[11px] transition-colors w-full hover:bg-gold/[0.03]">
+          <Plus size={12} /> Add month
+        </button>
       </motion.div>
     </div>
   )

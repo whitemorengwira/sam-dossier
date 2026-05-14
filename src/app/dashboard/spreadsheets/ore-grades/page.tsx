@@ -1,84 +1,96 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Mountains, TrendUp } from '@phosphor-icons/react'
+import { Mountains, Plus, Trash } from '@phosphor-icons/react'
+import { useState } from 'react'
 
-const gradeData = [
-  { shaft: 'Shaft No.1 - L1', jan: 18, feb: 20, mar: 22, apr: 19, may: 21, avg: 20 },
-  { shaft: 'Shaft No.1 - L2', jan: 15, feb: 17, mar: 18, apr: 16, may: 19, avg: 17 },
-  { shaft: 'Shaft No.2 - L1', jan: 22, feb: 24, mar: 25, apr: 23, may: 26, avg: 24 },
-  { shaft: 'East Drive', jan: 16, feb: 18, mar: 20, apr: 21, may: 22, avg: 19.4 },
-  { shaft: 'West Drive', jan: 12, feb: 14, mar: 15, apr: 16, may: 17, avg: 14.8 },
-  { shaft: 'New Reef (R3)', jan: null, feb: null, mar: 28, apr: 30, may: 32, avg: 30 },
-  { shaft: 'Tailings', jan: 15, feb: 15, mar: 15, apr: 15, may: 15, avg: 15 },
-]
+interface GradeRow {
+  shaft: string
+  jan: string
+  feb: string
+  mar: string
+  apr: string
+  may: string
+  avg: string
+}
 
-const historicalGrades = [
-  { year: '2019', avg: 15, samples: 24 },
-  { year: '2020', avg: 18, samples: 31 },
-  { year: '2021', avg: 25, samples: 28 },
-  { year: '2022', avg: 22, samples: 19 },
-  { year: '2023', avg: 20, samples: 22 },
-  { year: '2024', avg: 23, samples: 26 },
-  { year: '2025', avg: 24, samples: 30 },
-  { year: '2026', avg: 21, samples: 14 },
-]
+const emptyGradeRow = (): GradeRow => ({
+  shaft: '',
+  jan: '',
+  feb: '',
+  mar: '',
+  apr: '',
+  may: '',
+  avg: '',
+})
 
 export default function OreGradesPage() {
+  const [rows, setRows] = useState<GradeRow[]>(
+    Array.from({ length: 5 }, () => emptyGradeRow())
+  )
+
+  const updateRow = (i: number, field: keyof GradeRow, value: string) => {
+    setRows(prev => prev.map((r, idx) => idx === i ? { ...r, [field]: value } : r))
+  }
+
+  const addRow = () => setRows(prev => [...prev, emptyGradeRow()])
+
+  const removeRow = (i: number) => {
+    if (rows.length <= 1) return
+    setRows(prev => prev.filter((_, idx) => idx !== i))
+  }
+
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
         <h1 className="text-gold font-display font-black text-2xl mb-1">Ore Grade Tracker</h1>
-        <p className="text-text-muted text-sm">Chikonga Mine - Monthly assay results by shaft and drive</p>
+        <p className="text-text-muted text-sm">Enter monthly assay results by shaft and drive below</p>
       </motion.div>
 
       {/* Current Month Grades by Shaft */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card overflow-hidden">
         <div className="p-4 border-b border-gold/15 flex items-center gap-3">
           <Mountains size={18} weight="duotone" className="text-gold" />
-          <h3 className="text-text-primary font-body font-semibold text-sm">2026 Monthly Grades (g/t)</h3>
+          <h3 className="text-text-primary font-body font-semibold text-sm">Monthly Grades (g/t)</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gold/20">
-                {['Shaft / Drive', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Average'].map(h => (
+                {['Shaft / Drive', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Average', ''].map(h => (
                   <th key={h} className={`py-3 px-3 text-gold font-mono text-[10px] uppercase tracking-wider ${h === 'Shaft / Drive' ? 'text-left' : 'text-center'}`}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {gradeData.map((row) => (
-                <tr key={row.shaft} className="border-b border-gold/5 hover:bg-gold/[0.03]">
-                  <td className="py-2.5 px-3 text-text-primary text-xs font-medium">{row.shaft}</td>
-                  {[row.jan, row.feb, row.mar, row.apr, row.may].map((v, i) => (
-                    <td key={i} className={`py-2.5 px-3 font-mono text-xs text-center ${v === null ? 'text-text-muted' : v >= 25 ? 'text-gold font-bold' : v >= 18 ? 'text-success' : 'text-text-secondary'}`}>
-                      {v !== null ? v : '-'}
+              {rows.map((row, i) => (
+                <tr key={i} className="border-b border-gold/5 hover:bg-gold/[0.03]">
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.shaft} onChange={e => updateRow(i, 'shaft', e.target.value)} placeholder="Shaft / Drive name" className="bg-transparent border-none outline-none text-text-primary text-xs font-medium w-36 placeholder:text-text-muted/40" />
+                  </td>
+                  {(['jan', 'feb', 'mar', 'apr', 'may'] as const).map(month => (
+                    <td key={month} className="py-2.5 px-3">
+                      <input type="text" value={row[month]} onChange={e => updateRow(i, month, e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-xs text-center w-12 text-text-secondary placeholder:text-text-muted/40" />
                     </td>
                   ))}
-                  <td className="py-2.5 px-3 font-mono text-xs text-center text-gold font-bold">{row.avg}</td>
+                  <td className="py-2.5 px-3">
+                    <input type="text" value={row.avg} onChange={e => updateRow(i, 'avg', e.target.value)} placeholder="-" className="bg-transparent border-none outline-none font-mono text-xs text-center w-12 text-gold font-bold placeholder:text-text-muted/40" />
+                  </td>
+                  <td className="py-2.5 px-1">
+                    {rows.length > 1 && (
+                      <button onClick={() => removeRow(i)} className="p-0.5 hover:bg-red-500/10 rounded text-text-muted hover:text-red-400 transition-colors">
+                        <Trash size={12} />
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </motion.div>
-
-      {/* Historical Grade Progression */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <TrendUp size={18} weight="duotone" className="text-gold" />
-          <h3 className="text-text-primary font-body font-semibold text-sm">Historical Grade Progression</h3>
-        </div>
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
-          {historicalGrades.map((g) => (
-            <div key={g.year} className="border border-gold/15 p-3 text-center">
-              <p className="stat-label mb-1">{g.year}</p>
-              <p className={`font-mono text-lg font-bold ${g.avg >= 23 ? 'text-gold' : g.avg >= 18 ? 'text-success' : 'text-text-secondary'}`}>{g.avg}</p>
-              <p className="text-[9px] text-text-muted font-mono mt-1">{g.samples} samples</p>
-            </div>
-          ))}
-        </div>
+        <button onClick={addRow} className="flex items-center gap-1.5 px-4 py-2 text-text-muted hover:text-gold text-[11px] transition-colors w-full hover:bg-gold/[0.03]">
+          <Plus size={12} /> Add shaft / drive
+        </button>
       </motion.div>
     </div>
   )
