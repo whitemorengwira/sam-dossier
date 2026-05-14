@@ -20,11 +20,11 @@ import {
 // ─── Grid Config ──────────────────────────────────────────────────────────────
 const INITIAL_COLS = 26;
 const INITIAL_ROWS = 100;
-const MIN_COL_W = 50;
-const DEFAULT_COL_W = 128;
-const ROW_NUM_W = 40;
-const ROW_H = 78;
-const HEADER_H = 38;
+const MIN_COL_W = 46;
+const DEFAULT_COL_W = 120;
+const ROW_NUM_W = 46;
+const ROW_H = 30;
+const HEADER_H = 30;
 
 function colLabel(i: number): string {
   let s = '';
@@ -637,7 +637,7 @@ export default function SpreadsheetPage() {
         {/* ─── Grid ─── */}
         <div ref={gridRef} className="flex-1 overflow-auto bg-white relative select-none" style={{ cursor: resizingCol.current ? 'col-resize' : undefined }}>
           <div className="inline-block min-w-full">
-            <table className="border-collapse" style={{ tableLayout: 'fixed' }}>
+            <table className="border-collapse" style={{ tableLayout: 'fixed' }} cellPadding={0} cellSpacing={0}>
               <colgroup>
                 <col style={{ width: ROW_NUM_W }} />
                 {Array.from({ length: numCols }, (_, i) => (
@@ -676,10 +676,10 @@ export default function SpreadsheetPage() {
                   return (
                     <tr key={ri}>
                       <td
-                        className={`text-[11px] font-normal text-center border-b border-r border-[#e8e8e8] sticky left-0 z-[5] select-none ${
+                        className={`text-[11px] font-normal text-center border-b border-r border-[#e8e8e8] sticky left-0 z-[5] select-none align-middle ${
                           isActiveRow ? 'bg-[#d3e3fd] text-[#1a73e8]' : 'bg-[#f8f9fa] text-[#5f6368]'
                         }`}
-                        style={{ height: ROW_H, width: ROW_NUM_W }}
+                        style={{ height: ROW_H, width: ROW_NUM_W, lineHeight: `${ROW_H}px` }}
                       >
                         {ri + 1}
                       </td>
@@ -693,7 +693,7 @@ export default function SpreadsheetPage() {
                         return (
                           <td
                             key={ci}
-                            className={`border-b border-r border-[#e8e8e8] relative p-0 overflow-visible`}
+                            className={`border-b border-r border-[#e8e8e8] relative p-0 overflow-visible align-middle`}
                             style={{ height: ROW_H }}
                             onClick={() => handleCellClick(cellId)}
                             onDoubleClick={() => startEdit(cellId)}
